@@ -1,0 +1,36 @@
+package interium.fabric;
+import interium.fabric.delta.*;import interium.core.ModuleMath;
+import net.minecraft.client.gui.*;import net.minecraft.client.gui.screen.Screen;import net.minecraft.text.Text;
+import java.util.*;import java.util.function.*;
+/** Shared wheel/drag sliders. Changes persist on release, not every rendered frame. */
+class PrismSettingsScreen extends Screen {
+ protected final Screen parent;private DeltaFont font;protected final List<Option> options=new ArrayList<>();
+ protected static final class Option {String label;DoubleSupplier get;DoubleConsumer set;double min,max,step;BooleanSupplier flag;Runnable action;String[] names;float anim;float height(){return get!=null&&names==null?29:24;}}
+ private float scale,x,y,h,scroll,dest,open;private long time;private int drag=-1;
+ PrismSettingsScreen(Screen parent,Text title){super(title);this.parent=parent;}
+ @Override protected void init(){try{font=DeltaFont.load(client,"gt_regular");}catch(java.io.IOException e){throw new IllegalStateException(e);}options.clear();drag=-1;}
+ protected void range(String name,DoubleSupplier get,DoubleConsumer set,double min,double max,double step){Option o=new Option();o.label=name;o.get=get;o.set=set;o.min=min;o.max=max;o.step=step;options.add(o);}
+ protected void slider(String name,String key,float value,float min,float max,float step){range(name,()->DeltaVisualSettings.number(key,value,min,max),n->DeltaVisualSettings.set(key,n),min,max,step);}
+ protected void flag(String name,BooleanSupplier get,Runnable run){Option o=new Option();o.label=name;o.flag=get;o.action=run;options.add(o);}
+ protected void flag(String name,String key,boolean fallback){flag(name,()->DeltaVisualSettings.flag(key,fallback),()->DeltaVisualSettings.toggle(key,fallback));}
+ protected void button(String name,Runnable run){Option o=new Option();o.label=name;o.action=run;options.add(o);}
+ protected void choice(String name,String[] names,IntSupplier get,IntConsumer set){Option o=new Option();o.label=name;o.names=names;o.get=()->get.getAsInt();o.set=n->set.accept((int)n);options.add(o);}
+ protected void mode(String name,String key,String[] names,int fallback){choice(name,names,()->Math.round(DeltaVisualSettings.number(key,fallback,0,names.length-1)),n->DeltaVisualSettings.set(key,n));}
+ private void layout(){scale=Math.max(.1f,Math.min(2f/client.getWindow().getScaleFactor(),Math.min((width-12f)/300,(height-12f)/130)));float total=0;for(Option o:options)total+=o.height();h=Math.min(total+55,height/scale-20);x=(width/scale-300)/2;y=(height/scale-h)/2+(1-open)*8;dest=Math.max(0,Math.min(dest,Math.max(0,total-(h-55))));}
+ private void label(DrawContext c,String s,float xx,float cy,float size,int color){font.draw(c,s,xx,font.centeredY(s,size,cy),size,DeltaHud.fade(color,open));}
+ @Override public void renderBackground(DrawContext c,int mx,int my,float delta){}
+ @Override public void render(DrawContext c,int mx,int my,float delta){long now=System.nanoTime();float dt=time==0?.016f:Math.min(.05f,(now-time)/1e9f);time=now;float k=DeltaVisualSettings.motion()==0?1:1-(float)Math.exp(-dt*16/Math.max(.2f,DeltaVisualSettings.motion()));open+=(1-open)*k;scroll+=(dest-scroll)*k;layout();var m=c.getMatrices();m.pushMatrix();m.scale(scale,scale);DeltaGlass.draw(c,x,y,300,h,9,DeltaHud.fade(DeltaVisualSettings.background(),open));label(c,getTitle().getString(),x+12,y+14,10,DeltaVisualSettings.text());label(c,"Drag / колесо над ползунком · Esc назад",x+12,y+h-12,6.5f,DeltaVisualSettings.primary());c.enableScissor((int)x+5,(int)y+29,(int)x+295,(int)(y+h-25));float row=y+31-scroll;
+ for(Option o:options){float rh=o.height();if(row+rh<y+29||row>y+h-25){row+=rh;continue;}boolean hot=mx/scale>=x+8&&mx/scale<x+292&&my/scale>=row&&my/scale<row+rh;float target=o.flag!=null?(o.flag.getAsBoolean()?1:0):(hot?1:0);o.anim+=(target-o.anim)*k;if(hot)DeltaRect.draw(c,x+7,row,286,rh-2,4,0,0x13ffffff);label(c,o.label,x+12,row+8,7,DeltaVisualSettings.text());
+ if(o.names!=null){String v=o.names[Math.max(0,Math.min(o.names.length-1,(int)o.get.getAsDouble()))];label(c,v,x+288-font.width(v,7),row+17,7,DeltaVisualSettings.primary());}
+ else if(o.get!=null){double n=o.get.getAsDouble();String v=o.step>=1?Integer.toString((int)n):String.format(Locale.ROOT,"%.2f",n);label(c,v,x+288-font.width(v,7),row+8,7,DeltaVisualSettings.primary());float f=(float)((n-o.min)/(o.max-o.min));DeltaRect.draw(c,x+13,row+20,274,2,1,0,0x28ffffff);if(f>0)DeltaRect.draw(c,x+13,row+20,274*f,2,1,0,DeltaVisualSettings.primary());DeltaRect.draw(c,x+10+274*f,row+18,6,6,3,0,DeltaVisualSettings.text());}
+ else if(o.flag!=null){DeltaRect.draw(c,x+266,row+5,20,10,5,0,0x30ffffff);DeltaRect.draw(c,x+266,row+5,20,10,5,0,DeltaHud.fade(DeltaVisualSettings.primary(),o.anim*.75f));DeltaRect.draw(c,x+268+10*o.anim,row+7,6,6,3,0,DeltaVisualSettings.text());}else label(c,"›",x+280,row+9,9,DeltaVisualSettings.primary());row+=rh;}c.disableScissor();m.popMatrix();}
+ private int hit(double mx,double my){if(mx<x+7||mx>=x+293||my<y+29||my>=y+h-25)return -1;float row=y+31-scroll;for(int i=0;i<options.size();i++){float rh=options.get(i).height();if(my>=row&&my<row+rh)return i;row+=rh;}return -1;}
+ private void move(double mx){if(drag<0)return;Option o=options.get(drag);double t=Math.max(0,Math.min(1,(mx-x-13)/274));o.set.accept(ModuleMath.snap(o.min+t*(o.max-o.min),o.min,o.max,o.step));}
+ @Override public boolean mouseClicked(Click click,boolean doubled){layout();if(click.button()!=0)return false;int i=hit(click.x()/scale,click.y()/scale);if(i<0)return false;Option o=options.get(i);if(o.names!=null){o.set.accept(((int)o.get.getAsDouble()+1)%o.names.length);save();}else if(o.get!=null){drag=i;move(click.x()/scale);}else if(o.action!=null){o.action.run();save();}return true;}
+ @Override public boolean mouseDragged(Click click,double dx,double dy){if(drag>=0){move(click.x()/scale);return true;}return super.mouseDragged(click,dx,dy);}
+ @Override public boolean mouseReleased(Click click){if(drag>=0){drag=-1;save();return true;}return super.mouseReleased(click);}
+ @Override public boolean mouseScrolled(double mx,double my,double horizontal,double vertical){layout();int i=hit(mx/scale,my/scale);if(i>=0){Option o=options.get(i);if(o.get!=null&&o.names==null){o.set.accept(ModuleMath.snap(o.get.getAsDouble()+Math.signum(vertical)*o.step,o.min,o.max,o.step));save();return true;}}dest-=(float)vertical*22;layout();return true;}
+ static void smoke(){var c=net.minecraft.client.MinecraftClient.getInstance();if(!(c.currentScreen instanceof PrismSettingsScreen s)||s.options.isEmpty())throw new AssertionError("Settings missing");int checked=0;for(Option o:s.options)if(o.get!=null&&o.names==null){double old=o.get.getAsDouble();o.set.accept(ModuleMath.snap((o.min+o.max)/2,o.min,o.max,o.step));double n=o.get.getAsDouble();if(n<o.min-1e-5||n>o.max+1e-5)throw new AssertionError("Slider range");o.set.accept(old);checked++;}System.out.println("INTERIUM_SLIDER_SETTINGS_PASSED "+s.getTitle().getString()+" controls="+checked+" (model/render smoke, not input/world tests)");}
+ protected void save(){DeltaVisualSettings.save();InteriumState.save();}
+ @Override public void close(){save();client.setScreen(parent);}@Override public boolean shouldPause(){return false;}
+}
