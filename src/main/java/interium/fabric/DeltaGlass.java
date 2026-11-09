@@ -80,6 +80,15 @@ public final class DeltaGlass {
  }
  public static void draw(DrawContext c,float x,float y,float w,float h,float radius,int color){
   if(w<=0||h<=0||(color>>>24)==0)return;
+  radius=Math.min(Math.min(w,h)*.5f,Math.max(radius,DeltaVisualSettings.number("glass.radius",8,4,14)));
+  float visibility=(color>>>24)/255f,pulse=DeltaVisualSettings.pulse();
+  float glow=DeltaVisualSettings.number("theme.glow",.32f,0,1)*pulse;
+  int accent=DeltaVisualSettings.primary()&0xffffff;
+  // Three bounded rounded strokes, not a per-panel post-processing pass.
+  DeltaRect.draw(c,x-2,y-1,w+4,h+4,radius+2,1.5f,(Math.round(14*visibility)<<24));
+  if(glow>.001f)for(int i=3;i>=1;i--)DeltaRect.draw(c,x-i*.7f,y-i*.7f,w+i*1.4f,h+i*1.4f,radius+i*.7f,.7f,(Math.round(9*glow*visibility)<<24)|accent);
+  float rim=DeltaVisualSettings.number("theme.rim",.65f,0,1);
+  DeltaRect.draw(c,x-.3f,y-.3f,w+.6f,h+.6f,radius+.3f,.45f,(Math.round((18+48*rim*pulse)*visibility)<<24)|0xddd7ef);
   if(!enabled()||scene==null){DeltaRect.draw(c,x,y,w,h,radius,0,color);return;}
   requested=true;
   Matrix3x2f matrix=new Matrix3x2f(c.getMatrices());

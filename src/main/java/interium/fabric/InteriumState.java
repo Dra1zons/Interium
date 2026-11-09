@@ -36,6 +36,7 @@ public final class InteriumState {
     }
     static final Set<UUID> friends=new HashSet<>();
     private InteriumState() {}
+    static int bindIndex(int category,int index,boolean modern){return !modern&&category==2&&index>=18?index+1:index;}
     static void load() {
         try { if(Files.exists(THEME)) theme=ThemeStore.load(THEME); } catch(Exception e) { System.err.println("Interium: ignoring invalid theme: "+e.getMessage()); }
         Properties p=new Properties();
@@ -65,7 +66,7 @@ public final class InteriumState {
             try{float v=Float.parseFloat(p.getProperty("targetStrafe.speed","0.25"));targetStrafeSpeed=Float.isFinite(v)?Math.max(.1f,Math.min(.6f,v)):.25f;}catch(NumberFormatException ignored){targetStrafeSpeed=.25f;}
             targetStrafeClockwise=Boolean.parseBoolean(p.getProperty("targetStrafe.clockwise","true"));targetStrafeInput=Boolean.parseBoolean(p.getProperty("targetStrafe.requireInput","true"));
             for(int i=0;i<binds.length;i++)for(int j=0;j<binds[i].length;j++){
-                try{int k=Integer.parseInt(p.getProperty("bind."+i+"."+j,"-1"));
+                try{int k=Integer.parseInt(p.getProperty("bind."+i+"."+bindIndex(i,j,"2".equals(p.getProperty("bind.schema"))),"-1"));
                     if(k==-1||(k>=-100&&k<=-93)||(k>=32&&k<=348))binds[i][j]=k;
                 }catch(NumberFormatException ignored){}
             }
@@ -74,7 +75,7 @@ public final class InteriumState {
     }
     static void save() {
         try {
-            Files.createDirectories(DIR); Properties p=new Properties();
+            Files.createDirectories(DIR); Properties p=new Properties();p.setProperty("bind.schema","2");
             p.setProperty("tntTimer.ticks",Boolean.toString(tntTimerTicks));
             p.setProperty("freeCamera.speed",Float.toString(freeCameraSpeed));
             p.setProperty("cps",String.valueOf(cps)); p.setProperty("middleMode",middleFriend?"friend":"pearl");

@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.*;
 
 /** Experimental adaptation of Delta's panel geometry and input to 1.21.11.
- * Blur, animation, and most Delta settings are not yet ported. */
+ * Reference-inspired glass, animated controls and unified theme preferences. */
 public final class DeltaScreen extends Screen {
     private static final String[] CATEGORY={"Combat","Movement","Render","Player","Misc"};
     private static final String[] ICON={"V","I","t","L","D"};
@@ -25,7 +25,13 @@ public final class DeltaScreen extends Screen {
     private static final int BG=0xc811131a, OUTLINE=0x0affffff, TEXT=0xffffffff, DISABLED=0xff434651, PRIMARY=0xff859cff;
     private DeltaFont onest,icons;
     private TextFieldWidget input;
-    private final float[] scroll=new float[5];
+    private final float[] scroll=new float[5],displayScroll=new float[5];
+    private final Map<Integer,Float> hoverValues=new HashMap<>(),toggleValues=new HashMap<>();
+    private long frameTime;
+    private float frameDt=.016f,opening;
+    private boolean closing;
+    private float approach(float a,float b,float speed){if(DeltaVisualSettings.motion()==0)return b;return a+(b-a)*(1-(float)Math.exp(-frameDt*speed/Math.max(.2f,DeltaVisualSettings.motion())));}
+    private int accent(float alpha){return (Math.round(alpha*255)<<24)|(DeltaVisualSettings.primary()&0xffffff);}
     private int expanded=-1, searchStart=0, binding=-1;
     private float scale=1,left,top,searchX,searchY;
     private record Item(int i,int j,String name) {}
@@ -41,9 +47,9 @@ public final class DeltaScreen extends Screen {
     private void layout(){
         float gameScale=client.getWindow().getScaleFactor();
         scale=Math.min(2f/gameScale,Math.min((width-8f)/TOTAL,(height-8f)/(PH+64)));
-        scale=Math.max(0.1f,scale);
+        scale=Math.max(0.1f,scale)*(.96f+.04f*opening);
         float w=width/scale,h=height/scale;
-        left=(w-TOTAL)/2;top=(h-PH)/2;searchX=w/2-50;searchY=top+PH+12;
+        left=(w-TOTAL)/2;top=(h-PH)/2+(1-opening)*14;searchX=w/2-50;searchY=top+PH+12;
     }
     private float px(int i){return left+i*(PW+GAP);}
     private List<Item> items(int i){
@@ -59,12 +65,12 @@ public final class DeltaScreen extends Screen {
     private float rowHeight(Item a){return ROW+(hasSetting(a)&&!(a.i==2&&a.j>=4)&&expanded==a.i*100+a.j?((a.i==0&&a.j==3)?216:(a.i==1&&a.j==2)?36:(a.i==1&&a.j==3)?72:(a.i==0&&a.j==5)?72:(a.i==0&&a.j==6)?54:(a.i==2&&a.j==3&&!InteriumState.nightVision)?36:18):0);}
     private float clampedScroll(int i,List<Item> items){
         float total=0;for(Item a:items)total+=rowHeight(a)+ROW_GAP;
-        scroll[i]=Math.max(Math.min(0, (PH-30)-total),Math.min(0,scroll[i]));return scroll[i];
+        scroll[i]=Math.max(Math.min(0, (PH-30)-total),Math.min(0,scroll[i]));displayScroll[i]=approach(displayScroll[i],scroll[i],17);return displayScroll[i];
     }
     private static boolean inside(double x,double y,float bx,float by,float w,float h){return x>=bx&&x<bx+w&&y>=by&&y<by+h;}
     private static void rect(DrawContext c,float x,float y,float w,float h,float r,int color){DeltaRect.draw(c,x,y,w,h,r,0,color);}
     private static void border(DrawContext c,float x,float y,float w,float h,float r,int color){DeltaRect.draw(c,x,y,w,h,r,.5f,color);}
-    private void label(DrawContext c,DeltaFont f,String s,float x,float center,float size,int color){f.draw(c,s,x,f.centeredY(s,size,center),size,color);}
+    private void label(DrawContext c,DeltaFont f,String s,float x,float center,float size,int color){f.draw(c,s,x,f.centeredY(s,size,center),size,DeltaHud.fade(color,opening));}
     private String trim(String s,float size,float width){
         if(onest.width(s,size)<=width)return s;
         int end=s.length();while(end>0&&onest.width(s.substring(0,end)+"…",size)>width)end--;
@@ -85,34 +91,39 @@ public final class DeltaScreen extends Screen {
     private void setBinding(int id,int key){InteriumState.binds[id/100][id%100]=key;binding=-1;InteriumState.save();}
     @Override public void renderBackground(DrawContext c,int x,int y,float delta) {} // Delta deliberately leaves the game visible.
     @Override public void render(DrawContext c,int rawX,int rawY,float delta){
+        long now=System.nanoTime();frameDt=frameTime==0?.016f:Math.min(.05f,(now-frameTime)/1e9f);frameTime=now;
+        opening=approach(opening,closing?0:1,16);if(closing&&opening<.015f){client.setScreen(null);return;}
         layout();float mx=rawX/scale,my=rawY/scale;
         var matrix=c.getMatrices();matrix.pushMatrix();matrix.scale(scale,scale);
         for(int i=0;i<5;i++) {
             float x=px(i); List<Item> list=items(i);
-            DeltaGlass.draw(c,x,top,PW,PH,8,BG);border(c,x,top,PW,PH,8,OUTLINE);
-            int title=0xffe1e6ff;
+            DeltaGlass.draw(c,x,top,PW,PH,9,DeltaHud.fade(DeltaVisualSettings.background(),opening));
+            int title=DeltaVisualSettings.text();
             label(c,onest,CATEGORY[i],x+10,top+12,9,title);
-            label(c,icons,ICON[i],x+PW-10-icons.width(ICON[i],9),top+12,9,title);
+            label(c,icons,ICON[i],x+PW-10-icons.width(ICON[i],9),top+12,9,DeltaVisualSettings.primary());
+            rect(c,x+9,top+24,PW-18,.5f,0x18ffffff);
             float y=top+28+clampedScroll(i,list),bottom=top+PH-2;
             c.enableScissor((int)x,(int)(top+28),(int)(x+PW),(int)bottom);
             for(Item item:list){
                 float h=rowHeight(item);boolean on=InteriumScreen.enabled(item.i,item.j);
                 boolean hover=inside(mx,my,x+6,y,PW-12,ROW)&&my>=top+28&&my<bottom;
-                if(on)rect(c,x+6,y,PW-12,h,4,0x0a859cff);
-                if(hover)rect(c,x+6,y,PW-12,h,4,0x06ffffff);
-                if(on)border(c,x+6,y,PW-12,h,4,0x05ffffff);
+                int motionId=item.i*100+item.j;
+                float hot=approach(hoverValues.getOrDefault(motionId,0f),hover?1:0,19),active=approach(toggleValues.getOrDefault(motionId,on?1f:0f),on?1:0,16);
+                hoverValues.put(motionId,hot);toggleValues.put(motionId,active);
+                if(active+hot>.01f)rect(c,x+6,y,PW-12,h,4,accent(.085f*active+.045f*hot));
+                if(active>.01f)rect(c,x+6,y+5,1,6,1,accent(active*.75f*DeltaVisualSettings.pulse()));
                 int id=item.i*100+item.j,key=InteriumState.binds[item.i][item.j];
-                String name=trim(item.name,7.25f,(key!=-1||binding==id)?53:(on?76:92));
-                onest.draw(c,name,x+10,y+8-7.25f/2-.5f,7.25f,TEXT);
+                String name=trim(item.name,7.25f,(key!=-1||binding==id)?53:76);
+                onest.draw(c,name,x+10,y+8-7.25f/2-.5f,7.25f,DeltaHud.fade(DeltaVisualSettings.text(),opening));
                 if(key!=-1||binding==id){
                     String b=binding==id?"?":bindName(key);float iw=icons.width("C",6);
                     float bw=4+iw+2.5f+onest.width(b,6)+4;
                     float bx=x+14+onest.width(name,7.25f),by=y+3.5f;
-                    rect(c,bx,by,bw,9,2,0x28859cff);border(c,bx,by,bw,9,2,0x0affffff);
+                    rect(c,bx,by,bw,9,2,accent(.16f));border(c,bx,by,bw,9,2,0x0affffff);
                     label(c,icons,"C",bx+4,y+8,6,TEXT);label(c,onest,b,bx+4+iw+2.5f,y+8,6,TEXT);
                 }
-                if(hasSetting(item))label(c,onest,"...",x+PW-10-(on?18:0)-onest.width("...",10),y+8,10,DISABLED);
-                if(on){float tx=x+PW-24,ty=y+3.75f;rect(c,tx,ty,14,8.5f,3.25f,0x7d859cff);border(c,tx,ty,14,8.5f,3.25f,0x05ffffff);rect(c,tx+7,ty+1.5f,5.5f,5.5f,1.75f,TEXT);}
+                if(hasSetting(item))label(c,onest,"...",x+PW-10-18-onest.width("...",10),y+8,10,DISABLED);
+                {float tx=x+PW-24,ty=y+3.75f;rect(c,tx,ty,14,8.5f,3.25f,0x16ffffff);rect(c,tx,ty,14,8.5f,3.25f,accent(active*.55f));rect(c,tx+1.5f+5.5f*active,ty+1.5f,5.5f,5.5f,2,DeltaHud.fade(DeltaVisualSettings.text(),.45f+.55f*active));}
                 if(expanded==item.i*100+item.j&&hasSetting(item)){
                     if(item.i==0&&item.j==3){
                         String[] values={"Дистанция: "+String.format(Locale.ROOT,"%.1f",InteriumState.auraRange),"Доп. дистанция: "+String.format(Locale.ROOT,"%.1f",InteriumState.auraExtra),"Приоритет: "+new String[]{"Прицел","Дистанция","ХП"}[InteriumState.auraPriority],"Игроки: "+onoff(InteriumState.auraPlayers),"Враждебные мобы: "+onoff(InteriumState.auraHostiles),"Животные: "+onoff(InteriumState.auraAnimals),"Только криты: "+onoff(InteriumState.auraOnlyCrits),"Адаптивные: "+onoff(InteriumState.auraAdaptive),"Не бить при использовании: "+onoff(InteriumState.auraStopUsing),"Топор против щита: "+onoff(InteriumState.auraShieldBreak),"Скорость поворота: "+(int)InteriumState.auraTurnSpeed,"Удерживать цель: "+onoff(InteriumState.auraLock)};
@@ -147,7 +158,9 @@ public final class DeltaScreen extends Screen {
             }
             c.disableScissor();
         }
-        rect(c,searchX,searchY,100,20,6,0xc80e0f14);border(c,searchX,searchY,100,20,6,OUTLINE);
+        DeltaGlass.draw(c,searchX,searchY,100,20,7,DeltaVisualSettings.background());
+        DeltaGlass.draw(c,searchX+108,searchY,70,20,7,DeltaVisualSettings.background());
+        label(c,onest,"Themes · F7",searchX+118,searchY+10,7,DeltaVisualSettings.primary());
         String query=input.getText();boolean hint=query.isEmpty()&&!input.isFocused();
         int cursor=Math.max(0,Math.min(input.getCursor(),query.length()));
         searchStart=Math.min(searchStart,cursor);
@@ -165,7 +178,7 @@ public final class DeltaScreen extends Screen {
             int a=Math.max(searchStart,Math.min(cursor,anchor)),b=Math.max(searchStart,Math.max(cursor,anchor));
             if(a!=b){float sx=searchX+6+onest.width(query.substring(searchStart,a),7);
                 float ex=searchX+6+onest.width(query.substring(searchStart,b),7);
-                c.fill((int)sx,(int)(searchY+6),(int)Math.ceil(ex),(int)(searchY+14),0x78859cff);}
+                c.fill((int)sx,(int)(searchY+6),(int)Math.ceil(ex),(int)(searchY+14),accent(.47f));}
         }
         label(c,onest,visible,searchX+6,searchY+10,7,hint?DISABLED:TEXT);
         if(input.isFocused()&&System.currentTimeMillis()%1000<500){
@@ -176,6 +189,8 @@ public final class DeltaScreen extends Screen {
     }
     @Override public boolean mouseClicked(Click click,boolean doubled){
         layout();double mx=click.x()/scale,my=click.y()/scale;int button=click.button();
+        if(closing)return true;
+        if(button==0&&inside(mx,my,searchX+108,searchY,70,20)){client.setScreen(new ThemeEditorScreen(this));return true;}
         if(binding!=-1){if(button>=0&&button<=7){setBinding(binding,-100+button);return true;}return false;}
         boolean hitSearch=inside(mx,my,searchX,searchY,100,20);
         input.setFocused(hitSearch);if(hitSearch){input.setCursor(searchIndex(mx),false);return true;}
@@ -279,5 +294,6 @@ public final class DeltaScreen extends Screen {
         return super.keyPressed(key);
     }
     @Override public boolean charTyped(CharInput inputChar){return input.isFocused()&&input.charTyped(inputChar)||super.charTyped(inputChar);}
+    @Override public void close(){closing=true;input.setFocused(false);}
     @Override public boolean shouldPause(){return false;}
 }

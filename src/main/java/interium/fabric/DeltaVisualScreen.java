@@ -15,13 +15,13 @@ final class DeltaVisualScreen extends Screen {
     private float scale,x,y,panelH,scroll;
     private final List<Option> options=new ArrayList<>();
     private record Option(String label,String key,boolean fallback,float value,float min,float max,float step,Runnable action){}
-    DeltaVisualScreen(Screen parent,int mode){super(Text.literal(new String[]{"Interface","Crosshair","View Model","Removals","Aspect Ratio","Swing Animation","Pointers","Shulker Preview","See Invisibles","Item Physic","Entity Box","Entity ESP","Block ESP","Sound ESP","Warden ESP","Predictions","China Hat","Board Spoofer","Hands Shader","Shader ESP"}[mode]));this.parent=parent;this.mode=mode;}
+    DeltaVisualScreen(Screen parent,int mode){super(Text.literal(new String[]{"Interface","Crosshair","View Model","Removals","Aspect Ratio","Swing Animation","Pointers","Shulker Preview","See Invisibles","Item Physic","Entity Box","Entity ESP","Block ESP","Sound ESP","Predictions","China Hat","Board Spoofer","Hands Shader","Shader ESP"}[mode]));this.parent=parent;this.mode=mode;}
     private void flag(String label,String key,boolean fallback){options.add(new Option(label,key,fallback,0,0,0,0,null));}
     private void slider(String label,String key,float fallback,float min,float max,float step){options.add(new Option(label,key,false,fallback,min,max,step,null));}
     private void button(String label,Runnable action){options.add(new Option(label,"",false,0,0,0,0,action));}
     @Override protected void init(){try{font=DeltaFont.load(client,"gt_regular");icons=DeltaFont.load(client,"icons");}catch(IOException e){throw new IllegalStateException(e);}options.clear();
-        if(mode==0){button("Редактор HUD",()->client.setScreen(new DeltaHudEditor(this)));button("Список стаффа",()->client.setScreen(new DeltaTextSettingScreen(this,"staff.names","Ники стаффа через запятую")));for(int i=0;i<DeltaHud.IDS.length;i++)flag(DeltaHud.NAMES[i],"hud."+DeltaHud.IDS[i],true);
-            flag("Жидкое стекло","glass.enabled",true);slider("Размытие стекла","glass.blur",5,0,16,.5f);slider("Преломление стекла","glass.refraction",5,0,24,.5f);flag("Светлая тема","theme.light",false);slider("Прозрачность","theme.opacity",.78f,.2f,1,.05f);slider("Масштаб HUD","hud.scale",1,.5f,2,.1f);
+        if(mode==0){button("Редактор тем",()->client.setScreen(new ThemeEditorScreen(this)));button("Редактор HUD",()->client.setScreen(new DeltaHudEditor(this)));button("Список стаффа",()->client.setScreen(new DeltaTextSettingScreen(this,"staff.names","Ники стаффа через запятую")));for(int i=0;i<DeltaHud.IDS.length;i++)flag(DeltaHud.NAMES[i],"hud."+DeltaHud.IDS[i],true);
+            flag("Жидкое стекло","glass.enabled",true);slider("Размытие стекла","glass.blur",5,0,16,.5f);slider("Преломление стекла","glass.refraction",5,0,24,.5f);flag("Светлая тема","theme.light",false);slider("Прозрачность","theme.opacity",.86f,.2f,1,.05f);slider("Масштаб HUD","hud.scale",1,.5f,2,.1f);
             flag("Наводка: Target HUD","target.crosshair",false);flag("Предметы цели","target.items",true);flag("Броня окружения","environment.armor",true);
             for(String key:new String[]{"name","fps","ping","time","coords","speed"})flag("Инфо: "+switch(key){case "name"->"Ник";case "fps"->"FPS";case "ping"->"Пинг";case "time"->"Время";case "coords"->"Координаты";default->"Скорость";},"watermark."+key,true);
         }else if(mode==1){slider("Расстояние от центра","crosshair.gap",0,0,6,.5f);slider("Длина сегментов","crosshair.length",2.5f,2,5,.5f);flag("Адаптивность","crosshair.adaptive",false);flag("Контур","crosshair.outline",true);flag("Центральная метка","crosshair.dot",false);
@@ -37,12 +37,11 @@ final class DeltaVisualScreen extends Screen {
         }else if(mode==11){flag("Игроки","esp.players",true);flag("Животные","esp.animals",false);flag("Мобы","esp.mobs",false);flag("Предметы","esp.items",false);
         }else if(mode==12){button("Список блоков (minecraft:diamond_ore, ...)",()->client.setScreen(new DeltaTextSettingScreen(this,"block.ids","Block ESP: ID блоков через запятую")));
         }else if(mode==13){flag("Трезубец","sound.trident",true);flag("Фейерверк","sound.firework",true);flag("Взрывы","sound.explosion",true);
-        }else if(mode==14){button("Исходная область города Delta; только загруженное",()->{});
-        }else if(mode==15){flag("Стрелы","predict.arrows",true);flag("Трезубцы","predict.tridents",true);flag("Эндер жемчуг","predict.pearls",true);flag("Зелья","predict.potions",true);flag("Радужный цвет","predict.rainbow",false);
-        }else if(mode==16){slider("Цвет RGB","hat.color",0x859cff,0,0xffffff,0x10101);
-        }else if(mode==17){flag("Ранг","board.rank",true);flag("Монеты","board.coins",true);flag("Токены","board.tokens",true);slider("Привилегия (0–11)","board.rankMode",0,0,11,1);button("Число монет",()->client.setScreen(new DeltaTextSettingScreen(this,"board.coinValue","Монеты — только локальный текст")));button("Число токенов",()->client.setScreen(new DeltaTextSettingScreen(this,"board.tokenValue","Токены — только локальный текст")));
-        }else if(mode==18){slider("Непрозрачность","hands.opacity",.6f,0,1,.05f);
-        }else if(mode==19){flag("Показывать адаптер обводки","shader.enabled",true);}
+        }else if(mode==14){flag("Стрелы","predict.arrows",true);flag("Трезубцы","predict.tridents",true);flag("Эндер жемчуг","predict.pearls",true);flag("Зелья","predict.potions",true);flag("Радужный цвет","predict.rainbow",false);
+        }else if(mode==15){slider("Цвет RGB","hat.color",0x859cff,0,0xffffff,0x10101);
+        }else if(mode==16){flag("Ранг","board.rank",true);flag("Монеты","board.coins",true);flag("Токены","board.tokens",true);slider("Привилегия (0–11)","board.rankMode",0,0,11,1);button("Число монет",()->client.setScreen(new DeltaTextSettingScreen(this,"board.coinValue","Монеты — только локальный текст")));button("Число токенов",()->client.setScreen(new DeltaTextSettingScreen(this,"board.tokenValue","Токены — только локальный текст")));
+        }else if(mode==17){slider("Непрозрачность","hands.opacity",.6f,0,1,.05f);
+        }else if(mode==18){flag("Показывать адаптер обводки","shader.enabled",true);}
     }
     private void layout(){scale=Math.max(.1f,Math.min(2f/client.getWindow().getScaleFactor(),Math.min((width-8f)/260,(height-8f)/110)));x=(width/scale-260)/2;panelH=Math.min(options.size()*16+43,height/scale-20);y=(height/scale-panelH)/2;scroll=Math.max(0,Math.min(scroll,Math.max(0,options.size()*16-(panelH-43))));}
     @Override public void renderBackground(DrawContext c,int mx,int my,float delta){}

@@ -16,9 +16,12 @@ void main(){
  vec3 blurred=texture(Sampler1,safeUV).rgb;
  vec3 sharp=texture(Sampler0,safeUV).rgb;
  vec3 background=mix(blurred,sharp,edge*0.18);
- vec3 color=mix(background,tint.rgb,0.25);
+ vec3 color=mix(background,tint.rgb,0.48);
  float rim=1.0-smoothstep(0.0,1.0,-dist);
  float light=0.45+0.55*max(0.0,dot(normal,normalize(vec2(-0.5,-1.0))));
- color+=vec3(rim*light*0.24)+vec3(edge*0.025);
+ // Thin double meniscus and a restrained top-left specular sheen like the reference.
+ float inner=exp(-abs(dist+1.35)*2.5)*0.035;
+ float sheen=pow(max(0.0,1.0-localUV.y),7.0)*0.025;
+ color+=vec3(rim*light*0.20+inner+sheen)+vec3(edge*0.012);
  fragColor=vec4(color,coverage*tint.a);
 }

@@ -128,7 +128,9 @@ public final class InteriumClient implements ClientModInitializer {
         if(Boolean.getBoolean("interium.visualSmoke") && fontProbeShown){
             visualSmokeTicks++;
             if(visualSmokeTicks==120){DeltaHandsShader.smoke();DeltaWorldVisuals.smoke();System.out.println("INTERIUM_GUI_SMOKE_RENDERED");}
-            if(visualSmokeTicks==200){System.out.println("INTERIUM_GUI_SMOKE_PASSED (title and Delta GUI only; no world test)");client.scheduleStop();}
+            if(visualSmokeTicks==140)client.setScreen(new ThemeEditorScreen(client.currentScreen));
+            if(visualSmokeTicks==175){ThemeEditorScreen.smoke();System.out.println("INTERIUM_THEME_EDITOR_SMOKE_RENDERED");}
+            if(visualSmokeTicks==200){System.out.println("INTERIUM_GUI_SMOKE_PASSED (title, Delta GUI, theme editor; no world test)");client.scheduleStop();}
         }
         while (openMenu.wasPressed()) if (client.currentScreen == null) client.setScreen(new DeltaScreen());
         // Delta's death features must run while the death screen is open.

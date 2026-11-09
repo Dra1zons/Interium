@@ -45,9 +45,7 @@ public final class DeltaWorldVisuals {
  private static Object worldIdentity;
  private static final Deque<SoundMark> sounds=new ConcurrentLinkedDeque<>();
  private static final Map<BlockPos,Integer> blocks=new LinkedHashMap<>();
- private static final List<BlockPos> wardenChests=new ArrayList<>();
- private static final Map<BlockPos,Long> chestTimers=new HashMap<>();
- private static int scanCursor,ticks;
+   private static int scanCursor,ticks;
  private static BlockPos scanCenter=BlockPos.ORIGIN;
  private static String scanConfig="";
  private record Segment(Vec3d a,Vec3d b,int color){}
@@ -74,10 +72,9 @@ public final class DeltaWorldVisuals {
   WorldRenderEvents.END_MAIN.register(ctx->latest=frame(ctx));
  }
  private static void tick(MinecraftClient mc){
-  if(worldIdentity!=mc.world){worldIdentity=mc.world;latest=EMPTY;extracted=EMPTY;blocks.clear();sounds.clear();wardenChests.clear();chestTimers.clear();scanCursor=0;ticks=0;}
+  if(worldIdentity!=mc.world){worldIdentity=mc.world;latest=EMPTY;extracted=EMPTY;blocks.clear();sounds.clear();scanCursor=0;ticks=0;}
   if(mc.world==null||mc.player==null)return;ticks++;
   if(DeltaVisualSettings.blockEsp)scan(mc);else blocks.clear();
-  if(DeltaVisualSettings.wardenEsp&&ticks%20==0)scanChests(mc);
  }
  public static void sound(SoundInstance s){
   if(!DeltaVisualSettings.soundEsp)return;String path=s.getId().getPath(),label=null;
@@ -96,12 +93,6 @@ public final class DeltaWorldVisuals {
   int radius=70,side=radius*2+1,height=mc.world.getHeight(),total=side*side*height;BlockPos.Mutable pos=new BlockPos.Mutable();
   for(int n=0;n<12000;n++){int index=scanCursor++;if(scanCursor>=total)scanCursor=0;int y=index%height+mc.world.getBottomY(),column=index/height;int x=scanCenter.getX()-radius+column%side,z=scanCenter.getZ()-radius+column/side;
    if(!mc.world.getChunkManager().isChunkLoaded(x>>4,z>>4))continue;pos.set(x,y,z);if(targets.contains(mc.world.getBlockState(pos).getBlock())){if(blocks.size()<4096)blocks.put(pos.toImmutable(),DeltaVisualSettings.primary());}else blocks.remove(pos);
-  }
- }
- private static void scanChests(MinecraftClient mc){
-  wardenChests.clear();if(!mc.world.getRegistryKey().getValue().toString().equals("minecraft:overworld"))return;
-  for(int cx=-2070>>4;cx<=(-1921>>4);cx++)for(int cz=-2076>>4;cz<=(-1929>>4);cz++)if(mc.world.getChunkManager().isChunkLoaded(cx,cz))for(var be:mc.world.getChunk(cx,cz).getBlockEntities().values()){
-   BlockPos p=be.getPos();if(p.getX()>=-2070&&p.getX()<=-1921&&p.getZ()>=-2076&&p.getZ()<=-1929&&p.getY()>=-60&&p.getY()<=-35&&(be instanceof net.minecraft.block.entity.ChestBlockEntity))wardenChests.add(p.toImmutable());
   }
  }
  private static void extract(WorldExtractionContext ctx){
@@ -137,9 +128,6 @@ public final class DeltaWorldVisuals {
   }
   if(DeltaVisualSettings.blockEsp)for(var entry:blocks.entrySet())outline(lines,new Box(entry.getKey()),cam,entry.getValue());
   if(DeltaVisualSettings.soundEsp){long now=System.nanoTime();sounds.removeIf(s->now-s.time>5_500_000_000L);for(SoundMark s:sounds){Vector2f p=project(vp,cam,s.pos,sw,sh);if(p!=null)labels.add(new Label(p.x,p.y,s.name+" ["+(int)mc.player.getEntityPos().distanceTo(s.pos)+"м/"+(int)((now-s.time)/1e9)+" сек]",0x64000000,List.of(),List.of(),ItemStack.EMPTY));}}
-  if(DeltaVisualSettings.wardenEsp){long now=System.currentTimeMillis();for(Entity e:ctx.world().getEntities())if(e instanceof ArmorStandEntity){var matcher=java.util.regex.Pattern.compile("(\\d{2}):(\\d{2})").matcher(e.getName().getString());if(matcher.find())for(BlockPos p:wardenChests)if(e.getBlockX()==p.getX()&&e.getBlockZ()==p.getZ()){long duration=(Integer.parseInt(matcher.group(1))*60L+Integer.parseInt(matcher.group(2)))*1000;long old=chestTimers.getOrDefault(p,0L);if(Math.abs((old-now)-duration)>5000)chestTimers.put(p,now+duration);}}
-   chestTimers.entrySet().removeIf(e->e.getValue()<=now);for(BlockPos p:wardenChests){Long end=chestTimers.get(p);if(end==null)outline(lines,new Box(p),cam,0xffff6464);else{Vector2f at=project(vp,cam,p.toCenterPos().add(0,.5,0),sw,sh);if(at!=null){long sec=(end-now)/1000;labels.add(new Label(at.x,at.y,String.format(Locale.ROOT,"%02d:%02d",sec/60,sec%60),0xb00b0b0d,List.of(Items.CHEST.getDefaultStack()),List.of(),ItemStack.EMPTY));}}}
-  }
   Frame result=new Frame(List.copyOf(lines),List.copyOf(quads),List.copyOf(boxes),List.copyOf(labels));
   extracted=result;latest=result;if(state!=null)state.setData(KEY,result);
  }
