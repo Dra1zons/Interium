@@ -38,6 +38,7 @@ public final class DeltaHud {
     private float dt=.016f,sw,sh,alpha=1,health=1;
     private LivingEntity retainedTarget;
     private UUID healthTarget;
+    void resetWorld(){retainedTarget=null;healthTarget=null;animations.clear();bounds.clear();notices.clear();lastFrame=0;}
     private record Notice(String text,long time){}
     record Bounds(float x,float y,float w,float h){boolean contains(double mx,double my){return mx>=x&&mx<x+w&&my>=y&&my<y+h;}}
     private record Row(String key,String icon,String title,String right,ItemStack stack,Identifier skin,StatusEffectInstance effect,int color){}

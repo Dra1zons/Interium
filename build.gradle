@@ -50,3 +50,19 @@ tasks.register('visualTargetChecks') {
  }
 }
 check.dependsOn visualTargetChecks
+
+// Opt-in CI GUI launch. This does not run in distributed clients.
+loom { runs { client { if(System.getenv('INTERIUM_SMOKE')=='1') { vmArg '-Dinterium.deltaProbe=true'; vmArg '-Dinterium.visualSmoke=true' } } } }
+tasks.register('visualApiDump') {
+ dependsOn compileJava
+ doLast {
+  def home=javaToolchains.launcherFor { languageVersion=JavaLanguageVersion.of(21) }.get().metadata.installationPath.asFile
+  def names=['com.mojang.blaze3d.systems.RenderSystem','com.mojang.blaze3d.systems.CommandEncoder','com.mojang.blaze3d.systems.RenderPass','com.mojang.blaze3d.systems.GpuDevice','com.mojang.blaze3d.buffers.GpuBuffer','com.mojang.blaze3d.textures.GpuTexture','net.minecraft.client.gl.Framebuffer','net.minecraft.client.gl.SimpleFramebuffer','net.minecraft.client.render.VertexFormats','net.minecraft.client.gui.render.state.GuiRenderState','net.minecraft.client.gui.render.state.SimpleGuiElementRenderState','net.minecraft.client.gui.render.state.ColoredQuadGuiElementRenderState','net.minecraft.client.gl.TextureSetup','net.minecraft.client.render.GameRenderer','net.minecraft.client.gui.DrawContext$ScissorStack','net.minecraft.client.render.entity.state.EntityRenderState']
+  def output=new StringBuilder()
+  names.each { name ->
+   def p=new ProcessBuilder(new File(home,'bin/javap').absolutePath,'-classpath',sourceSets.main.compileClasspath.asPath,'-p',name).redirectErrorStream(true).start()
+   def text=p.inputStream.text;p.waitFor();output.append('\n=== '+name+' ===\n'+text)
+  }
+  def file=file('build/visual-api.txt');file.parentFile.mkdirs();file.text=output.toString()
+ }
+}

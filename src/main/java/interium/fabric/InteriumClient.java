@@ -64,6 +64,7 @@ public final class InteriumClient implements ClientModInitializer {
     private int attackAccumulator, fireballCooldown, chestCooldown;
     private boolean previousMiddle;
     private boolean fontProbeShown;
+    private int visualSmokeTicks;
 
     @Override public void onInitializeClient() {
         InteriumState.load();
@@ -116,6 +117,11 @@ public final class InteriumClient implements ClientModInitializer {
             if(Boolean.getBoolean("interium.fontProbe")){fontProbeShown=true;client.setScreen(new FontProbe());}
             else if(Boolean.getBoolean("interium.deltaProbe")){fontProbeShown=true;client.setScreen(new DeltaScreen());}
         }
+        if(Boolean.getBoolean("interium.visualSmoke") && fontProbeShown){
+            visualSmokeTicks++;
+            if(visualSmokeTicks==120)System.out.println("INTERIUM_GUI_SMOKE_RENDERED");
+            if(visualSmokeTicks==200){System.out.println("INTERIUM_GUI_SMOKE_PASSED (title and Delta GUI only; no world test)");client.scheduleStop();}
+        }
         while (openMenu.wasPressed()) if (client.currentScreen == null) client.setScreen(new DeltaScreen());
         // Delta's death features must run while the death screen is open.
         if(client.player==null){deathAnnounced=false;respawnDelay=0;}
@@ -131,6 +137,8 @@ public final class InteriumClient implements ClientModInitializer {
                 if(respawnDelay<=0){client.player.requestRespawn();respawnDelay=20;}else respawnDelay--;
             }else respawnDelay=0;
         }
+        DeltaVisuals.auraTargetPresent=client.player!=null&&client.world!=null&&aura.target()!=null;
+        if(client.player==null||client.world==null)DeltaHud.INSTANCE.resetWorld();
         if(freeCameraActive()){
             autoExp.tick(client,false);aura.clear();
             attackAccumulator=0;fireballCooldown=0;chestCooldown=0;previousMiddle=false;return;
@@ -221,7 +229,7 @@ public final class InteriumClient implements ClientModInitializer {
     }
     private void renderHud(DrawContext matrices,RenderTickCounter tickDelta) {
         MinecraftClient client=MinecraftClient.getInstance();
-        DeltaVisuals.auraTargetPresent=aura.target()!=null;
+
         DeltaPointers.render(client,matrices);
         DeltaWorldVisuals.hud(client,matrices);
         if(!(client.currentScreen instanceof DeltaHudEditor))DeltaHud.INSTANCE.render(client,matrices,aura.target(),false);
