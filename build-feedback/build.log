@@ -26,12 +26,531 @@ PASS: 108 TNT-format checks (not rendering tests)
 
 > Task :test
 > Task :validateAccessWidener NO-SOURCE
-> Task :check
+
+> Task :visualTargetChecks
+Visual target check: renderFirstPersonItem swingArm calls=3
+
 > Task :remapSourcesJar
+
+> Task :visualTargetChecks
+ITEM_RENDERER_BYTECODE_BEGIN
+Compiled from "ItemEntityRenderer.java"
+public class net.minecraft.client.render.entity.ItemEntityRenderer extends net.minecraft.client.render.entity.EntityRenderer<net.minecraft.entity.ItemEntity, net.minecraft.client.render.entity.state.ItemEntityRenderState> {
+  private static final float field_56954;
+
+  private static final float field_32924;
+
+  private static final float field_56955;
+
+  private final net.minecraft.client.item.ItemModelManager itemModelManager;
+
+  private final net.minecraft.util.math.random.Random random;
+
+  public net.minecraft.client.render.entity.ItemEntityRenderer(net.minecraft.client.render.entity.EntityRendererFactory$Context);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #30                 // Method net/minecraft/client/render/entity/EntityRenderer."<init>":(Lnet/minecraft/client/render/entity/EntityRendererFactory$Context;)V
+       5: aload_0
+       6: invokestatic  #36                 // InterfaceMethod net/minecraft/util/math/random/Random.create:()Lnet/minecraft/util/math/random/Random;
+       9: putfield      #38                 // Field random:Lnet/minecraft/util/math/random/Random;
+      12: aload_0
+      13: aload_1
+      14: invokevirtual #42                 // Method net/minecraft/client/render/entity/EntityRendererFactory$Context.getItemModelManager:()Lnet/minecraft/client/item/ItemModelManager;
+      17: putfield      #44                 // Field itemModelManager:Lnet/minecraft/client/item/ItemModelManager;
+      20: aload_0
+      21: ldc           #20                 // float 0.15f
+      23: putfield      #47                 // Field shadowRadius:F
+      26: aload_0
+      27: ldc           #48                 // float 0.75f
+      29: putfield      #51                 // Field shadowOpacity:F
+      32: return
+
+  public net.minecraft.client.render.entity.state.ItemEntityRenderState createRenderState();
+    Code:
+       0: new           #58                 // class net/minecraft/client/render/entity/state/ItemEntityRenderState
+       3: dup
+       4: invokespecial #61                 // Method net/minecraft/client/render/entity/state/ItemEntityRenderState."<init>":()V
+       7: areturn
+
+  public void updateRenderState(net.minecraft.entity.ItemEntity, net.minecraft.client.render.entity.state.ItemEntityRenderState, float);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: fload_3
+       4: invokespecial #69                 // Method net/minecraft/client/render/entity/EntityRenderer.updateRenderState:(Lnet/minecraft/entity/Entity;Lnet/minecraft/client/render/entity/state/EntityRenderState;F)V
+       7: aload_2
+       8: aload_1
+       9: getfield      #74                 // Field net/minecraft/entity/ItemEntity.uniqueOffset:F
+      12: putfield      #75                 // Field net/minecraft/client/render/entity/state/ItemEntityRenderState.uniqueOffset:F
+      15: aload_2
+      16: aload_1
+      17: aload_1
+      18: invokevirtual #79                 // Method net/minecraft/entity/ItemEntity.getStack:()Lnet/minecraft/item/ItemStack;
+      21: aload_0
+      22: getfield      #44                 // Field itemModelManager:Lnet/minecraft/client/item/ItemModelManager;
+      25: invokevirtual #83                 // Method net/minecraft/client/render/entity/state/ItemEntityRenderState.update:(Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/item/ItemModelManager;)V
+      28: return
+
+  public void render(net.minecraft.client.render.entity.state.ItemEntityRenderState, net.minecraft.client.util.math.MatrixStack, net.minecraft.client.render.command.OrderedRenderCommandQueue, net.minecraft.client.render.state.CameraRenderState);
+    Code:
+       0: aload_1
+       1: getfield      #94                 // Field net/minecraft/client/render/entity/state/ItemEntityRenderState.itemRenderState:Lnet/minecraft/client/render/item/ItemRenderState;
+       4: invokevirtual #100                // Method net/minecraft/client/render/item/ItemRenderState.isEmpty:()Z
+       7: ifeq          11
+      10: return
+      11: aload_2
+      12: invokevirtual #105                // Method net/minecraft/client/util/math/MatrixStack.push:()V
+      15: aload_1
+      16: getfield      #94                 // Field net/minecraft/client/render/entity/state/ItemEntityRenderState.itemRenderState:Lnet/minecraft/client/render/item/ItemRenderState;
+      19: invokevirtual #109                // Method net/minecraft/client/render/item/ItemRenderState.getModelBoundingBox:()Lnet/minecraft/util/math/Box;
+      22: astore        5
+      24: aload         5
+      26: getfield      #115                // Field net/minecraft/util/math/Box.minY:D
+      29: d2f
+      30: fneg
+      31: ldc           #18                 // float 0.0625f
+      33: fadd
+      34: fstore        6
+      36: aload_1
+      37: getfield      #118                // Field net/minecraft/client/render/entity/state/ItemEntityRenderState.age:F
+      40: ldc           #119                // float 10.0f
+      42: fdiv
+      43: aload_1
+      44: getfield      #75                 // Field net/minecraft/client/render/entity/state/ItemEntityRenderState.uniqueOffset:F
+      47: fadd
+      48: f2d
+      49: invokestatic  #125                // Method net/minecraft/util/math/MathHelper.sin:(D)F
+      52: ldc           #126                // float 0.1f
+      54: fmul
+      55: ldc           #126                // float 0.1f
+      57: fadd
+      58: fstore        7
+      60: aload_2
+      61: fconst_0
+      62: fload         7
+      64: fload         6
+      66: fadd
+      67: fconst_0
+      68: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+      71: aload_1
+      72: getfield      #118                // Field net/minecraft/client/render/entity/state/ItemEntityRenderState.age:F
+      75: aload_1
+      76: getfield      #75                 // Field net/minecraft/client/render/entity/state/ItemEntityRenderState.uniqueOffset:F
+      79: invokestatic  #134                // Method net/minecraft/entity/ItemEntity.getRotation:(FF)F
+      82: fstore        8
+      84: aload_2
+      85: getstatic     #140                // Field net/minecraft/util/math/RotationAxis.POSITIVE_Y:Lnet/minecraft/util/math/RotationAxis;
+      88: fload         8
+      90: invokeinterface #144,  2          // InterfaceMethod net/minecraft/util/math/RotationAxis.rotation:(F)Lorg/joml/Quaternionf;
+      95: invokevirtual #148                // Method net/minecraft/client/util/math/MatrixStack.multiply:(Lorg/joml/Quaternionfc;)V
+      98: aload_2
+      99: aload_3
+     100: aload_1
+     101: getfield      #152                // Field net/minecraft/client/render/entity/state/ItemEntityRenderState.light:I
+     104: aload_1
+     105: aload_0
+     106: getfield      #38                 // Field random:Lnet/minecraft/util/math/random/Random;
+     109: aload         5
+     111: invokestatic  #155                // Method render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/client/render/entity/state/ItemStackEntityRenderState;Lnet/minecraft/util/math/random/Random;Lnet/minecraft/util/math/Box;)V
+     114: aload_2
+     115: invokevirtual #158                // Method net/minecraft/client/util/math/MatrixStack.pop:()V
+     118: aload_0
+     119: aload_1
+     120: aload_2
+     121: aload_3
+     122: aload         4
+     124: invokespecial #161                // Method net/minecraft/client/render/entity/EntityRenderer.render:(Lnet/minecraft/client/render/entity/state/EntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V
+     127: return
+
+  public static void render(net.minecraft.client.util.math.MatrixStack, net.minecraft.client.render.command.OrderedRenderCommandQueue, int, net.minecraft.client.render.entity.state.ItemStackEntityRenderState, net.minecraft.util.math.random.Random);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: aload_3
+       4: aload         4
+       6: aload_3
+       7: getfield      #175                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.itemRenderState:Lnet/minecraft/client/render/item/ItemRenderState;
+      10: invokevirtual #109                // Method net/minecraft/client/render/item/ItemRenderState.getModelBoundingBox:()Lnet/minecraft/util/math/Box;
+      13: invokestatic  #155                // Method render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/client/render/entity/state/ItemStackEntityRenderState;Lnet/minecraft/util/math/random/Random;Lnet/minecraft/util/math/Box;)V
+      16: return
+
+  public static void render(net.minecraft.client.util.math.MatrixStack, net.minecraft.client.render.command.OrderedRenderCommandQueue, int, net.minecraft.client.render.entity.state.ItemStackEntityRenderState, net.minecraft.util.math.random.Random, net.minecraft.util.math.Box);
+    Code:
+       0: aload_3
+       1: getfield      #180                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.renderedAmount:I
+       4: istore        6
+       6: iload         6
+       8: ifne          12
+      11: return
+      12: aload         4
+      14: aload_3
+      15: getfield      #183                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.seed:I
+      18: i2l
+      19: invokeinterface #187,  3          // InterfaceMethod net/minecraft/util/math/random/Random.setSeed:(J)V
+      24: aload_3
+      25: getfield      #175                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.itemRenderState:Lnet/minecraft/client/render/item/ItemRenderState;
+      28: astore        7
+      30: aload         5
+      32: invokevirtual #191                // Method net/minecraft/util/math/Box.getLengthZ:()D
+      35: d2f
+      36: fstore        8
+      38: fload         8
+      40: ldc           #18                 // float 0.0625f
+      42: fcmpl
+      43: ifle          161
+      46: aload         7
+      48: aload_0
+      49: aload_1
+      50: iload_2
+      51: getstatic     #196                // Field net/minecraft/client/render/OverlayTexture.DEFAULT_UV:I
+      54: aload_3
+      55: getfield      #199                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.outlineColor:I
+      58: invokevirtual #202                // Method net/minecraft/client/render/item/ItemRenderState.render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;III)V
+      61: iconst_1
+      62: istore        9
+      64: iload         9
+      66: iload         6
+      68: if_icmpge     158
+      71: aload_0
+      72: invokevirtual #105                // Method net/minecraft/client/util/math/MatrixStack.push:()V
+      75: aload         4
+      77: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+      82: fconst_2
+      83: fmul
+      84: fconst_1
+      85: fsub
+      86: ldc           #20                 // float 0.15f
+      88: fmul
+      89: fstore        10
+      91: aload         4
+      93: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+      98: fconst_2
+      99: fmul
+     100: fconst_1
+     101: fsub
+     102: ldc           #20                 // float 0.15f
+     104: fmul
+     105: fstore        11
+     107: aload         4
+     109: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+     114: fconst_2
+     115: fmul
+     116: fconst_1
+     117: fsub
+     118: ldc           #20                 // float 0.15f
+     120: fmul
+     121: fstore        12
+     123: aload_0
+     124: fload         10
+     126: fload         11
+     128: fload         12
+     130: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     133: aload         7
+     135: aload_0
+     136: aload_1
+     137: iload_2
+     138: getstatic     #196                // Field net/minecraft/client/render/OverlayTexture.DEFAULT_UV:I
+     141: aload_3
+     142: getfield      #199                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.outlineColor:I
+     145: invokevirtual #202                // Method net/minecraft/client/render/item/ItemRenderState.render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;III)V
+     148: aload_0
+     149: invokevirtual #158                // Method net/minecraft/client/util/math/MatrixStack.pop:()V
+     152: iinc          9, 1
+     155: goto          64
+     158: goto          302
+     161: fload         8
+     163: ldc           #209                // float 1.5f
+     165: fmul
+     166: fstore        9
+     168: aload_0
+     169: fconst_0
+     170: fconst_0
+     171: fload         9
+     173: iload         6
+     175: iconst_1
+     176: isub
+     177: i2f
+     178: fmul
+     179: fconst_2
+     180: fdiv
+     181: fneg
+     182: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     185: aload         7
+     187: aload_0
+     188: aload_1
+     189: iload_2
+     190: getstatic     #196                // Field net/minecraft/client/render/OverlayTexture.DEFAULT_UV:I
+     193: aload_3
+     194: getfield      #199                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.outlineColor:I
+     197: invokevirtual #202                // Method net/minecraft/client/render/item/ItemRenderState.render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;III)V
+     200: aload_0
+     201: fconst_0
+     202: fconst_0
+     203: fload         9
+     205: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     208: iconst_1
+     209: istore        10
+     211: iload         10
+     213: iload         6
+     215: if_icmpge     302
+     218: aload_0
+     219: invokevirtual #105                // Method net/minecraft/client/util/math/MatrixStack.push:()V
+     222: aload         4
+     224: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+     229: fconst_2
+     230: fmul
+     231: fconst_1
+     232: fsub
+     233: ldc           #20                 // float 0.15f
+     235: fmul
+     236: ldc           #210                // float 0.5f
+     238: fmul
+     239: fstore        11
+     241: aload         4
+     243: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+     248: fconst_2
+     249: fmul
+     250: fconst_1
+     251: fsub
+     252: ldc           #20                 // float 0.15f
+     254: fmul
+     255: ldc           #210                // float 0.5f
+     257: fmul
+     258: fstore        12
+     260: aload_0
+     261: fload         11
+     263: fload         12
+     265: fconst_0
+     266: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     269: aload         7
+     271: aload_0
+     272: aload_1
+     273: iload_2
+     274: getstatic     #196                // Field net/minecraft/client/render/OverlayTexture.DEFAULT_UV:I
+     277: aload_3
+     278: getfield      #199                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.outlineColor:I
+     281: invokevirtual #202                // Method net/minecraft/client/render/item/ItemRenderState.render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;III)V
+     284: aload_0
+     285: invokevirtual #158                // Method net/minecraft/client/util/math/MatrixStack.pop:()V
+     288: aload_0
+     289: fconst_0
+     290: fconst_0
+     291: fload         9
+     293: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     296: iinc          10, 1
+     299: goto          211
+     302: return
+
+  public static void renderStack(net.minecraft.client.util.math.MatrixStack, net.minecraft.client.render.command.OrderedRenderCommandQueue, int, net.minecraft.client.render.entity.state.ItemStackEntityRenderState, net.minecraft.util.math.random.Random);
+    Code:
+       0: aload_3
+       1: getfield      #175                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.itemRenderState:Lnet/minecraft/client/render/item/ItemRenderState;
+       4: invokevirtual #109                // Method net/minecraft/client/render/item/ItemRenderState.getModelBoundingBox:()Lnet/minecraft/util/math/Box;
+       7: astore        5
+       9: aload_3
+      10: getfield      #180                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.renderedAmount:I
+      13: istore        6
+      15: iload         6
+      17: ifne          21
+      20: return
+      21: aload         4
+      23: aload_3
+      24: getfield      #183                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.seed:I
+      27: i2l
+      28: invokeinterface #187,  3          // InterfaceMethod net/minecraft/util/math/random/Random.setSeed:(J)V
+      33: aload_3
+      34: getfield      #175                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.itemRenderState:Lnet/minecraft/client/render/item/ItemRenderState;
+      37: astore        7
+      39: aload         5
+      41: invokevirtual #191                // Method net/minecraft/util/math/Box.getLengthZ:()D
+      44: d2f
+      45: fstore        8
+      47: fload         8
+      49: ldc           #18                 // float 0.0625f
+      51: fcmpl
+      52: ifle          170
+      55: aload         7
+      57: aload_0
+      58: aload_1
+      59: iload_2
+      60: getstatic     #196                // Field net/minecraft/client/render/OverlayTexture.DEFAULT_UV:I
+      63: aload_3
+      64: getfield      #199                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.outlineColor:I
+      67: invokevirtual #202                // Method net/minecraft/client/render/item/ItemRenderState.render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;III)V
+      70: iconst_1
+      71: istore        9
+      73: iload         9
+      75: iload         6
+      77: if_icmpge     167
+      80: aload_0
+      81: invokevirtual #105                // Method net/minecraft/client/util/math/MatrixStack.push:()V
+      84: aload         4
+      86: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+      91: fconst_2
+      92: fmul
+      93: fconst_1
+      94: fsub
+      95: ldc           #20                 // float 0.15f
+      97: fmul
+      98: fstore        10
+     100: aload         4
+     102: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+     107: fconst_2
+     108: fmul
+     109: fconst_1
+     110: fsub
+     111: ldc           #20                 // float 0.15f
+     113: fmul
+     114: fstore        11
+     116: aload         4
+     118: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+     123: fconst_2
+     124: fmul
+     125: fconst_1
+     126: fsub
+     127: ldc           #20                 // float 0.15f
+     129: fmul
+     130: fstore        12
+     132: aload_0
+     133: fload         10
+     135: fload         11
+     137: fload         12
+     139: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     142: aload         7
+     144: aload_0
+     145: aload_1
+     146: iload_2
+     147: getstatic     #196                // Field net/minecraft/client/render/OverlayTexture.DEFAULT_UV:I
+     150: aload_3
+     151: getfield      #199                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.outlineColor:I
+     154: invokevirtual #202                // Method net/minecraft/client/render/item/ItemRenderState.render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;III)V
+     157: aload_0
+     158: invokevirtual #158                // Method net/minecraft/client/util/math/MatrixStack.pop:()V
+     161: iinc          9, 1
+     164: goto          73
+     167: goto          311
+     170: fload         8
+     172: ldc           #209                // float 1.5f
+     174: fmul
+     175: fstore        9
+     177: aload_0
+     178: fconst_0
+     179: fconst_0
+     180: fload         9
+     182: iload         6
+     184: iconst_1
+     185: isub
+     186: i2f
+     187: fmul
+     188: fconst_2
+     189: fdiv
+     190: fneg
+     191: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     194: aload         7
+     196: aload_0
+     197: aload_1
+     198: iload_2
+     199: getstatic     #196                // Field net/minecraft/client/render/OverlayTexture.DEFAULT_UV:I
+     202: aload_3
+     203: getfield      #199                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.outlineColor:I
+     206: invokevirtual #202                // Method net/minecraft/client/render/item/ItemRenderState.render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;III)V
+     209: aload_0
+     210: fconst_0
+     211: fconst_0
+     212: fload         9
+     214: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     217: iconst_1
+     218: istore        10
+     220: iload         10
+     222: iload         6
+     224: if_icmpge     311
+     227: aload_0
+     228: invokevirtual #105                // Method net/minecraft/client/util/math/MatrixStack.push:()V
+     231: aload         4
+     233: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+     238: fconst_2
+     239: fmul
+     240: fconst_1
+     241: fsub
+     242: ldc           #20                 // float 0.15f
+     244: fmul
+     245: ldc           #210                // float 0.5f
+     247: fmul
+     248: fstore        11
+     250: aload         4
+     252: invokeinterface #208,  1          // InterfaceMethod net/minecraft/util/math/random/Random.nextFloat:()F
+     257: fconst_2
+     258: fmul
+     259: fconst_1
+     260: fsub
+     261: ldc           #20                 // float 0.15f
+     263: fmul
+     264: ldc           #210                // float 0.5f
+     266: fmul
+     267: fstore        12
+     269: aload_0
+     270: fload         11
+     272: fload         12
+     274: fconst_0
+     275: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     278: aload         7
+     280: aload_0
+     281: aload_1
+     282: iload_2
+     283: getstatic     #196                // Field net/minecraft/client/render/OverlayTexture.DEFAULT_UV:I
+     286: aload_3
+     287: getfield      #199                // Field net/minecraft/client/render/entity/state/ItemStackEntityRenderState.outlineColor:I
+     290: invokevirtual #202                // Method net/minecraft/client/render/item/ItemRenderState.render:(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;III)V
+     293: aload_0
+     294: invokevirtual #158                // Method net/minecraft/client/util/math/MatrixStack.pop:()V
+     297: aload_0
+     298: fconst_0
+     299: fconst_0
+     300: fload         9
+     302: invokevirtual #130                // Method net/minecraft/client/util/math/MatrixStack.translate:(FFF)V
+     305: iinc          10, 1
+     308: goto          220
+     311: return
+
+  public void updateRenderState(net.minecraft.entity.Entity, net.minecraft.client.render.entity.state.EntityRenderState, float);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: checkcast     #71                 // class net/minecraft/entity/ItemEntity
+       5: aload_2
+       6: checkcast     #58                 // class net/minecraft/client/render/entity/state/ItemEntityRenderState
+       9: fload_3
+      10: invokevirtual #220                // Method updateRenderState:(Lnet/minecraft/entity/ItemEntity;Lnet/minecraft/client/render/entity/state/ItemEntityRenderState;F)V
+      13: return
+
+  public net.minecraft.client.render.entity.state.EntityRenderState createRenderState();
+    Code:
+       0: aload_0
+       1: invokevirtual #225                // Method createRenderState:()Lnet/minecraft/client/render/entity/state/ItemEntityRenderState;
+       4: areturn
+
+  public void render(net.minecraft.client.render.entity.state.EntityRenderState, net.minecraft.client.util.math.MatrixStack, net.minecraft.client.render.command.OrderedRenderCommandQueue, net.minecraft.client.render.state.CameraRenderState);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: checkcast     #58                 // class net/minecraft/client/render/entity/state/ItemEntityRenderState
+       5: aload_2
+       6: aload_3
+       7: aload         4
+       9: invokevirtual #229                // Method render:(Lnet/minecraft/client/render/entity/state/ItemEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V
+      12: return
+}
+
+ITEM_RENDERER_BYTECODE_END
+
+> Task :check
 > Task :remapJar
 > Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794242973645.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794243380160.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/Interium/Interium/build/reports/problems/problems-report.html
 
@@ -41,5 +560,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 31s
-10 actionable tasks: 10 executed
+BUILD SUCCESSFUL in 33s
+11 actionable tasks: 11 executed
