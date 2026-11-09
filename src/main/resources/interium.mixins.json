@@ -45,7 +45,8 @@
     "DeltaGlowRemovalMixin",
     "DeltaHeartRemovalMixin",
     "DeltaRenderLayerAccess",
-    "DeltaSoundMixin"
+    "DeltaSoundMixin",
+    "DeltaBoardMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -9,7 +9,7 @@ import java.util.*;
 public final class DeltaVisualSettings {
     private static final Path FILE=FabricLoader.getInstance().getConfigDir().resolve("interium/delta-visuals.properties");
     private static final Properties DATA=new Properties();
-    public static boolean hud=true,crosshair=false,viewModel=false,removals=false,seeInvisibles=false,aspectRatio=false,swingAnimation=false,pointers=false,shulkerPreview=false,itemPhysic=false,entityBox=false,entityEsp=false,blockEsp=false,soundEsp=false,wardenEsp=false;
+    public static boolean hud=true,crosshair=false,viewModel=false,removals=false,seeInvisibles=false,aspectRatio=false,swingAnimation=false,pointers=false,shulkerPreview=false,itemPhysic=false,entityBox=false,entityEsp=false,blockEsp=false,soundEsp=false,wardenEsp=false,predictions=false,chinaHat=false,boardSpoofer=false;
     static void load(){
         try(var in=Files.newInputStream(FILE)){DATA.load(in);}
         catch(NoSuchFileException ignored){}catch(IOException|IllegalArgumentException e){System.err.println("Interium Delta preferences: "+e.getMessage());DATA.clear();}

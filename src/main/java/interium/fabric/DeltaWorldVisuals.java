@@ -48,13 +48,14 @@ public final class DeltaWorldVisuals {
  private static BlockPos scanCenter=BlockPos.ORIGIN;
  private static String scanConfig="";
  private record Segment(Vec3d a,Vec3d b,int color){}
- private record Quad(Vec3d a,Vec3d b,Vec3d c,Vec3d d,int color){}
+ private record Quad(Vec3d a,Vec3d b,Vec3d c,Vec3d d,int color,boolean depth){}
  private record ScreenBox(float x,float y,float w,float h,int color,boolean corners,boolean health,float fraction){}
  private record Label(float x,float y,String text,int color,List<ItemStack> items,List<String> effects,ItemStack shulker){}
  private record Frame(List<Segment> lines,List<Quad> quads,List<ScreenBox> boxes,List<Label> labels){}
  private record SoundMark(Vec3d pos,String name,long time){}
  private static final RenderLayer LINES=layer("delta_world_lines",VertexFormat.DrawMode.DEBUG_LINES);
  private static final RenderLayer QUADS=layer("delta_world_quads",VertexFormat.DrawMode.QUADS);
+ private static final RenderLayer HATS=RenderLayers.debugQuads();
  private static RenderLayer layer(String name,VertexFormat.DrawMode mode){
   RenderPipeline p=RenderPipeline.builder().withLocation(Identifier.of("interium",name))
    .withVertexShader(Identifier.ofVanilla("core/position_color")).withFragmentShader(Identifier.ofVanilla("core/position_color"))
@@ -121,6 +122,14 @@ public final class DeltaWorldVisuals {
    }
    if(DeltaVisualSettings.shulkerPreview&&e instanceof ItemEntity item&&item.getStack().getItem() instanceof BlockItem bi&&bi.getBlock() instanceof ShulkerBoxBlock&&item.getStack().get(net.minecraft.component.DataComponentTypes.CONTAINER)!=null){Vector2f p=project(vp,cam,pos.add(0,.5,0),sw,sh);if(p!=null)labels.add(new Label(p.x,p.y,"",0,List.of(),List.of(),item.getStack().copy()));}
   }
+  if(DeltaVisualSettings.chinaHat)for(var player:ctx.world().getPlayers())if((player==mc.player||InteriumState.friends.contains(player.getUuid()))&&(player!=mc.player||!mc.options.getPerspective().isFirstPerson())){
+   Vec3d center=player.getLerpedPos(tick).add(0,player.getEyeHeight(player.getPose())+.15,0).subtract(cam);float radius=player.getWidth(),pitch=(float)Math.toRadians(player.getPitch(tick)),yaw=(float)-Math.toRadians(player.headYaw);int color=player==mc.player?0xff000000|(int)DeltaVisualSettings.number("hat.color",0x859cff,0,0xffffff):0xff009600;Vec3d apex=new Vec3d(0,.3,0).rotateX(pitch).rotateY(yaw).add(center);
+   for(int segment=0;segment<90;segment++){double a=segment*Math.PI/45,b=(segment+1)*Math.PI/45;Vec3d p=new Vec3d(Math.sin(a)*radius,0,Math.cos(a)*radius).rotateX(pitch).rotateY(yaw).add(center),q=new Vec3d(Math.sin(b)*radius,0,Math.cos(b)*radius).rotateX(pitch).rotateY(yaw).add(center);float f=.75f+.25f*(float)Math.sin(segment*.14+System.currentTimeMillis()/450d);int shaded=0xff000000|Math.round(((color>>16)&255)*f)<<16|Math.round(((color>>8)&255)*f)<<8|Math.round((color&255)*f);quads.add(new Quad(p,q,apex,apex,shaded,true));}
+  }
+  for(var prediction:DeltaPredictions.extract(mc,tick)){var path=prediction.path();if(path.size()<2)continue;int base=DeltaVisualSettings.primary();if(!prediction.held())for(int n=0;n<path.size()-1;n++){Vec3d p=path.get(n),q=path.get(n+1);int color=DeltaVisualSettings.flag("predict.rainbow",false)?java.awt.Color.HSBtoRGB((float)((p.x*.05+p.z*.05)%1),1,1):base;int alpha=Math.round(255*(.3f+.7f*(1-n/(float)(path.size()-1))));lines.add(new Segment(p.subtract(cam),q.subtract(cam),(color&0xffffff)|(alpha<<24)));}
+   Vec3d end=path.getLast();if(prediction.hit()!=null)outline(lines,prediction.hit(),cam,0xffff6464);if(prediction.side()!=null){Direction.Axis axis=prediction.side().getAxis();Vec3d u=axis==Direction.Axis.Y?new Vec3d(1,0,0):new Vec3d(0,1,0),v=axis==Direction.Axis.Z?new Vec3d(1,0,0):new Vec3d(0,0,1);for(int n=0;n<32;n++){double a=n*Math.PI/16,b=(n+1)*Math.PI/16;lines.add(new Segment(end.add(u.multiply(Math.cos(a)*.33)).add(v.multiply(Math.sin(a)*.33)).subtract(cam),end.add(u.multiply(Math.cos(b)*.33)).add(v.multiply(Math.sin(b)*.33)).subtract(cam),0xffffffff));}}
+   if(!prediction.held()){Vector2f p=project(vp,cam,end,sw,sh);if(p!=null)labels.add(new Label(p.x,p.y,String.format(Locale.ROOT,"%.1fs",(path.size()-1)/20f),0x82000000,List.of(prediction.icon()),List.of(),ItemStack.EMPTY));}
+  }
   if(DeltaVisualSettings.blockEsp)for(var entry:blocks.entrySet())outline(lines,new Box(entry.getKey()),cam,entry.getValue());
   if(DeltaVisualSettings.soundEsp){long now=System.nanoTime();sounds.removeIf(s->now-s.time>5_500_000_000L);for(SoundMark s:sounds){Vector2f p=project(vp,cam,s.pos,sw,sh);if(p!=null)labels.add(new Label(p.x,p.y,s.name+" ["+(int)mc.player.getEntityPos().distanceTo(s.pos)+"м/"+(int)((now-s.time)/1e9)+" сек]",0x64000000,List.of(),List.of(),ItemStack.EMPTY));}}
   if(DeltaVisualSettings.wardenEsp){long now=System.currentTimeMillis();for(Entity e:ctx.world().getEntities())if(e instanceof ArmorStandEntity){var matcher=java.util.regex.Pattern.compile("(\\d{2}):(\\d{2})").matcher(e.getName().getString());if(matcher.find())for(BlockPos p:wardenChests)if(e.getBlockX()==p.getX()&&e.getBlockZ()==p.getZ()){long duration=(Integer.parseInt(matcher.group(1))*60L+Integer.parseInt(matcher.group(2)))*1000;long old=chestTimers.getOrDefault(p,0L);if(Math.abs((old-now)-duration)>5000)chestTimers.put(p,now+duration);}}
@@ -133,8 +142,8 @@ public final class DeltaWorldVisuals {
  private static float[] bounds(Matrix4f vp,Vec3d cam,Box b,int w,int h){float minX=Float.POSITIVE_INFINITY,minY=minX,maxX=Float.NEGATIVE_INFINITY,maxY=maxX;int n=0;for(int i=0;i<8;i++){Vector2f p=project(vp,cam,new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ),w,h);if(p!=null){n++;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}}return n>=2&&maxX>minX&&maxY>minY?new float[]{minX,minY,maxX,maxY}:null;}
  private static void outline(List<Segment> out,Box b,Vec3d cam,int color){Vec3d[] p=corners(b,cam);for(int i=0;i<8;i++)for(int bit:new int[]{1,2,4})if((i&bit)==0)out.add(new Segment(p[i],p[i|bit],color));}
  private static Vec3d[] corners(Box b,Vec3d cam){Vec3d[] p=new Vec3d[8];for(int i=0;i<8;i++)p[i]=new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ).subtract(cam);return p;}
- private static void filled(List<Quad> out,Box b,Vec3d cam,int c){Vec3d[] p=corners(b,cam);for(int[] f:new int[][]{{0,1,3,2},{4,6,7,5},{0,4,5,1},{2,3,7,6},{0,2,6,4},{1,5,7,3}})out.add(new Quad(p[f[0]],p[f[1]],p[f[2]],p[f[3]],c));}
- private static void draw(WorldRenderContext ctx){Frame f=ctx.worldState().getData(KEY);if(f==null)return;var entry=ctx.matrices().peek();if(!f.lines.isEmpty()){var v=ctx.consumers().getBuffer(LINES);for(Segment s:f.lines){vertex(v,entry,s.a,s.color);vertex(v,entry,s.b,s.color);}}if(!f.quads.isEmpty()){var v=ctx.consumers().getBuffer(QUADS);for(Quad q:f.quads){vertex(v,entry,q.a,q.color);vertex(v,entry,q.b,q.color);vertex(v,entry,q.c,q.color);vertex(v,entry,q.d,q.color);}}}
+ private static void filled(List<Quad> out,Box b,Vec3d cam,int c){Vec3d[] p=corners(b,cam);for(int[] f:new int[][]{{0,1,3,2},{4,6,7,5},{0,4,5,1},{2,3,7,6},{0,2,6,4},{1,5,7,3}})out.add(new Quad(p[f[0]],p[f[1]],p[f[2]],p[f[3]],c,false));}
+ private static void draw(WorldRenderContext ctx){Frame f=ctx.worldState().getData(KEY);if(f==null)return;var entry=ctx.matrices().peek();if(!f.lines.isEmpty()){var v=ctx.consumers().getBuffer(LINES);for(Segment s:f.lines){vertex(v,entry,s.a,s.color);vertex(v,entry,s.b,s.color);}}if(!f.quads.isEmpty()){for(Quad q:f.quads){var v=ctx.consumers().getBuffer(q.depth?HATS:QUADS);vertex(v,entry,q.a,q.color);vertex(v,entry,q.b,q.color);vertex(v,entry,q.c,q.color);vertex(v,entry,q.d,q.color);}}}
  private static void vertex(VertexConsumer v,net.minecraft.client.util.math.MatrixStack.Entry m,Vec3d p,int color){v.vertex(m,(float)p.x,(float)p.y,(float)p.z).color(color);}
  public static void hud(MinecraftClient mc,DrawContext c){
   if(mc.player==null||mc.world==null||mc.options.hudHidden)return;Frame frame=latest;
