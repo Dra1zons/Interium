@@ -61,6 +61,7 @@ public final class InteriumClient implements ClientModInitializer {
     private final Scaffold scaffold = new Scaffold();
     private final AutoArmor autoArmor = new AutoArmor();
     private KeyBinding openMenu, autoExpHold;
+    static int autoExpUseKey=-1;
     private int attackAccumulator, fireballCooldown, chestCooldown;
     private boolean previousMiddle;
     private boolean fontProbeShown;
@@ -77,6 +78,12 @@ public final class InteriumClient implements ClientModInitializer {
                 "key.interium.auto_exp", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_V, controls));
         ClientTickEvents.START_CLIENT_TICK.register(freeCamera::sync);
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
+        ClientTickEvents.END_CLIENT_TICK.register(c->{
+            var key=InputUtil.fromTranslationKey(autoExpHold.getBoundKeyTranslationKey());autoExpUseKey=key.getCategory()==InputUtil.Type.MOUSE?-100+key.getCode():key.getCode();
+            var target=aura.target();
+            if(target==null&&triggerBotEnabled&&c.crosshairTarget instanceof EntityHitResult hit&&hit.getEntity() instanceof net.minecraft.entity.LivingEntity living)target=living;
+            DeltaEnvironment.tick(c,target);
+        });
         HudRenderCallback.EVENT.register(this::renderHud);
     }
     /** Key-press events only. Never toggle binds while a GUI or chat is open. */
