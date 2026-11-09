@@ -27,7 +27,7 @@ public final class DeltaVisualSettings {
         catch(IOException e){System.err.println("Interium: could not save Delta preferences: "+e.getMessage());}
     }
     static boolean light(){return flag("theme.light",false);}
-    static int primary(){return (int)(long)number("theme.rgb",0x859cff,0,0xffffff)|0xff000000;}
+    public static int primary(){return (int)(long)number("theme.rgb",0x859cff,0,0xffffff)|0xff000000;}
     static int text(){return light()?0xff111216:0xffffffff;}
     static int background(){int a=Math.round(number("theme.opacity",.78f,.2f,1f)*255);return a<<24|(light()?0xe9edf5:0x111220);}
 }
