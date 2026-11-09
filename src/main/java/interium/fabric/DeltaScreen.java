@@ -101,7 +101,7 @@ public final class DeltaScreen extends Screen {
             int title=DeltaVisualSettings.text();
             label(c,onest,CATEGORY[i],x+10,top+12,9,title);
             label(c,icons,ICON[i],x+PW-10-icons.width(ICON[i],9),top+12,9,DeltaVisualSettings.primary());
-            rect(c,x+9,top+24,PW-18,.5f,0x18ffffff);
+            rect(c,x+9,top+24,PW-18,.5f,0,0x18ffffff);
             float y=top+28+clampedScroll(i,list),bottom=top+PH-2;
             c.enableScissor((int)x,(int)(top+28),(int)(x+PW),(int)bottom);
             for(Item item:list){
