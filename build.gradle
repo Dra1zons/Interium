@@ -77,13 +77,13 @@ tasks.register('generateInteriumLogo') {
  doLast {
   def image=new java.awt.image.BufferedImage(64,64,java.awt.image.BufferedImage.TYPE_INT_ARGB)
   def g=image.createGraphics();g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,java.awt.RenderingHints.VALUE_ANTIALIAS_ON)
-  def poly={xs,ys,color -> g.setColor(new java.awt.Color(color as int,true));g.fillPolygon(xs as int[],ys as int[],xs.size())}
-  poly([32,58,58,32,6,6],[2,17,47,62,47,17],0xff11101b)
-  poly([32,55,55,32,9,9],[5,18,46,59,46,18],0xffa07ef9)
-  poly([32,51,51,32,13,13],[10,21,43,54,43,21],0xff161423)
-  poly([20,44,40,36,36,42,46,18,22,28,28,24],[18,18,25,25,39,39,46,46,39,39,25,25],0xffeae2ff)
-  poly([36,40,44,36],[25,25,18,18],0xff7eb7ff)
-  poly([18,46,42,28],[46,46,39,39],0xffab89ff)
+  g.setPaint(new java.awt.GradientPaint(40f,12f,new java.awt.Color(0xff2376ff as int,true),24f,52f,new java.awt.Color(0xff17c8ec as int,true)))
+  g.setStroke(new java.awt.BasicStroke(8f,java.awt.BasicStroke.CAP_ROUND,java.awt.BasicStroke.JOIN_ROUND))
+  def mark=new java.awt.geom.Path2D.Float()
+  mark.moveTo(23d,15d);mark.lineTo(47d,15d)
+  mark.moveTo(36d,15d);mark.lineTo(28d,49d)
+  mark.moveTo(17d,49d);mark.lineTo(41d,49d)
+  g.draw(mark)
   g.dispose();def out=target.get().asFile;out.parentFile.mkdirs();javax.imageio.ImageIO.write(image,'png',out)
  }
 }
