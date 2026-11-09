@@ -10,6 +10,7 @@ import net.minecraft.util.hit.EntityHitResult;
 
 /** Source-based Delta Crosshair and View Model; render-only, no gameplay mutation. */
 public final class DeltaVisuals {
+    public static boolean shaderOutline(net.minecraft.entity.Entity e){var c=net.minecraft.client.MinecraftClient.getInstance();return DeltaVisualSettings.shaderEsp&&DeltaVisualSettings.flag("shader.enabled",true)&&e!=c.player&&(e instanceof net.minecraft.entity.player.PlayerEntity||e instanceof net.minecraft.entity.ItemEntity)&&!(DeltaVisualSettings.removals&&DeltaVisualSettings.flag("remove.glow",true));}
     private DeltaVisuals(){}
     public static boolean smallItems(){return DeltaVisualSettings.flag("physic.small",false);}
     public static volatile boolean auraTargetPresent;

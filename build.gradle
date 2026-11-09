@@ -31,7 +31,7 @@ tasks.register('visualTargetChecks') {
  dependsOn compileJava
  doLast {
   def javaHome=javaToolchains.launcherFor { languageVersion=JavaLanguageVersion.of(21) }.get().metadata.installationPath.asFile
-  def classes=['net.minecraft.client.render.item.HeldItemRenderer','net.minecraft.client.render.entity.ItemEntityRenderer']
+  def classes=['net.minecraft.client.render.item.HeldItemRenderer','net.minecraft.client.render.entity.ItemEntityRenderer','net.minecraft.client.render.GameRenderer']
   classes.each { name ->
    def proc=new ProcessBuilder(new File(javaHome,'bin/javap').absolutePath,'-classpath',sourceSets.main.compileClasspath.asPath,'-c','-p',name).redirectErrorStream(true).start()
    def text=proc.inputStream.text
@@ -57,7 +57,7 @@ tasks.register('visualApiDump') {
  dependsOn compileJava
  doLast {
   def home=javaToolchains.launcherFor { languageVersion=JavaLanguageVersion.of(21) }.get().metadata.installationPath.asFile
-  def names=['com.mojang.blaze3d.systems.RenderSystem','com.mojang.blaze3d.systems.CommandEncoder','com.mojang.blaze3d.systems.RenderPass','com.mojang.blaze3d.systems.GpuDevice','com.mojang.blaze3d.buffers.GpuBuffer','com.mojang.blaze3d.textures.GpuTexture','net.minecraft.client.gl.Framebuffer','net.minecraft.client.gl.SimpleFramebuffer','net.minecraft.client.render.VertexFormats','net.minecraft.client.gui.render.state.GuiRenderState','net.minecraft.client.gui.render.state.SimpleGuiElementRenderState','net.minecraft.client.gui.render.state.ColoredQuadGuiElementRenderState','net.minecraft.client.gl.TextureSetup','net.minecraft.client.render.GameRenderer','net.minecraft.client.gui.DrawContext$ScissorStack','net.minecraft.client.render.entity.state.EntityRenderState']
+  def names=['com.mojang.blaze3d.systems.RenderSystem','com.mojang.blaze3d.systems.CommandEncoder','com.mojang.blaze3d.systems.RenderPass','com.mojang.blaze3d.systems.GpuDevice','com.mojang.blaze3d.buffers.GpuBuffer','com.mojang.blaze3d.textures.GpuTexture','net.minecraft.client.gl.Framebuffer','net.minecraft.client.gl.SimpleFramebuffer','net.minecraft.client.render.VertexFormats','net.minecraft.client.gui.render.state.GuiRenderState','net.minecraft.client.gui.render.state.SimpleGuiElementRenderState','net.minecraft.client.gui.render.state.ColoredQuadGuiElementRenderState','net.minecraft.client.texture.TextureSetup','net.minecraft.client.render.GameRenderer','net.minecraft.client.gui.DrawContext$ScissorStack','net.minecraft.client.render.entity.state.EntityRenderState']
   def output=new StringBuilder()
   names.each { name ->
    def p=new ProcessBuilder(new File(home,'bin/javap').absolutePath,'-classpath',sourceSets.main.compileClasspath.asPath,'-p',name).redirectErrorStream(true).start()

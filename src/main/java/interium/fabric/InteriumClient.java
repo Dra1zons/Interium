@@ -71,6 +71,7 @@ public final class InteriumClient implements ClientModInitializer {
         InteriumState.load();
         DeltaVisualSettings.load();
         DeltaWorldVisuals.init();
+        DeltaHandsShader.init();
         KeyBinding.Category controls = KeyBinding.Category.create(Identifier.of("interium", "controls"));
         openMenu = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.interium.open", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_SHIFT, controls));

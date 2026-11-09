@@ -49,6 +49,8 @@ jobs:
         run: |
           set -o pipefail
           if ! command -v xvfb-run >/dev/null; then sudo apt-get update && sudo apt-get install -y xvfb; fi
+          mkdir -p run
+          printf "onboardAccessibility:false\nmaxFps:60\n" > run/options.txt
           timeout 420s xvfb-run -a -s "-screen 0 1280x720x24" bash ./gradlew runClient --no-daemon --args="--username InteriumSmoke --width 960 --height 540" 2>&1 | tee smoke.log
           grep -F 'INTERIUM_GUI_SMOKE_PASSED' smoke.log
       - name: Upload build outputs
