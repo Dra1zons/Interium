@@ -37,6 +37,8 @@ jobs:
         run: |
           set -o pipefail
           bash ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log
+      - name: Verify remapped JAR and bundled dependency
+        run: python3 tools/verify_build.py
       - name: Upload build outputs
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,6 +47,8 @@ jobs:
           path: |
             build.log
             build/libs/*.jar
+            build/verification.json
+            build/SHA256SUMS
           if-no-files-found: ignore
           retention-days: 7
       - name: Publish build feedback and successful experimental binaries
@@ -62,9 +66,16 @@ jobs:
               const tag = `experimental-${run}`;
               const rel = await github.rest.repos.createRelease({owner, repo, tag_name: tag, target_commitish: context.sha, name: `Interium experimental build ${run}`, prerelease: true, body: 'Compiled work-in-progress for Fabric 1.21.11. Not game-tested. Includes source and third-party notices. Not the lost 0.6.0 source branch.'});
               result.release = rel.data.html_url;
-              for (const name of fs.readdirSync('build/libs').filter(n => n.endsWith('.jar') && !n.endsWith('-dev.jar'))) {
+              for (const name of fs.readdirSync('build/libs').filter(n => n.endsWith('.jar'))) {
                 const data = fs.readFileSync(`build/libs/${name}`);
                 await github.rest.repos.uploadReleaseAsset({owner, repo, release_id: rel.data.id, name, data, headers: {'content-type': 'application/java-archive','content-length': data.length}});
+              }
+            }
+            for (const name of ['verification.json','SHA256SUMS']) {
+              if (result.status === 'success' && fs.existsSync('build/' + name)) {
+                const rel = await github.rest.repos.getReleaseByTag({owner,repo,tag:'experimental-' + run});
+                const data = fs.readFileSync('build/' + name);
+                await github.rest.repos.uploadReleaseAsset({owner,repo,release_id:rel.data.id,name,data,headers:{'content-type':'application/octet-stream','content-length':data.length}});
               }
             }
             for (const [path, text] of [['build-feedback/latest.json', JSON.stringify(result, null, 2)], ['build-feedback/build.log', fs.existsSync('build.log') ? fs.readFileSync('build.log','utf8').slice(-600000) : 'Build failed before Gradle; see Actions run.']]) {
