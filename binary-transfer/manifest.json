@@ -1,0 +1,98 @@
+[
+  {
+    "path": "gradle/wrapper/gradle-wrapper.jar",
+    "sha256": "3b8a25775a69158b5ad2b1d17a80a88dc7b40a352a73eb27d06c612a7ce68e98",
+    "parts": [
+      "binary-transfer/12277790711b9f7d.000.b64"
+    ]
+  },
+  {
+    "path": "libs/vfp-api.jar",
+    "sha256": "c4243df8f2b873bbc7fb0b73bef530c3b2af01f9afde7f1851df8071f57b9c74",
+    "parts": [
+      "binary-transfer/d02e570ae22ba23f.000.b64"
+    ]
+  },
+  {
+    "path": "src/main/resources/assets/delta/fonts/gt_regular.png",
+    "sha256": "fc58c6310951d75430a88b4056e7c593f36d1995cc4e862ac9c927f8970daecd",
+    "parts": [
+      "binary-transfer/46a78a3794bf921b.000.b64"
+    ]
+  },
+  {
+    "path": "src/main/resources/assets/delta/fonts/icons.png",
+    "sha256": "a6777460b78eaff3ffcffe4574b5693ba642f7d811a14e714da9897b3e02b4ca",
+    "parts": [
+      "binary-transfer/4f50f71263c77e41.000.b64"
+    ]
+  },
+  {
+    "path": "src/main/resources/assets/delta/fonts/onest_regular.png",
+    "sha256": "06df6a17dc95e0a102a28bdfe58a9fd6dbc0ba9be2c52af3b6db2656ee61e85a",
+    "parts": [
+      "binary-transfer/32836459e1351c1d.000.b64",
+      "binary-transfer/32836459e1351c1d.001.b64"
+    ]
+  },
+  {
+    "path": "src/main/resources/assets/delta/fonts/sf_medium.png",
+    "sha256": "5f7750e75ced1697833a1cbeb70975f2b1311bc95f2237989fdd762c8ac0fd5c",
+    "parts": [
+      "binary-transfer/5d2dfdcc33dd268e.000.b64",
+      "binary-transfer/5d2dfdcc33dd268e.001.b64",
+      "binary-transfer/5d2dfdcc33dd268e.002.b64"
+    ]
+  },
+  {
+    "path": "src/main/resources/assets/delta/fonts/sf_regular.png",
+    "sha256": "696a7f162433766504263f3f3c5b3f5fc9ddf94a64e22b7c54766601b62daa2a",
+    "parts": [
+      "binary-transfer/c90f41a8de8bbb6a.000.b64",
+      "binary-transfer/c90f41a8de8bbb6a.001.b64",
+      "binary-transfer/c90f41a8de8bbb6a.002.b64"
+    ]
+  },
+  {
+    "path": "src/main/resources/assets/interium/textures/gui/white.png",
+    "sha256": "d5a51b6aed15684ec8c123e30fe5703155359d6543b6d7b47cb5766ef44939de",
+    "parts": [
+      "binary-transfer/fa80e3e1d05fc9e6.000.b64"
+    ]
+  },
+  {
+    "path": "third-party/sources/ViaFabricPlus-4.4.15-source.zip",
+    "sha256": "a7cfb1738d44fd9c0d276d7941e7e3ed0c371404e07e5bd3ec49b8b4a1caf1ac",
+    "parts": [
+      "binary-transfer/b950f15e6d5acaa6.000.b64",
+      "binary-transfer/b950f15e6d5acaa6.001.b64",
+      "binary-transfer/b950f15e6d5acaa6.002.b64",
+      "binary-transfer/b950f15e6d5acaa6.003.b64",
+      "binary-transfer/b950f15e6d5acaa6.004.b64",
+      "binary-transfer/b950f15e6d5acaa6.005.b64",
+      "binary-transfer/b950f15e6d5acaa6.006.b64",
+      "binary-transfer/b950f15e6d5acaa6.007.b64",
+      "binary-transfer/b950f15e6d5acaa6.008.b64",
+      "binary-transfer/b950f15e6d5acaa6.009.b64",
+      "binary-transfer/b950f15e6d5acaa6.010.b64",
+      "binary-transfer/b950f15e6d5acaa6.011.b64",
+      "binary-transfer/b950f15e6d5acaa6.012.b64",
+      "binary-transfer/b950f15e6d5acaa6.013.b64",
+      "binary-transfer/b950f15e6d5acaa6.014.b64",
+      "binary-transfer/b950f15e6d5acaa6.015.b64",
+      "binary-transfer/b950f15e6d5acaa6.016.b64",
+      "binary-transfer/b950f15e6d5acaa6.017.b64",
+      "binary-transfer/b950f15e6d5acaa6.018.b64",
+      "binary-transfer/b950f15e6d5acaa6.019.b64",
+      "binary-transfer/b950f15e6d5acaa6.020.b64",
+      "binary-transfer/b950f15e6d5acaa6.021.b64",
+      "binary-transfer/b950f15e6d5acaa6.022.b64",
+      "binary-transfer/b950f15e6d5acaa6.023.b64",
+      "binary-transfer/b950f15e6d5acaa6.024.b64",
+      "binary-transfer/b950f15e6d5acaa6.025.b64",
+      "binary-transfer/b950f15e6d5acaa6.026.b64",
+      "binary-transfer/b950f15e6d5acaa6.027.b64",
+      "binary-transfer/b950f15e6d5acaa6.028.b64"
+    ]
+  }
+]
