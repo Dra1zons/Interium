@@ -66,3 +66,6 @@ tasks.register('visualApiDump') {
   def file=file('build/visual-api.txt');file.parentFile.mkdirs();file.text=output.toString()
  }
 }
+
+tasks.register('visualNumericalChecks',JavaExec){dependsOn testClasses;classpath=sourceSets.test.runtimeClasspath;mainClass='interium.core.VisualMathTest'}
+check.dependsOn visualNumericalChecks

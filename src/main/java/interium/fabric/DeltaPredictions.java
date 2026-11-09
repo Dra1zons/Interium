@@ -24,7 +24,7 @@ final class DeltaPredictions {
    if(icon!=null){result.add(simulate(mc,e,e.getEntityPos(),e.getVelocity(),thrown,potion,140,icon,false));count++;}
   }
   ItemStack main=mc.player.getMainHandStack(),off=mc.player.getOffHandStack(),item=main;float speed=0;boolean thrown=false,potion=false;
-  if(main.getItem() instanceof BowItem&&DeltaVisualSettings.flag("predict.arrows",true)){if(!mc.player.isUsingItem())return List.copyOf(result);float f=mc.player.getItemUseTime()/20f;speed=Math.min((f*f+2*f)/3,1)*3;if(speed<.3f)return List.copyOf(result);}
+  if(main.getItem() instanceof BowItem&&DeltaVisualSettings.flag("predict.arrows",true)){if(!mc.player.isUsingItem())return List.copyOf(result);speed=interium.core.VisualMath.bowPull(mc.player.getItemUseTime())*3;if(speed<.3f)return List.copyOf(result);}
   else if(main.getItem() instanceof CrossbowItem&&DeltaVisualSettings.flag("predict.arrows",true))speed=3;
   else if(main.getItem() instanceof TridentItem&&DeltaVisualSettings.flag("predict.tridents",true))speed=2.5f;
   else if((main.isOf(Items.ENDER_PEARL)||off.isOf(Items.ENDER_PEARL))&&DeltaVisualSettings.flag("predict.pearls",true)){speed=1.5f;thrown=true;item=main.isOf(Items.ENDER_PEARL)?main:off;}
@@ -35,10 +35,10 @@ final class DeltaPredictions {
  private static Prediction simulate(MinecraftClient mc,Entity source,Vec3d pos,Vec3d velocity,boolean thrown,boolean potion,int max,ItemStack icon,boolean held){List<Vec3d> path=new ArrayList<>();path.add(pos);double gravity=potion?.05000000070627959:.030000000582077163;
   for(int n=0;n<max&&velocity.lengthSquared()>=1e-6&&pos.y>=mc.world.getBottomY()&&pos.y<=mc.world.getBottomY()+mc.world.getHeight();n++){
    if(!mc.world.getChunkManager().isChunkLoaded(BlockPos.ofFloored(pos).getX()>>4,BlockPos.ofFloored(pos).getZ()>>4))break;
-   double drag=mc.world.getFluidState(BlockPos.ofFloored(pos)).isIn(FluidTags.WATER)?thrown?.7999999144424994:.6000000001891753:.990000120151185;if(thrown)velocity=new Vec3d(velocity.x*drag,(velocity.y-gravity)*drag,velocity.z*drag);
-   Vec3d next=pos.add(velocity);BlockHitResult block=mc.world.raycast(new RaycastContext(pos,next,RaycastContext.ShapeType.COLLIDER,RaycastContext.FluidHandling.NONE,source));Vec3d end=block.getType()!=HitResult.Type.MISS?block.getPos():next;
+   var step=interium.core.VisualMath.step(velocity.x,velocity.y,velocity.z,thrown,potion,mc.world.getFluidState(BlockPos.ofFloored(pos)).isIn(FluidTags.WATER));
+   Vec3d next=pos.add(step.dx(),step.dy(),step.dz());BlockHitResult block=mc.world.raycast(new RaycastContext(pos,next,RaycastContext.ShapeType.COLLIDER,RaycastContext.FluidHandling.NONE,source));Vec3d end=block.getType()!=HitResult.Type.MISS?block.getPos():next;
    if(held){Entity closest=null;Vec3d at=null;double distance=Double.MAX_VALUE;for(Entity candidate:mc.world.getOtherEntities(source,new Box(pos,end).expand(1)))if(candidate instanceof LivingEntity&&candidate.isAlive()&&!candidate.isSpectator()){var hit=candidate.getBoundingBox().expand(.30000001176381136).raycast(pos,end);if(hit.isPresent()&&pos.squaredDistanceTo(hit.get())<distance){closest=candidate;at=hit.get();distance=pos.squaredDistanceTo(at);}}if(closest!=null){path.add(at);return new Prediction(List.copyOf(path),icon,closest.getBoundingBox(),null,true);}}
-   if(block.getType()!=HitResult.Type.MISS){path.add(block.getPos());return new Prediction(List.copyOf(path),icon,null,block.getSide(),held);}pos=next;if(!thrown)velocity=new Vec3d(velocity.x*drag,velocity.y*drag-.05000000070627959,velocity.z*drag);path.add(pos);
+   if(block.getType()!=HitResult.Type.MISS){path.add(block.getPos());return new Prediction(List.copyOf(path),icon,null,block.getSide(),held);}pos=next;velocity=new Vec3d(step.vx(),step.vy(),step.vz());path.add(pos);
   }return new Prediction(List.copyOf(path),icon,null,null,held);
  }
 }

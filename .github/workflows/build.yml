@@ -45,6 +45,7 @@ jobs:
         env:
           INTERIUM_SMOKE: '1'
           LIBGL_ALWAYS_SOFTWARE: '1'
+          ALSOFT_DRIVERS: 'null'
         shell: bash
         run: |
           set -o pipefail

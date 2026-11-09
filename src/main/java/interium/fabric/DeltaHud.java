@@ -45,7 +45,7 @@ public final class DeltaHud {
     static boolean enabled(String id){return DeltaVisualSettings.flag("hud."+id,true);}
     float scale(MinecraftClient c){return Math.max(.1f,2f/c.getWindow().getScaleFactor()*DeltaVisualSettings.number("hud.scale",1,.5f,2));}
     Map<String,Bounds> bounds(){return Collections.unmodifiableMap(bounds);}
-    void move(String id,float x,float y){Bounds b=bounds.get(id);if(b==null)return;DeltaVisualSettings.set("pos."+id+".x",Math.max(0,Math.min(1,x/Math.max(1,sw-b.w))));DeltaVisualSettings.set("pos."+id+".y",Math.max(0,Math.min(1,y/Math.max(1,sh-b.h))));}
+    void move(String id,float x,float y){Bounds b=bounds.get(id);if(b==null)return;DeltaVisualSettings.set("pos."+id+".x",interium.core.VisualMath.position(x,sw,b.w));DeltaVisualSettings.set("pos."+id+".y",interium.core.VisualMath.position(y,sh,b.h));}
     static void notifyModule(String name,boolean on){INSTANCE.notices.addLast(new Notice(name+(on?" включён":" выключен"),System.nanoTime()));while(INSTANCE.notices.size()>5)INSTANCE.notices.removeFirst();}
     private void fonts(MinecraftClient c){if(gt!=null)return;try{gt=DeltaFont.load(c,"gt_regular");icons=DeltaFont.load(c,"icons");}catch(IOException e){throw new IllegalStateException("Original Delta HUD fonts could not be loaded",e);}}
     static int fade(int color,float a){return Math.round(((color>>>24)&255)*Math.max(0,Math.min(1,a)))<<24|(color&0xffffff);}
