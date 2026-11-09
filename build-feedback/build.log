@@ -32,11 +32,11 @@ Visual target check: renderFirstPersonItem swingArm calls=3
 Visual target check: item renderer bytecode captured
 
 > Task :check
-> Task :remapSourcesJar
 > Task :remapJar
+> Task :remapSourcesJar
 > Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794244761994.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794245052508.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/Interium/Interium/build/reports/problems/problems-report.html
 
