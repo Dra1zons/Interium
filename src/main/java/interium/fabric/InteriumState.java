@@ -61,7 +61,7 @@ public final class InteriumState {
             try{float v=Float.parseFloat(p.getProperty("aura.turnSpeed","60"));auraTurnSpeed=Float.isFinite(v)?Math.max(10f,Math.min(180f,v)):60f;}catch(NumberFormatException ignored){auraTurnSpeed=60f;}
             auraLock=Boolean.parseBoolean(p.getProperty("aura.lock","true"));
             try{float v=Float.parseFloat(p.getProperty("speed.value","0.36"));speedValue=Float.isFinite(v)?Math.max(.2f,Math.min(.8f,v)):.36f;}catch(NumberFormatException ignored){speedValue=.36f;}
-            try{speedMode=Math.max(0,Math.min(1,Integer.parseInt(p.getProperty("speed.mode","0"))));}catch(NumberFormatException ignored){speedMode=0;}
+            try{speedMode=Math.max(0,Math.min(2,Integer.parseInt(p.getProperty("speed.mode","0"))));}catch(NumberFormatException ignored){speedMode=0;}
             try{float v=Float.parseFloat(p.getProperty("targetStrafe.radius","2.5"));targetStrafeRadius=Float.isFinite(v)?Math.max(1f,Math.min(5f,v)):2.5f;}catch(NumberFormatException ignored){targetStrafeRadius=2.5f;}
             try{float v=Float.parseFloat(p.getProperty("targetStrafe.speed","0.25"));targetStrafeSpeed=Float.isFinite(v)?Math.max(.1f,Math.min(.6f,v)):.25f;}catch(NumberFormatException ignored){targetStrafeSpeed=.25f;}
             targetStrafeClockwise=Boolean.parseBoolean(p.getProperty("targetStrafe.clockwise","true"));targetStrafeInput=Boolean.parseBoolean(p.getProperty("targetStrafe.requireInput","true"));

@@ -9,7 +9,8 @@ import java.util.*;
 public final class DeltaVisualSettings {
     private static final Path FILE=FabricLoader.getInstance().getConfigDir().resolve("interium/delta-visuals.properties");
     private static final Properties DATA=new Properties();
-    private static final Map<String,Float> NUMBERS=new HashMap<>();
+    private static final Map<String,Float> NUMBERS=new java.util.concurrent.ConcurrentHashMap<>();
+    public static boolean targetEsp=true;
     public static boolean hud=true,crosshair=false,viewModel=false,removals=false,seeInvisibles=false,aspectRatio=false,swingAnimation=false,pointers=false,shulkerPreview=false,itemPhysic=false,entityBox=false,entityEsp=false,blockEsp=false,soundEsp=false,predictions=false,chinaHat=false,boardSpoofer=false,handsShader=false,shaderEsp=false;
     static void load(){
         try(var in=Files.newInputStream(FILE)){DATA.load(in);NUMBERS.clear();}

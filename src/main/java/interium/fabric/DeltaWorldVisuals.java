@@ -42,6 +42,10 @@ public final class DeltaWorldVisuals {
  // Keep only the immutable geometry from the latest extraction, never query entities while drawing.
  private static volatile Frame extracted=EMPTY;
  private static DeltaFont font;
+ private static volatile LivingEntity target;private static float targetFade;
+ public static LivingEntity currentTarget(){return target;}
+ static void target(LivingEntity current){if(current!=null){target=current;targetFade+=(1-targetFade)*.45f;}else{targetFade*=.55f;if(targetFade<.01f){targetFade=0;target=null;}}}
+
  private static Object worldIdentity;
  private static final Deque<SoundMark> sounds=new ConcurrentLinkedDeque<>();
  private static final Map<BlockPos,Integer> blocks=new LinkedHashMap<>();
@@ -73,7 +77,7 @@ public final class DeltaWorldVisuals {
   WorldRenderEvents.END_MAIN.register(ctx->latest=frame(ctx));
  }
  private static void tick(MinecraftClient mc){
-  if(worldIdentity!=mc.world){worldIdentity=mc.world;latest=EMPTY;extracted=EMPTY;blocks.clear();sounds.clear();scanCursor=0;ticks=0;}
+  if(worldIdentity!=mc.world){worldIdentity=mc.world;target=null;targetFade=0;latest=EMPTY;extracted=EMPTY;blocks.clear();sounds.clear();scanCursor=0;ticks=0;}
   if(mc.world==null||mc.player==null)return;ticks++;
   if(DeltaVisualSettings.blockEsp)scan(mc);else blocks.clear();
  }
@@ -100,11 +104,11 @@ public final class DeltaWorldVisuals {
   var mc=MinecraftClient.getInstance();extracted=EMPTY;latest=EMPTY;
   var state=ctx.worldState();if(state!=null)state.setData(KEY,EMPTY);
   if(mc.player==null||mc.world==null||ctx.world()==null||ctx.camera()==null||mc.options.hudHidden)return;
-  if(!(DeltaVisualSettings.shulkerPreview||DeltaVisualSettings.entityBox||DeltaVisualSettings.entityEsp||DeltaVisualSettings.pointers||DeltaVisualSettings.chinaHat||DeltaVisualSettings.predictions||DeltaVisualSettings.blockEsp||DeltaVisualSettings.soundEsp))return;
+  if(!(DeltaVisualSettings.targetEsp&&target!=null&&DeltaVisualSettings.flag("targetEsp.enabled",true)||DeltaVisualSettings.shulkerPreview||DeltaVisualSettings.entityBox||DeltaVisualSettings.entityEsp||DeltaVisualSettings.pointers||DeltaVisualSettings.chinaHat||DeltaVisualSettings.predictions||DeltaVisualSettings.blockEsp||DeltaVisualSettings.soundEsp))return;
   float tick=ctx.tickCounter().getTickProgress(false);Vec3d cam=ctx.camera().getCameraPos();Matrix4f vp=new Matrix4f(ctx.cullProjectionMatrix()).mul(ctx.viewMatrix());
   int sw=mc.getWindow().getScaledWidth(),sh=mc.getWindow().getScaledHeight();List<Segment> lines=new ArrayList<>();List<Quad> quads=new ArrayList<>();List<ScreenBox> boxes=new ArrayList<>();List<Label> labels=new ArrayList<>();
   if(DeltaVisualSettings.shulkerPreview||DeltaVisualSettings.entityBox||DeltaVisualSettings.entityEsp||(DeltaVisualSettings.pointers&&DeltaVisualSettings.flag("pointers.tracers",true)))for(Entity e:ctx.world().getEntities()){
-   if(mc.player.squaredDistanceTo(e)>512*512)continue;
+   if(mc.player.squaredDistanceTo(e)>Math.pow(DeltaVisualSettings.number("perf.visualRange",96,16,512),2))continue;
    Vec3d pos=e.getLerpedPos(tick);Box box=e.getBoundingBox().offset(pos.subtract(e.getEntityPos()));boolean self=e==mc.player,friend=InteriumState.friends.contains(e.getUuid());
    if(DeltaVisualSettings.entityBox&&(e instanceof PlayerEntity||e instanceof ItemEntity)&&(!self||!mc.options.getPerspective().isFirstPerson())){
     int mode=Math.round(DeltaVisualSettings.number("box.mode",0,0,3)),color=DeltaVisualSettings.flag("box.static",false)?0xff000000|(int)DeltaVisualSettings.number("box.color",0xffffff,0,0xffffff):DeltaVisualSettings.primary();
@@ -128,10 +132,19 @@ public final class DeltaWorldVisuals {
    Vec3d end=path.getLast();if(prediction.hit()!=null)outline(lines,prediction.hit(),cam,0xffff6464);if(prediction.side()!=null){Direction.Axis axis=prediction.side().getAxis();Vec3d u=axis==Direction.Axis.Y?new Vec3d(1,0,0):new Vec3d(0,1,0),v=axis==Direction.Axis.Z?new Vec3d(1,0,0):new Vec3d(0,0,1);for(int n=0;n<32;n++){double a=n*Math.PI/16,b=(n+1)*Math.PI/16;lines.add(new Segment(end.add(u.multiply(Math.cos(a)*.33)).add(v.multiply(Math.sin(a)*.33)).subtract(cam),end.add(u.multiply(Math.cos(b)*.33)).add(v.multiply(Math.sin(b)*.33)).subtract(cam),0xffffffff));}}
    if(!prediction.held()){Vector2f p=project(vp,cam,end,sw,sh);if(p!=null)labels.add(new Label(p.x,p.y,String.format(Locale.ROOT,"%.1fs",(path.size()-1)/20f),0x82000000,List.of(prediction.icon()),List.of(),ItemStack.EMPTY));}
   }
+  if(DeltaVisualSettings.targetEsp&&DeltaVisualSettings.flag("targetEsp.enabled",true)&&target!=null&&target.isAlive()&&!target.isRemoved())targetGeometry(lines,quads,target,tick,cam);
   if(DeltaVisualSettings.blockEsp)for(var entry:blocks.entrySet())outline(lines,new Box(entry.getKey()),cam,entry.getValue());
   if(DeltaVisualSettings.soundEsp){long now=System.nanoTime();sounds.removeIf(s->now-s.time>5_500_000_000L);for(SoundMark s:sounds){Vector2f p=project(vp,cam,s.pos,sw,sh);if(p!=null)labels.add(new Label(p.x,p.y,s.name+" ["+(int)mc.player.getEntityPos().distanceTo(s.pos)+"м/"+(int)((now-s.time)/1e9)+" сек]",0x64000000,List.of(),List.of(),ItemStack.EMPTY));}}
   Frame result=new Frame(List.copyOf(lines),List.copyOf(quads),List.copyOf(boxes),List.copyOf(labels));
   extracted=result;latest=result;if(state!=null)state.setData(KEY,result);
+ }
+ /** Delta AuraHandler motifs adapted to bounded extraction batches; not its immediate GL renderer. */
+ private static void targetGeometry(List<Segment> lines,List<Quad> quads,LivingEntity e,float tick,Vec3d cam){
+ float alpha=targetFade*DeltaVisualSettings.number("targetEsp.alpha",.85f,.1f,1),size=DeltaVisualSettings.number("targetEsp.size",1,.5f,2);double time=System.nanoTime()/1e9*DeltaVisualSettings.number("targetEsp.speed",1,.2f,3);int mode=(int)DeltaVisualSettings.number("targetEsp.mode",0,0,2),color=DeltaVisualSettings.primary(),count=DeltaPerformance.quality()==0?16:DeltaPerformance.quality()==1?32:48;Vec3d pos=e.getLerpedPos(tick).subtract(cam);
+ if(mode==1){double t=(time%1.75)/.875,progress=t>1?t-1:1-t,ease=progress<.5?2*progress*progress:1-Math.pow(-2*progress+2,2)/2,yy=pos.y+(e.getHeight()+.15)*ease,r=e.getWidth()*.8*size,tail=(e.getHeight()+.15)*.8*Math.min(ease,1-ease)*(t>1?-1:1);int bands=DeltaPerformance.quality()+1;
+ for(int i=0;i<count;i++){double a=i*Math.PI*2/count,b=(i+1)*Math.PI*2/count;Vec3d p=new Vec3d(pos.x+Math.cos(a)*r,yy,pos.z+Math.sin(a)*r),q=new Vec3d(pos.x+Math.cos(b)*r,yy,pos.z+Math.sin(b)*r);lines.add(new Segment(p,q,DeltaHud.fade(color,alpha)));for(int band=0;band<bands;band++){double lo=tail*band/bands,hi=tail*(band+1)/bands;quads.add(new Quad(p.add(0,lo,0),q.add(0,lo,0),q.add(0,hi,0),p.add(0,hi,0),DeltaHud.fade(color,alpha*.45f*(1-band/(float)bands)),false));}}return;}
+ int crystals=DeltaPerformance.quality()==0?9:18;double width=e.getWidth()*1.5*(1.25-.5*targetFade)*size;
+ for(int i=0;i<crystals;i++){double degrees=i*360d/crystals,a=Math.toRadians(degrees+time*120),yy=.1+e.getHeight()*Math.abs(Math.sin(degrees));Vec3d c=pos.add(Math.sin(a)*width,yy,Math.cos(a)*width);double r=.055*size;Vec3d top=c.add(0,r*1.5,0),bottom=c.add(0,-r*1.5,0);Vec3d[] ring={c.add(r,0,0),c.add(0,0,r),c.add(-r,0,0),c.add(0,0,-r)};for(int k=0;k<4;k++){int shade=DeltaHud.fade(color,alpha*(.55f+k*.12f));quads.add(new Quad(top,ring[k],ring[(k+1)%4],ring[(k+1)%4],shade,false));quads.add(new Quad(bottom,ring[(k+1)%4],ring[k],ring[k],shade,false));}}
  }
  private static boolean tracked(Entity e){return e instanceof PlayerEntity?DeltaVisualSettings.flag("esp.players",true):e instanceof HostileEntity?DeltaVisualSettings.flag("esp.mobs",false):e instanceof AnimalEntity||e instanceof VillagerEntity?DeltaVisualSettings.flag("esp.animals",false):e instanceof ItemEntity||e instanceof net.minecraft.entity.projectile.ArrowEntity?DeltaVisualSettings.flag("esp.items",false):false;}
  private static Vector2f project(Matrix4f vp,Vec3d camera,Vec3d p,int w,int h){Vector4f v=new Vector4f((float)(p.x-camera.x),(float)(p.y-camera.y),(float)(p.z-camera.z),1);vp.transform(v);if(v.w<=.001f||v.z< -v.w||v.z>v.w)return null;float x=(v.x/v.w*.5f+.5f)*w,y=(.5f-v.y/v.w*.5f)*h;if(!Float.isFinite(x)||!Float.isFinite(y)||x< -w*4||x>w*5||y< -h*4||y>h*5)return null;return new Vector2f(x,y);}

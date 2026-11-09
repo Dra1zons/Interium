@@ -55,7 +55,10 @@
     "DeltaOutlineStateMixin",
     "DeltaShaderOutlineMixin",
     "InteriumTitleMixin",
-    "DeltaButtonActionAccess"
+    "DeltaButtonActionAccess",
+    "DeltaInputAccess",
+    "InteriumAttackHooks",
+    "InteriumEntityBudget"
   ],
   "injectors": {
     "defaultRequire": 1

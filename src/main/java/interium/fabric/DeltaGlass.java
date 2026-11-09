@@ -45,7 +45,7 @@ public final class DeltaGlass {
  private static float cachedRadius,cachedGlow,cachedRim,cachedBend,cachedPulse;
  private static int cachedAccent,quality;
  public static boolean hasResources(){return scene!=null;}
- private static boolean likelyVisible(){var c=MinecraftClient.getInstance();var s=c.currentScreen;return s instanceof InteriumTitleScreen||s instanceof DeltaScreen||s instanceof ThemeEditorScreen||s instanceof PerformanceScreen||s instanceof DeltaVisualScreen||s instanceof DeltaHudEditor||(c.world!=null&&DeltaVisualSettings.hud&&!c.options.hudHidden);}
+ private static boolean likelyVisible(){var c=MinecraftClient.getInstance();var s=c.currentScreen;return s instanceof InteriumTitleScreen||s instanceof DeltaScreen||s instanceof ThemeEditorScreen||s instanceof PerformanceScreen||s instanceof PrismSettingsScreen||s instanceof DeltaHudEditor||(c.world!=null&&DeltaVisualSettings.hud&&!c.options.hudHidden);}
 
  public static boolean enabled(){return DeltaVisualSettings.flag("glass.enabled",true);}
  public static void beginFrame(){

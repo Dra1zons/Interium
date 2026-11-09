@@ -82,7 +82,9 @@ public final class InteriumClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
         ClientTickEvents.END_CLIENT_TICK.register(c->{
             var key=InputUtil.fromTranslationKey(autoExpHold.getBoundKeyTranslationKey());autoExpUseKey=key.getCategory()==InputUtil.Type.MOUSE?-100+key.getCode():key.getCode();
+            EntityRenderBudget.update();DiscordPresence.tick();
             var target=aura.target();
+            DeltaWorldVisuals.target(target);
             if(target==null&&triggerBotEnabled&&c.crosshairTarget instanceof EntityHitResult hit&&hit.getEntity() instanceof net.minecraft.entity.LivingEntity living)target=living;
             DeltaEnvironment.tick(c,target);
         });
@@ -123,18 +125,27 @@ public final class InteriumClient implements ClientModInitializer {
     public static boolean useSafeWalk(PlayerEntity player){ return safeWalkEnabled && !freeCameraActive() && MinecraftClient.getInstance().player==player; }
     private void tick(MinecraftClient client) {
         if(!fontProbeShown && client.currentScreen instanceof net.minecraft.client.gui.screen.TitleScreen){
-            if(Boolean.getBoolean("interium.visualSmoke")){if(++titleSmokeTicks<40)return;InteriumTitleScreen.smoke();DeltaPerformance.smoke();smokeProfile=DeltaVisualSettings.string("perf.quality","1");}
+            if(Boolean.getBoolean("interium.visualSmoke")){if(++titleSmokeTicks<40)return;InteriumTitleScreen.smoke();InteriumLogo.smoke();DeltaPerformance.smoke();smokeProfile=DeltaVisualSettings.string("perf.quality","1");}
             if(Boolean.getBoolean("interium.fontProbe")){fontProbeShown=true;client.setScreen(new FontProbe());}
             else if(Boolean.getBoolean("interium.deltaProbe")){fontProbeShown=true;client.setScreen(new DeltaScreen());}
         }
         if(Boolean.getBoolean("interium.visualSmoke") && fontProbeShown){
             visualSmokeTicks++;
+            if(visualSmokeTicks==30)client.setScreen(new ModuleSettingsScreen(client.currentScreen,0,3));
+            if(visualSmokeTicks==55)PrismSettingsScreen.smoke();
+            if(visualSmokeTicks==60)client.setScreen(new ModuleSettingsScreen(client.currentScreen,1,2));
+            if(visualSmokeTicks==78)PrismSettingsScreen.smoke();
+            if(visualSmokeTicks==80)client.setScreen(new ModuleSettingsScreen(client.currentScreen,1,4));
+            if(visualSmokeTicks==98)PrismSettingsScreen.smoke();
+            if(visualSmokeTicks==100)client.setScreen(new DeltaVisualScreen(client.currentScreen,0));
+            if(visualSmokeTicks==118)PrismSettingsScreen.smoke();
+            if(visualSmokeTicks==130)client.setScreen(new DeltaScreen());
             if(visualSmokeTicks==120){DeltaHandsShader.smoke();DeltaWorldVisuals.smoke();System.out.println("INTERIUM_GUI_SMOKE_RENDERED");}
             if(visualSmokeTicks==140)client.setScreen(new ThemeEditorScreen(client.currentScreen));
             if(visualSmokeTicks==175){ThemeEditorScreen.smoke();System.out.println("INTERIUM_THEME_EDITOR_SMOKE_RENDERED");}
             if(visualSmokeTicks==205)DeltaVisualSettings.set("perf.quality",0);
             if(visualSmokeTicks==225){if(DeltaGlass.hasResources())throw new AssertionError("Lite retained GPU blur buffers");System.out.println("INTERIUM_LITE_ZERO_BLUR_RESOURCES_PASSED");DeltaVisualSettings.set("perf.quality",2);}
-            if(visualSmokeTicks==250){if(!DeltaGlass.hasResources())throw new AssertionError("Quality glass was not restored");DeltaVisualSettings.set("perf.quality",smokeProfile);System.out.println("INTERIUM_GUI_SMOKE_PASSED (custom title, navigation, GUI, themes, Lite/Quality; no world test or FPS benchmark)");client.scheduleStop();}
+            if(visualSmokeTicks==250){if(!DeltaGlass.hasResources())throw new AssertionError("Quality glass was not restored");DeltaVisualSettings.set("perf.quality",smokeProfile);System.out.println("INTERIUM_GUI_SMOKE_PASSED (custom title, logo, Aura/Speed/Flight slider screens, themes, Lite/Quality; no world/server/FPS/RPC integration test)");client.scheduleStop();}
         }
         while (openMenu.wasPressed()) if (client.currentScreen == null) client.setScreen(new DeltaScreen());
         // Delta's death features must run while the death screen is open.

@@ -19,7 +19,7 @@ public final class InteriumTitleScreen extends TitleScreen {
  private int vanillaActions;
  public InteriumTitleScreen(){super(false);}
  @Override protected void init(){
-  super.init();
+  super.init();InteriumLogo.window(client);
   List<ButtonWidget> original=new ArrayList<>();for(var child:children())if(child instanceof ButtonWidget button)original.add(button);
   vanillaActions=original.size();clearChildren();entries.clear();hover.clear();
   try{font=DeltaFont.load(client,"onest_regular");}catch(IOException ex){throw new IllegalStateException("Interium title font",ex);}
@@ -45,7 +45,8 @@ public final class InteriumTitleScreen extends TitleScreen {
   if(DeltaPerformance.quality()>0)for(int i=4;i>=1;i--){float size=40+i*35;DeltaRect.draw(c,width*.2f-size/2,height*.22f-size/2,size,size,size/2,0,(Math.round((3+i)*pulse)<<24)|ac);}
   float titleSize=height<300?26:42,titleY=Math.max(22,panelY-(height<300?24:46));
   String brand="INTERIUM";float tw=font.width(brand,titleSize);
-  font.draw(c,brand,(width-tw)/2,font.centeredY(brand,titleSize,titleY),titleSize,DeltaHud.fade(0xfff5f1ff,opening));
+  InteriumLogo.draw(c,(int)((width-tw-36)/2),(int)titleY-15,30,opening);
+  font.draw(c,brand,(width-tw+36)/2,font.centeredY(brand,titleSize,titleY),titleSize,DeltaHud.fade(0xfff5f1ff,opening));
   DeltaGlass.draw(c,panelX,panelY,panelW,panelH,12,DeltaHud.fade(DeltaVisualSettings.background(),opening));
   for(Entry e:entries){ButtonWidget b=e.button;boolean hot=b.active&&(b.isFocused()||(mx>=b.getX()&&mx<b.getX()+b.getWidth()&&my>=b.getY()&&my<b.getY()+b.getHeight()));float v=hover.getOrDefault(b,0f);v+=((hot?1:0)-v)*ease;hover.put(b,v);
    DeltaRect.draw(c,b.getX(),b.getY(),b.getWidth(),b.getHeight(),6,0,DeltaHud.fade((Math.round(14+v*22)<<24)|ac,opening));
