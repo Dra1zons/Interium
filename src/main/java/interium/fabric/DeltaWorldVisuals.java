@@ -38,6 +38,9 @@ public final class DeltaWorldVisuals {
  private static final RenderStateDataKey<Frame> KEY=RenderStateDataKey.create(()->"interium:delta_world");
  private static final Frame EMPTY=new Frame(List.of(),List.of(),List.of(),List.of());
  private static volatile Frame latest=EMPTY;
+ // Some renderer integrations leave WorldRenderContext.worldState() unset.
+ // Keep only the immutable geometry from the latest extraction, never query entities while drawing.
+ private static volatile Frame extracted=EMPTY;
  private static DeltaFont font;
  private static Object worldIdentity;
  private static final Deque<SoundMark> sounds=new ConcurrentLinkedDeque<>();
@@ -68,10 +71,10 @@ public final class DeltaWorldVisuals {
   ClientTickEvents.END_CLIENT_TICK.register(DeltaWorldVisuals::tick);
   WorldRenderEvents.END_EXTRACTION.register(DeltaWorldVisuals::extract);
   WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DeltaWorldVisuals::draw);
-  WorldRenderEvents.END_MAIN.register(ctx->latest=ctx.worldState().getDataOrDefault(KEY,EMPTY));
+  WorldRenderEvents.END_MAIN.register(ctx->latest=frame(ctx));
  }
  private static void tick(MinecraftClient mc){
-  if(worldIdentity!=mc.world){worldIdentity=mc.world;latest=EMPTY;blocks.clear();sounds.clear();wardenChests.clear();chestTimers.clear();scanCursor=0;ticks=0;}
+  if(worldIdentity!=mc.world){worldIdentity=mc.world;latest=EMPTY;extracted=EMPTY;blocks.clear();sounds.clear();wardenChests.clear();chestTimers.clear();scanCursor=0;ticks=0;}
   if(mc.world==null||mc.player==null)return;ticks++;
   if(DeltaVisualSettings.blockEsp)scan(mc);else blocks.clear();
   if(DeltaVisualSettings.wardenEsp&&ticks%20==0)scanChests(mc);
@@ -102,7 +105,9 @@ public final class DeltaWorldVisuals {
   }
  }
  private static void extract(WorldExtractionContext ctx){
-  var mc=MinecraftClient.getInstance();if(mc.player==null||mc.world==null||mc.options.hudHidden){ctx.worldState().setData(KEY,EMPTY);return;}
+  var mc=MinecraftClient.getInstance();extracted=EMPTY;latest=EMPTY;
+  var state=ctx.worldState();if(state!=null)state.setData(KEY,EMPTY);
+  if(mc.player==null||mc.world==null||ctx.world()==null||ctx.camera()==null||mc.options.hudHidden)return;
   float tick=ctx.tickCounter().getTickProgress(false);Vec3d cam=ctx.camera().getCameraPos();Matrix4f vp=new Matrix4f(ctx.cullProjectionMatrix()).mul(ctx.viewMatrix());
   int sw=mc.getWindow().getScaledWidth(),sh=mc.getWindow().getScaledHeight();List<Segment> lines=new ArrayList<>();List<Quad> quads=new ArrayList<>();List<ScreenBox> boxes=new ArrayList<>();List<Label> labels=new ArrayList<>();
   for(Entity e:ctx.world().getEntities()){
@@ -135,7 +140,8 @@ public final class DeltaWorldVisuals {
   if(DeltaVisualSettings.wardenEsp){long now=System.currentTimeMillis();for(Entity e:ctx.world().getEntities())if(e instanceof ArmorStandEntity){var matcher=java.util.regex.Pattern.compile("(\\d{2}):(\\d{2})").matcher(e.getName().getString());if(matcher.find())for(BlockPos p:wardenChests)if(e.getBlockX()==p.getX()&&e.getBlockZ()==p.getZ()){long duration=(Integer.parseInt(matcher.group(1))*60L+Integer.parseInt(matcher.group(2)))*1000;long old=chestTimers.getOrDefault(p,0L);if(Math.abs((old-now)-duration)>5000)chestTimers.put(p,now+duration);}}
    chestTimers.entrySet().removeIf(e->e.getValue()<=now);for(BlockPos p:wardenChests){Long end=chestTimers.get(p);if(end==null)outline(lines,new Box(p),cam,0xffff6464);else{Vector2f at=project(vp,cam,p.toCenterPos().add(0,.5,0),sw,sh);if(at!=null){long sec=(end-now)/1000;labels.add(new Label(at.x,at.y,String.format(Locale.ROOT,"%02d:%02d",sec/60,sec%60),0xb00b0b0d,List.of(Items.CHEST.getDefaultStack()),List.of(),ItemStack.EMPTY));}}}
   }
-  ctx.worldState().setData(KEY,new Frame(List.copyOf(lines),List.copyOf(quads),List.copyOf(boxes),List.copyOf(labels)));
+  Frame result=new Frame(List.copyOf(lines),List.copyOf(quads),List.copyOf(boxes),List.copyOf(labels));
+  extracted=result;latest=result;if(state!=null)state.setData(KEY,result);
  }
  private static boolean tracked(Entity e){return e instanceof PlayerEntity?DeltaVisualSettings.flag("esp.players",true):e instanceof HostileEntity?DeltaVisualSettings.flag("esp.mobs",false):e instanceof AnimalEntity||e instanceof VillagerEntity?DeltaVisualSettings.flag("esp.animals",false):e instanceof ItemEntity||e instanceof net.minecraft.entity.projectile.ArrowEntity?DeltaVisualSettings.flag("esp.items",false):false;}
  private static Vector2f project(Matrix4f vp,Vec3d camera,Vec3d p,int w,int h){Vector4f v=new Vector4f((float)(p.x-camera.x),(float)(p.y-camera.y),(float)(p.z-camera.z),1);vp.transform(v);if(v.w<=.001f||v.z< -v.w||v.z>v.w)return null;float x=(v.x/v.w*.5f+.5f)*w,y=(.5f-v.y/v.w*.5f)*h;if(!Float.isFinite(x)||!Float.isFinite(y)||x< -w*4||x>w*5||y< -h*4||y>h*5)return null;return new Vector2f(x,y);}
@@ -143,7 +149,10 @@ public final class DeltaWorldVisuals {
  private static void outline(List<Segment> out,Box b,Vec3d cam,int color){Vec3d[] p=corners(b,cam);for(int i=0;i<8;i++)for(int bit:new int[]{1,2,4})if((i&bit)==0)out.add(new Segment(p[i],p[i|bit],color));}
  private static Vec3d[] corners(Box b,Vec3d cam){Vec3d[] p=new Vec3d[8];for(int i=0;i<8;i++)p[i]=new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ).subtract(cam);return p;}
  private static void filled(List<Quad> out,Box b,Vec3d cam,int c){Vec3d[] p=corners(b,cam);for(int[] f:new int[][]{{0,1,3,2},{4,6,7,5},{0,4,5,1},{2,3,7,6},{0,2,6,4},{1,5,7,3}})out.add(new Quad(p[f[0]],p[f[1]],p[f[2]],p[f[3]],c,false));}
- private static void draw(WorldRenderContext ctx){Frame f=ctx.worldState().getData(KEY);if(f==null)return;var entry=ctx.matrices().peek();if(!f.lines.isEmpty()){var v=ctx.consumers().getBuffer(LINES);for(Segment s:f.lines){vertex(v,entry,s.a,s.color);vertex(v,entry,s.b,s.color);}}if(!f.quads.isEmpty()){for(Quad q:f.quads){var v=ctx.consumers().getBuffer(q.depth?HATS:QUADS);vertex(v,entry,q.a,q.color);vertex(v,entry,q.b,q.color);vertex(v,entry,q.c,q.color);vertex(v,entry,q.d,q.color);}}}
+ private static Frame frame(WorldRenderContext ctx){
+  var state=ctx.worldState();return state==null?extracted:state.getDataOrDefault(KEY,extracted);
+ }
+ private static void draw(WorldRenderContext ctx){Frame f=frame(ctx);if(f==EMPTY||ctx.matrices()==null||ctx.consumers()==null)return;var entry=ctx.matrices().peek();if(!f.lines.isEmpty()){var v=ctx.consumers().getBuffer(LINES);for(Segment s:f.lines){vertex(v,entry,s.a,s.color);vertex(v,entry,s.b,s.color);}}if(!f.quads.isEmpty()){for(Quad q:f.quads){var v=ctx.consumers().getBuffer(q.depth?HATS:QUADS);vertex(v,entry,q.a,q.color);vertex(v,entry,q.b,q.color);vertex(v,entry,q.c,q.color);vertex(v,entry,q.d,q.color);}}}
  private static void vertex(VertexConsumer v,net.minecraft.client.util.math.MatrixStack.Entry m,Vec3d p,int color){v.vertex(m,(float)p.x,(float)p.y,(float)p.z).color(color);}
  public static void hud(MinecraftClient mc,DrawContext c){
   if(mc.player==null||mc.world==null||mc.options.hudHidden)return;Frame frame=latest;
