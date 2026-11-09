@@ -30,11 +30,15 @@
     "DeltaHudMixin",
     "DeltaHurtCameraMixin",
     "DeltaViewModelMixin",
-    "DeltaAspectMixin",
-    "DeltaSwingMixin",
-    "DeltaInvisibleStateMixin",
-    "DeltaInvisibleRendererMixin",
-    "DeltaShulkerMixin"
+    "DeltaItemStateMixin",
+    "DeltaItemPhysicMixin",
+    "DeltaOverlayRemovalMixin",
+    "DeltaCameraRemovalMixin",
+    "DeltaWeatherRemovalMixin",
+    "DeltaFogRemovalMixin",
+    "DeltaDarknessRemovalMixin",
+    "DeltaGlowRemovalMixin",
+    "DeltaHeartRemovalMixin"
   ],
   "injectors": {
     "defaultRequire": 1
