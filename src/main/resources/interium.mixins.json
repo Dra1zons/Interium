@@ -1,0 +1,32 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "interium.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MinecraftClientAccess",
+    "MinecraftClientMixin",
+    "PlayerEntityMixin",
+    "TextFieldWidgetAccess",
+    "KeyboardMixin",
+    "MouseMixin",
+    "ClientPlayerNoSlowMixin",
+    "LightmapFullBrightMixin",
+    "ClientVelocityMixin",
+    "FriendAttackMixin",
+    "JumpDelayMixin",
+    "EntityPushMixin",
+    "GuiMoveMixin",
+    "InputAccess",
+    "FreeCameraInputMixin",
+    "FreeCameraLookMixin",
+    "FreeCameraActionsMixin",
+    "FreeCameraInteractionMixin",
+    "FreeCameraDropMixin",
+    "TntCountdownMixin",
+    "TntCountdownStateMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

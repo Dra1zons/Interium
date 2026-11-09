@@ -1,0 +1,11 @@
+Behavioral reference: Time To Live 0.3, author Schauweg.
+User-supplied Fabric_1.16.5_TimeToLive_0.3.jar (Minecraft 1.16.5).
+Project: https://github.com/Schauweg/TimeToLive
+Official distribution: https://www.curseforge.com/minecraft/mc-mods/time-to-live
+The official distribution page identifies MIT; the supplied JAR contains no license file.
+No Time To Live classes, assets, bundled config library, or decompiled source are copied/distributed here.
+Interium uses an independent implementation of the observable TNT countdown behavior on 1.21.11.
+Reference checked: entity-relative billboard; height +0.5; scale .025; white text,
+faint see-through pass/background and normal depth pass; seconds/ticks setting;
+20 tick/s conversion, truncated tenths, >1200 min and >72000 hours.
+Reference also handles ignited creepers; Interium's requested TNT module intentionally does not.

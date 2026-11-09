@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "interium",
+  "version": "${version}",
+  "name": "Interium",
+  "description": "Interium 1.21.11 early development build with bundled ViaFabricPlus.",
+  "license": "GPL-3.0-only",
+  "environment": "client",
+  "entrypoints": { "client": ["interium.fabric.InteriumClient"] },
+  "mixins": ["interium.mixins.json"],
+  "jars": [{ "file": "META-INF/jars/ViaFabricPlus-4.4.15.jar" }],
+  "depends": { "fabricloader": ">=0.19.5", "fabric-api": "*", "minecraft": "1.21.11", "java": ">=21" }
+}
