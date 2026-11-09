@@ -43,7 +43,9 @@
     "DeltaFogRemovalMixin",
     "DeltaDarknessRemovalMixin",
     "DeltaGlowRemovalMixin",
-    "DeltaHeartRemovalMixin"
+    "DeltaHeartRemovalMixin",
+    "DeltaRenderLayerAccess",
+    "DeltaSoundMixin"
   ],
   "injectors": {
     "defaultRequire": 1

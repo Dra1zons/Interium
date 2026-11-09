@@ -68,6 +68,7 @@ public final class InteriumClient implements ClientModInitializer {
     @Override public void onInitializeClient() {
         InteriumState.load();
         DeltaVisualSettings.load();
+        DeltaWorldVisuals.init();
         KeyBinding.Category controls = KeyBinding.Category.create(Identifier.of("interium", "controls"));
         openMenu = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.interium.open", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_SHIFT, controls));
@@ -222,6 +223,7 @@ public final class InteriumClient implements ClientModInitializer {
         MinecraftClient client=MinecraftClient.getInstance();
         DeltaVisuals.auraTargetPresent=aura.target()!=null;
         DeltaPointers.render(client,matrices);
+        DeltaWorldVisuals.hud(client,matrices);
         if(!(client.currentScreen instanceof DeltaHudEditor))DeltaHud.INSTANCE.render(client,matrices,aura.target(),false);
         bedFeatures.render(client,matrices);
         renderPlayerRadar(client,matrices);
