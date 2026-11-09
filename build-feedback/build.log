@@ -7,258 +7,44 @@ Fabric Loom: 1.19.4
 Cannot remap modifiers because it does not exist in any of the targets [] or their parents.
 
 > Task :compileJava
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:82: error: reference to Math is ambiguous
-  for(SoundMark e:sounds)if(Math.abs(e.pos.x-pos.x)<=.5&&Math.abs(e.pos.y-pos.y)<=.5&&Math.abs(e.pos.z-pos.z)<=.5)return;
-                            ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:82: error: reference to Math is ambiguous
-  for(SoundMark e:sounds)if(Math.abs(e.pos.x-pos.x)<=.5&&Math.abs(e.pos.y-pos.y)<=.5&&Math.abs(e.pos.z-pos.z)<=.5)return;
-                                                         ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:82: error: reference to Math is ambiguous
-  for(SoundMark e:sounds)if(Math.abs(e.pos.x-pos.x)<=.5&&Math.abs(e.pos.y-pos.y)<=.5&&Math.abs(e.pos.z-pos.z)<=.5)return;
-                                                                                      ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:109: error: reference to Math is ambiguous
-    int mode=Math.round(DeltaVisualSettings.number("box.mode",0,0,3)),color=DeltaVisualSettings.flag("box.static",false)?0xff000000|(int)DeltaVisualSettings.number("box.color",0xffffff,0,0xffffff):DeltaVisualSettings.primary();
-             ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:110: error: reference to Math is ambiguous
-    if(mode==2)filled(quads,box,cam,(color&0xffffff)|0x50000000);else if(mode<2){float[] b=bounds(vp,cam,box,sw,sh);if(b!=null){float fraction=e instanceof LivingEntity l?Math.max(0,Math.min(1,l.getHealth()/Math.max(1,l.getMaxHealth()))):0;boxes.add(new ScreenBox(b[0],b[1],b[2]-b[0],b[3]-b[1],color,mode==1,DeltaVisualSettings.flag("box.health",false)&&e instanceof LivingEntity,fraction));}}
-                                                                                                                                                                           ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:110: error: reference to Math is ambiguous
-    if(mode==2)filled(quads,box,cam,(color&0xffffff)|0x50000000);else if(mode<2){float[] b=bounds(vp,cam,box,sw,sh);if(b!=null){float fraction=e instanceof LivingEntity l?Math.max(0,Math.min(1,l.getHealth()/Math.max(1,l.getMaxHealth()))):0;boxes.add(new ScreenBox(b[0],b[1],b[2]-b[0],b[3]-b[1],color,mode==1,DeltaVisualSettings.flag("box.health",false)&&e instanceof LivingEntity,fraction));}}
-                                                                                                                                                                                                               ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:110: error: reference to Math is ambiguous
-    if(mode==2)filled(quads,box,cam,(color&0xffffff)|0x50000000);else if(mode<2){float[] b=bounds(vp,cam,box,sw,sh);if(b!=null){float fraction=e instanceof LivingEntity l?Math.max(0,Math.min(1,l.getHealth()/Math.max(1,l.getMaxHealth()))):0;boxes.add(new ScreenBox(b[0],b[1],b[2]-b[0],b[3]-b[1],color,mode==1,DeltaVisualSettings.flag("box.health",false)&&e instanceof LivingEntity,fraction));}}
-                                                                                                                                                                                      ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:113: error: reference to Math is ambiguous
-    Vec3d start=new Vec3d(0,0,27).rotateX((float)-Math.toRadians(ctx.camera().getPitch())).rotateY((float)-Math.toRadians(ctx.camera().getYaw()));lines.add(new Segment(start,pos.add(0,e.getHeight()/2,0).subtract(cam),friend?0xff00ff00:0xffffffff));
-                                                                                                           ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:113: error: reference to Math is ambiguous
-    Vec3d start=new Vec3d(0,0,27).rotateX((float)-Math.toRadians(ctx.camera().getPitch())).rotateY((float)-Math.toRadians(ctx.camera().getYaw()));lines.add(new Segment(start,pos.add(0,e.getHeight()/2,0).subtract(cam),friend?0xff00ff00:0xffffffff));
-                                                  ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:124: error: reference to Math is ambiguous
-  if(DeltaVisualSettings.wardenEsp){long now=System.currentTimeMillis();for(Entity e:ctx.world().getEntities())if(e instanceof ArmorStandEntity){var matcher=java.util.regex.Pattern.compile("(\\d{2}):(\\d{2})").matcher(e.getName().getString());if(matcher.find())for(BlockPos p:wardenChests)if(e.getBlockX()==p.getX()&&e.getBlockZ()==p.getZ()){long duration=(Integer.parseInt(matcher.group(1))*60L+Integer.parseInt(matcher.group(2)))*1000;long old=chestTimers.getOrDefault(p,0L);if(Math.abs((old-now)-duration)>5000)chestTimers.put(p,now+duration);}}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:131: error: reference to Math is ambiguous
- private static float[] bounds(Matrix4f vp,Vec3d cam,Box b,int w,int h){float minX=Float.POSITIVE_INFINITY,minY=minX,maxX=Float.NEGATIVE_INFINITY,maxY=maxX;int n=0;for(int i=0;i<8;i++){Vector2f p=project(vp,cam,new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ),w,h);if(p!=null){n++;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}}return n>=2&&maxX>minX&&maxY>minY?new float[]{minX,minY,maxX,maxY}:null;}
-                                                                                                                                                                                                                                                                                                                             ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:131: error: reference to Math is ambiguous
- private static float[] bounds(Matrix4f vp,Vec3d cam,Box b,int w,int h){float minX=Float.POSITIVE_INFINITY,minY=minX,maxX=Float.NEGATIVE_INFINITY,maxY=maxX;int n=0;for(int i=0;i<8;i++){Vector2f p=project(vp,cam,new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ),w,h);if(p!=null){n++;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}}return n>=2&&maxX>minX&&maxY>minY?new float[]{minX,minY,maxX,maxY}:null;}
-                                                                                                                                                                                                                                                                                                                                                     ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:131: error: reference to Math is ambiguous
- private static float[] bounds(Matrix4f vp,Vec3d cam,Box b,int w,int h){float minX=Float.POSITIVE_INFINITY,minY=minX,maxX=Float.NEGATIVE_INFINITY,maxY=maxX;int n=0;for(int i=0;i<8;i++){Vector2f p=project(vp,cam,new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ),w,h);if(p!=null){n++;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}}return n>=2&&maxX>minX&&maxY>minY?new float[]{minX,minY,maxX,maxY}:null;}
-                                                                                                                                                                                                                                                                                                                                                                             ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:131: error: reference to Math is ambiguous
- private static float[] bounds(Matrix4f vp,Vec3d cam,Box b,int w,int h){float minX=Float.POSITIVE_INFINITY,minY=minX,maxX=Float.NEGATIVE_INFINITY,maxY=maxX;int n=0;for(int i=0;i<8;i++){Vector2f p=project(vp,cam,new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ),w,h);if(p!=null){n++;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}}return n>=2&&maxX>minX&&maxY>minY?new float[]{minX,minY,maxX,maxY}:null;}
-                                                                                                                                                                                                                                                                                                                                                                                                     ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:140: error: reference to Math is ambiguous
-  for(ScreenBox b:frame.boxes){float l=b.x,t=b.y,r=l+b.w,d=t+b.h;if(b.corners){float n=Math.min(b.w,b.h)*.25f;for(float[] line:new float[][]{{l,t,n,0},{l,t,0,n},{r,t,-n,0},{r,t,0,n},{l,d,n,0},{l,d,0,-n},{r,d,-n,0},{r,d,0,-n}})edge(c,line[0],line[1],line[2],line[3],b.color);}else{edge(c,l,t,b.w,0,b.color);edge(c,l,d,b.w,0,b.color);edge(c,l,t,0,b.h,b.color);edge(c,r,t,0,b.h,b.color);}if(b.health){quad(c,l-3.5f,t-.5f,1.75f,b.h+1,0xff000000);int color=0xff000000|Math.round(255*(1-b.fraction))<<16|Math.round(255*b.fraction)<<8;quad(c,l-3,t+b.h*(1-b.fraction),.75f,b.h*b.fraction,color);}}
-                                                                                       ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:140: error: reference to Math is ambiguous
-  for(ScreenBox b:frame.boxes){float l=b.x,t=b.y,r=l+b.w,d=t+b.h;if(b.corners){float n=Math.min(b.w,b.h)*.25f;for(float[] line:new float[][]{{l,t,n,0},{l,t,0,n},{r,t,-n,0},{r,t,0,n},{l,d,n,0},{l,d,0,-n},{r,d,-n,0},{r,d,0,-n}})edge(c,line[0],line[1],line[2],line[3],b.color);}else{edge(c,l,t,b.w,0,b.color);edge(c,l,d,b.w,0,b.color);edge(c,l,t,0,b.h,b.color);edge(c,r,t,0,b.h,b.color);}if(b.health){quad(c,l-3.5f,t-.5f,1.75f,b.h+1,0xff000000);int color=0xff000000|Math.round(255*(1-b.fraction))<<16|Math.round(255*b.fraction)<<8;quad(c,l-3,t+b.h*(1-b.fraction),.75f,b.h*b.fraction,color);}}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:140: error: reference to Math is ambiguous
-  for(ScreenBox b:frame.boxes){float l=b.x,t=b.y,r=l+b.w,d=t+b.h;if(b.corners){float n=Math.min(b.w,b.h)*.25f;for(float[] line:new float[][]{{l,t,n,0},{l,t,0,n},{r,t,-n,0},{r,t,0,n},{l,d,n,0},{l,d,0,-n},{r,d,-n,0},{r,d,0,-n}})edge(c,line[0],line[1],line[2],line[3],b.color);}else{edge(c,l,t,b.w,0,b.color);edge(c,l,d,b.w,0,b.color);edge(c,l,t,0,b.h,b.color);edge(c,r,t,0,b.h,b.color);}if(b.health){quad(c,l-3.5f,t-.5f,1.75f,b.h+1,0xff000000);int color=0xff000000|Math.round(255*(1-b.fraction))<<16|Math.round(255*b.fraction)<<8;quad(c,l-3,t+b.h*(1-b.fraction),.75f,b.h*b.fraction,color);}}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:143: error: reference to Math is ambiguous
- private static void edge(DrawContext c,float x,float y,float dx,float dy,int color){float l=Math.min(x,x+dx),t=Math.min(y,y+dy),w=dx==0?.75f:Math.abs(dx),h=dy==0?.75f:Math.abs(dy);if(dx==0)l-=.375f;if(dy==0)t-=.375f;quad(c,l-.5f,t-.5f,w+1,h+1,0xff000000);quad(c,l,t,w,h,color);}
-                                                                                             ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:143: error: reference to Math is ambiguous
- private static void edge(DrawContext c,float x,float y,float dx,float dy,int color){float l=Math.min(x,x+dx),t=Math.min(y,y+dy),w=dx==0?.75f:Math.abs(dx),h=dy==0?.75f:Math.abs(dy);if(dx==0)l-=.375f;if(dy==0)t-=.375f;quad(c,l-.5f,t-.5f,w+1,h+1,0xff000000);quad(c,l,t,w,h,color);}
-                                                                                                                ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:143: error: reference to Math is ambiguous
- private static void edge(DrawContext c,float x,float y,float dx,float dy,int color){float l=Math.min(x,x+dx),t=Math.min(y,y+dy),w=dx==0?.75f:Math.abs(dx),h=dy==0?.75f:Math.abs(dy);if(dx==0)l-=.375f;if(dy==0)t-=.375f;quad(c,l-.5f,t-.5f,w+1,h+1,0xff000000);quad(c,l,t,w,h,color);}
-                                                                                                                                              ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:143: error: reference to Math is ambiguous
- private static void edge(DrawContext c,float x,float y,float dx,float dy,int color){float l=Math.min(x,x+dx),t=Math.min(y,y+dy),w=dx==0?.75f:Math.abs(dx),h=dy==0?.75f:Math.abs(dy);if(dx==0)l-=.375f;if(dy==0)t-=.375f;quad(c,l-.5f,t-.5f,w+1,h+1,0xff000000);quad(c,l,t,w,h,color);}
-                                                                                                                                                                        ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
-21 errors
 
-> Task :compileJava FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794244475872.json
+> Task :processResources
+> Task :classes
+> Task :jar
+> Task :processIncludeJars
+> Task :sourcesJar
+> Task :compileTestJava
+> Task :processTestResources NO-SOURCE
+> Task :testClasses
+
+> Task :coreChecks
+PASS: 27 checks
+PASS: 65 camera numerical checks (not game tests)
+PASS: 108 TNT-format checks (not rendering tests)
+
+> Task :test
+> Task :validateAccessWidener NO-SOURCE
+
+> Task :visualTargetChecks
+Visual target check: renderFirstPersonItem swingArm calls=3
+Visual target check: item renderer bytecode captured
+
+> Task :check
+> Task :remapSourcesJar
+> Task :remapJar
+> Task :assemble
+> Task :build
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794244635530.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/Interium/Interium/build/reports/problems/problems-report.html
 
-FAILURE: Build failed with an exception.
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
 
-* What went wrong:
-Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
-> Compilation failed; see the compiler output below.
-  /home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:82: error: reference to Math is ambiguous
-    for(SoundMark e:sounds)if(Math.abs(e.pos.x-pos.x)<=.5&&Math.abs(e.pos.y-pos.y)<=.5&&Math.abs(e.pos.z-pos.z)<=.5)return;
-                              ^
-    both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-  21 errors
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
 
-* Try:
-> Check your code and dependencies to fix the compilation error(s)
-> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+For more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-* Exception is:
-org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.lambda$doExecute$1(DefaultTaskNodeExecutor.java:367)
-	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.doExecute(DefaultTaskNodeExecutor.java:365)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeTrackingTaskIdentity(DefaultTaskNodeExecutor.java:332)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeFinalizingProperties(DefaultTaskNodeExecutor.java:318)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeSkippingWithNoActions(DefaultTaskNodeExecutor.java:289)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeSkippingOnlyIf(DefaultTaskNodeExecutor.java:272)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeCatchingFailures(DefaultTaskNodeExecutor.java:228)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeWithFallbackOperationId(DefaultTaskNodeExecutor.java:197)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeWithLifecycle(DefaultTaskNodeExecutor.java:171)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.access$000(DefaultTaskNodeExecutor.java:67)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor$1.run(DefaultTaskNodeExecutor.java:136)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.execute(DefaultTaskNodeExecutor.java:133)
-	at org.gradle.execution.plan.LocalTaskNode.execute(LocalTaskNode.java:229)
-	at org.gradle.execution.DefaultBuildWorkExecutor.lambda$executePlan$0(DefaultBuildWorkExecutor.java:153)
-	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.lambda$execute$0(DefaultPlanExecutor.java:476)
-	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
-	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:475)
-	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:392)
-	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:65)
-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:82: error: reference to Math is ambiguous
-  for(SoundMark e:sounds)if(Math.abs(e.pos.x-pos.x)<=.5&&Math.abs(e.pos.y-pos.y)<=.5&&Math.abs(e.pos.z-pos.z)<=.5)return;
-                            ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:82: error: reference to Math is ambiguous
-  for(SoundMark e:sounds)if(Math.abs(e.pos.x-pos.x)<=.5&&Math.abs(e.pos.y-pos.y)<=.5&&Math.abs(e.pos.z-pos.z)<=.5)return;
-                                                         ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:82: error: reference to Math is ambiguous
-  for(SoundMark e:sounds)if(Math.abs(e.pos.x-pos.x)<=.5&&Math.abs(e.pos.y-pos.y)<=.5&&Math.abs(e.pos.z-pos.z)<=.5)return;
-                                                                                      ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:109: error: reference to Math is ambiguous
-    int mode=Math.round(DeltaVisualSettings.number("box.mode",0,0,3)),color=DeltaVisualSettings.flag("box.static",false)?0xff000000|(int)DeltaVisualSettings.number("box.color",0xffffff,0,0xffffff):DeltaVisualSettings.primary();
-             ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:110: error: reference to Math is ambiguous
-    if(mode==2)filled(quads,box,cam,(color&0xffffff)|0x50000000);else if(mode<2){float[] b=bounds(vp,cam,box,sw,sh);if(b!=null){float fraction=e instanceof LivingEntity l?Math.max(0,Math.min(1,l.getHealth()/Math.max(1,l.getMaxHealth()))):0;boxes.add(new ScreenBox(b[0],b[1],b[2]-b[0],b[3]-b[1],color,mode==1,DeltaVisualSettings.flag("box.health",false)&&e instanceof LivingEntity,fraction));}}
-                                                                                                                                                                           ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:110: error: reference to Math is ambiguous
-    if(mode==2)filled(quads,box,cam,(color&0xffffff)|0x50000000);else if(mode<2){float[] b=bounds(vp,cam,box,sw,sh);if(b!=null){float fraction=e instanceof LivingEntity l?Math.max(0,Math.min(1,l.getHealth()/Math.max(1,l.getMaxHealth()))):0;boxes.add(new ScreenBox(b[0],b[1],b[2]-b[0],b[3]-b[1],color,mode==1,DeltaVisualSettings.flag("box.health",false)&&e instanceof LivingEntity,fraction));}}
-                                                                                                                                                                                                               ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:110: error: reference to Math is ambiguous
-    if(mode==2)filled(quads,box,cam,(color&0xffffff)|0x50000000);else if(mode<2){float[] b=bounds(vp,cam,box,sw,sh);if(b!=null){float fraction=e instanceof LivingEntity l?Math.max(0,Math.min(1,l.getHealth()/Math.max(1,l.getMaxHealth()))):0;boxes.add(new ScreenBox(b[0],b[1],b[2]-b[0],b[3]-b[1],color,mode==1,DeltaVisualSettings.flag("box.health",false)&&e instanceof LivingEntity,fraction));}}
-                                                                                                                                                                                      ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:113: error: reference to Math is ambiguous
-    Vec3d start=new Vec3d(0,0,27).rotateX((float)-Math.toRadians(ctx.camera().getPitch())).rotateY((float)-Math.toRadians(ctx.camera().getYaw()));lines.add(new Segment(start,pos.add(0,e.getHeight()/2,0).subtract(cam),friend?0xff00ff00:0xffffffff));
-                                                                                                           ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:113: error: reference to Math is ambiguous
-    Vec3d start=new Vec3d(0,0,27).rotateX((float)-Math.toRadians(ctx.camera().getPitch())).rotateY((float)-Math.toRadians(ctx.camera().getYaw()));lines.add(new Segment(start,pos.add(0,e.getHeight()/2,0).subtract(cam),friend?0xff00ff00:0xffffffff));
-                                                  ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:124: error: reference to Math is ambiguous
-  if(DeltaVisualSettings.wardenEsp){long now=System.currentTimeMillis();for(Entity e:ctx.world().getEntities())if(e instanceof ArmorStandEntity){var matcher=java.util.regex.Pattern.compile("(\\d{2}):(\\d{2})").matcher(e.getName().getString());if(matcher.find())for(BlockPos p:wardenChests)if(e.getBlockX()==p.getX()&&e.getBlockZ()==p.getZ()){long duration=(Integer.parseInt(matcher.group(1))*60L+Integer.parseInt(matcher.group(2)))*1000;long old=chestTimers.getOrDefault(p,0L);if(Math.abs((old-now)-duration)>5000)chestTimers.put(p,now+duration);}}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:131: error: reference to Math is ambiguous
- private static float[] bounds(Matrix4f vp,Vec3d cam,Box b,int w,int h){float minX=Float.POSITIVE_INFINITY,minY=minX,maxX=Float.NEGATIVE_INFINITY,maxY=maxX;int n=0;for(int i=0;i<8;i++){Vector2f p=project(vp,cam,new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ),w,h);if(p!=null){n++;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}}return n>=2&&maxX>minX&&maxY>minY?new float[]{minX,minY,maxX,maxY}:null;}
-                                                                                                                                                                                                                                                                                                                             ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:131: error: reference to Math is ambiguous
- private static float[] bounds(Matrix4f vp,Vec3d cam,Box b,int w,int h){float minX=Float.POSITIVE_INFINITY,minY=minX,maxX=Float.NEGATIVE_INFINITY,maxY=maxX;int n=0;for(int i=0;i<8;i++){Vector2f p=project(vp,cam,new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ),w,h);if(p!=null){n++;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}}return n>=2&&maxX>minX&&maxY>minY?new float[]{minX,minY,maxX,maxY}:null;}
-                                                                                                                                                                                                                                                                                                                                                     ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:131: error: reference to Math is ambiguous
- private static float[] bounds(Matrix4f vp,Vec3d cam,Box b,int w,int h){float minX=Float.POSITIVE_INFINITY,minY=minX,maxX=Float.NEGATIVE_INFINITY,maxY=maxX;int n=0;for(int i=0;i<8;i++){Vector2f p=project(vp,cam,new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ),w,h);if(p!=null){n++;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}}return n>=2&&maxX>minX&&maxY>minY?new float[]{minX,minY,maxX,maxY}:null;}
-                                                                                                                                                                                                                                                                                                                                                                             ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:131: error: reference to Math is ambiguous
- private static float[] bounds(Matrix4f vp,Vec3d cam,Box b,int w,int h){float minX=Float.POSITIVE_INFINITY,minY=minX,maxX=Float.NEGATIVE_INFINITY,maxY=maxX;int n=0;for(int i=0;i<8;i++){Vector2f p=project(vp,cam,new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ),w,h);if(p!=null){n++;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}}return n>=2&&maxX>minX&&maxY>minY?new float[]{minX,minY,maxX,maxY}:null;}
-                                                                                                                                                                                                                                                                                                                                                                                                     ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:140: error: reference to Math is ambiguous
-  for(ScreenBox b:frame.boxes){float l=b.x,t=b.y,r=l+b.w,d=t+b.h;if(b.corners){float n=Math.min(b.w,b.h)*.25f;for(float[] line:new float[][]{{l,t,n,0},{l,t,0,n},{r,t,-n,0},{r,t,0,n},{l,d,n,0},{l,d,0,-n},{r,d,-n,0},{r,d,0,-n}})edge(c,line[0],line[1],line[2],line[3],b.color);}else{edge(c,l,t,b.w,0,b.color);edge(c,l,d,b.w,0,b.color);edge(c,l,t,0,b.h,b.color);edge(c,r,t,0,b.h,b.color);}if(b.health){quad(c,l-3.5f,t-.5f,1.75f,b.h+1,0xff000000);int color=0xff000000|Math.round(255*(1-b.fraction))<<16|Math.round(255*b.fraction)<<8;quad(c,l-3,t+b.h*(1-b.fraction),.75f,b.h*b.fraction,color);}}
-                                                                                       ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:140: error: reference to Math is ambiguous
-  for(ScreenBox b:frame.boxes){float l=b.x,t=b.y,r=l+b.w,d=t+b.h;if(b.corners){float n=Math.min(b.w,b.h)*.25f;for(float[] line:new float[][]{{l,t,n,0},{l,t,0,n},{r,t,-n,0},{r,t,0,n},{l,d,n,0},{l,d,0,-n},{r,d,-n,0},{r,d,0,-n}})edge(c,line[0],line[1],line[2],line[3],b.color);}else{edge(c,l,t,b.w,0,b.color);edge(c,l,d,b.w,0,b.color);edge(c,l,t,0,b.h,b.color);edge(c,r,t,0,b.h,b.color);}if(b.health){quad(c,l-3.5f,t-.5f,1.75f,b.h+1,0xff000000);int color=0xff000000|Math.round(255*(1-b.fraction))<<16|Math.round(255*b.fraction)<<8;quad(c,l-3,t+b.h*(1-b.fraction),.75f,b.h*b.fraction,color);}}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:140: error: reference to Math is ambiguous
-  for(ScreenBox b:frame.boxes){float l=b.x,t=b.y,r=l+b.w,d=t+b.h;if(b.corners){float n=Math.min(b.w,b.h)*.25f;for(float[] line:new float[][]{{l,t,n,0},{l,t,0,n},{r,t,-n,0},{r,t,0,n},{l,d,n,0},{l,d,0,-n},{r,d,-n,0},{r,d,0,-n}})edge(c,line[0],line[1],line[2],line[3],b.color);}else{edge(c,l,t,b.w,0,b.color);edge(c,l,d,b.w,0,b.color);edge(c,l,t,0,b.h,b.color);edge(c,r,t,0,b.h,b.color);}if(b.health){quad(c,l-3.5f,t-.5f,1.75f,b.h+1,0xff000000);int color=0xff000000|Math.round(255*(1-b.fraction))<<16|Math.round(255*b.fraction)<<8;quad(c,l-3,t+b.h*(1-b.fraction),.75f,b.h*b.fraction,color);}}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:143: error: reference to Math is ambiguous
- private static void edge(DrawContext c,float x,float y,float dx,float dy,int color){float l=Math.min(x,x+dx),t=Math.min(y,y+dy),w=dx==0?.75f:Math.abs(dx),h=dy==0?.75f:Math.abs(dy);if(dx==0)l-=.375f;if(dy==0)t-=.375f;quad(c,l-.5f,t-.5f,w+1,h+1,0xff000000);quad(c,l,t,w,h,color);}
-                                                                                             ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:143: error: reference to Math is ambiguous
- private static void edge(DrawContext c,float x,float y,float dx,float dy,int color){float l=Math.min(x,x+dx),t=Math.min(y,y+dy),w=dx==0?.75f:Math.abs(dx),h=dy==0?.75f:Math.abs(dy);if(dx==0)l-=.375f;if(dy==0)t-=.375f;quad(c,l-.5f,t-.5f,w+1,h+1,0xff000000);quad(c,l,t,w,h,color);}
-                                                                                                                ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:143: error: reference to Math is ambiguous
- private static void edge(DrawContext c,float x,float y,float dx,float dy,int color){float l=Math.min(x,x+dx),t=Math.min(y,y+dy),w=dx==0?.75f:Math.abs(dx),h=dy==0?.75f:Math.abs(dy);if(dx==0)l-=.375f;if(dy==0)t-=.375f;quad(c,l-.5f,t-.5f,w+1,h+1,0xff000000);quad(c,l,t,w,h,color);}
-                                                                                                                                              ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaWorldVisuals.java:143: error: reference to Math is ambiguous
- private static void edge(DrawContext c,float x,float y,float dx,float dy,int color){float l=Math.min(x,x+dx),t=Math.min(y,y+dy),w=dx==0?.75f:Math.abs(dx),h=dy==0?.75f:Math.abs(dy);if(dx==0)l-=.375f;if(dy==0)t-=.375f;quad(c,l-.5f,t-.5f,w+1,h+1,0xff000000);quad(c,l,t,w,h,color);}
-                                                                                                                                                                        ^
-  both class org.joml.Math in org.joml and class java.lang.Math in java.lang match
-Note: Some input files use or override a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-21 errors
-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:88)
-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:49)
-	at org.gradle.api.internal.tasks.compile.daemon.CompilerWorkAction.execute(CompilerWorkAction.java:52)
-	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
-	at org.gradle.workers.internal.AbstractClassLoaderWorker$1.create(AbstractClassLoaderWorker.java:54)
-	at org.gradle.workers.internal.AbstractClassLoaderWorker$1.create(AbstractClassLoaderWorker.java:48)
-	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:103)
-	at org.gradle.workers.internal.AbstractClassLoaderWorker.executeInClassLoader(AbstractClassLoaderWorker.java:48)
-	at org.gradle.workers.internal.FlatClassLoaderWorker.run(FlatClassLoaderWorker.java:32)
-	at org.gradle.workers.internal.FlatClassLoaderWorker.run(FlatClassLoaderWorker.java:22)
-	at org.gradle.workers.internal.WorkerDaemonServer.run(WorkerDaemonServer.java:109)
-	at org.gradle.workers.internal.WorkerDaemonServer.run(WorkerDaemonServer.java:78)
-	at org.gradle.process.internal.worker.request.WorkerAction.lambda$run$1(WorkerAction.java:150)
-	at org.gradle.process.internal.worker.child.WorkerLogEventListener.withWorkerLoggingProtocol(WorkerLogEventListener.java:41)
-	at org.gradle.process.internal.worker.request.WorkerAction.lambda$run$0(WorkerAction.java:150)
-	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
-	at org.gradle.process.internal.worker.request.WorkerAction.run(WorkerAction.java:142)
-	at org.gradle.internal.dispatch.MethodInvocation.invokeOn(MethodInvocation.java:77)
-	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:28)
-	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:19)
-	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:183)
-	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:165)
-	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:414)
-	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:65)
-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-
-
-BUILD FAILED in 24s
-1 actionable task: 1 executed
+BUILD SUCCESSFUL in 39s
+11 actionable tasks: 11 executed
