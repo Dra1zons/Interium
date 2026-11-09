@@ -1,0 +1,5 @@
+PASS: 27 checks
+PASS: 65 camera numerical checks (not game tests)
+PASS: 108 TNT-format checks (not rendering tests)
+Parsed 53 Java files; syntax errors=0; no type resolution or Mixin validation.
+Static Mixin registration and HUD-list removal checks: PASS. No real Minecraft compile or render test.
