@@ -42,7 +42,7 @@ final class Aura {
             default -> Comparator.comparingDouble(e -> angle(player.getRotationVec(1f),e.getBoundingBox().getCenter().subtract(eye)));
         };
         double search=InteriumState.auraRange+InteriumState.auraExtra;
-        if(player.age-scanAge>=(int)n("scanTicks",2,1,10)||nearby.isEmpty()){nearby=c.world.getOtherEntities(player,player.getBoundingBox().expand(search+1));scanAge=player.age;}
+        if(player.age<scanAge||player.age-scanAge>=(int)n("scanTicks",2,1,10)||nearby.isEmpty()){nearby=c.world.getOtherEntities(player,player.getBoundingBox().expand(search+1));scanAge=player.age;}
         List<LivingEntity> candidates=nearby.stream()
             .filter(LivingEntity.class::isInstance).map(LivingEntity.class::cast)
             .filter(e -> e!=player && e.isAlive() && !e.isSpectator() && !player.isTeammate(e))
@@ -89,7 +89,7 @@ final class Aura {
         try{
             boolean legacy=f("legacy",false);long now=System.nanoTime();if(now<nextHit||!legacy&&player.getAttackCooldownProgress(.5f)<n("cooldown",.93f,.8f,1))return;
             if(falling && InteriumState.auraOnlyCrits)player.setSprinting(false);
-            c.interactionManager.attackEntity(player,target);player.swingHand(Hand.MAIN_HAND);nextHit=now+(legacy?interium.core.ModuleMath.interval(n("cpsMin",8,1,20),n("cpsMax",12,1,20),java.util.concurrent.ThreadLocalRandom.current().nextDouble()):50_000_000L);
+            player.networkHandler.sendPacket(new net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.LookAndOnGround(player.getYaw(),player.getPitch(),player.isOnGround(),player.horizontalCollision));c.interactionManager.attackEntity(player,target);player.swingHand(Hand.MAIN_HAND);nextHit=now+(legacy?interium.core.ModuleMath.interval(n("cpsMin",8,1,20),n("cpsMax",12,1,20),java.util.concurrent.ThreadLocalRandom.current().nextDouble()):50_000_000L);
         }finally{if(attackSlot!=oldSlot)player.getInventory().setSelectedSlot(oldSlot);}
     }
     private boolean validType(LivingEntity e) {
