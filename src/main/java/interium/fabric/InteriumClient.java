@@ -127,7 +127,7 @@ public final class InteriumClient implements ClientModInitializer {
         }
         if(Boolean.getBoolean("interium.visualSmoke") && fontProbeShown){
             visualSmokeTicks++;
-            if(visualSmokeTicks==120)System.out.println("INTERIUM_GUI_SMOKE_RENDERED");
+            if(visualSmokeTicks==120){DeltaHandsShader.smoke();System.out.println("INTERIUM_GUI_SMOKE_RENDERED");}
             if(visualSmokeTicks==200){System.out.println("INTERIUM_GUI_SMOKE_PASSED (title and Delta GUI only; no world test)");client.scheduleStop();}
         }
         while (openMenu.wasPressed()) if (client.currentScreen == null) client.setScreen(new DeltaScreen());
