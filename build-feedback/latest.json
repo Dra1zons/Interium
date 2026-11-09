@@ -1,7 +1,7 @@
 {
-  "status": "cancelled",
-  "run_id": 42665402853,
-  "sha": "5c28ca100f1b9b755dce89a1de3b78ed75c63aff",
-  "url": "https://github.com/Dra1zons/Interium/actions/runs/42665402853",
-  "release": null
+  "status": "success",
+  "run_id": 42665576852,
+  "sha": "cbf9956f51e4718620745cd7635ffd243d76278f",
+  "url": "https://github.com/Dra1zons/Interium/actions/runs/42665576852",
+  "release": "https://github.com/Dra1zons/Interium/releases/tag/experimental-42665576852"
 }
