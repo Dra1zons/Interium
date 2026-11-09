@@ -149,6 +149,19 @@ public final class DeltaWorldVisuals {
  private static void outline(List<Segment> out,Box b,Vec3d cam,int color){Vec3d[] p=corners(b,cam);for(int i=0;i<8;i++)for(int bit:new int[]{1,2,4})if((i&bit)==0)out.add(new Segment(p[i],p[i|bit],color));}
  private static Vec3d[] corners(Box b,Vec3d cam){Vec3d[] p=new Vec3d[8];for(int i=0;i<8;i++)p[i]=new Vec3d((i&1)==0?b.minX:b.maxX,(i&2)==0?b.minY:b.maxY,(i&4)==0?b.minZ:b.maxZ).subtract(cam);return p;}
  private static void filled(List<Quad> out,Box b,Vec3d cam,int c){Vec3d[] p=corners(b,cam);for(int[] f:new int[][]{{0,1,3,2},{4,6,7,5},{0,4,5,1},{2,3,7,6},{0,2,6,4},{1,5,7,3}})out.add(new Quad(p[f[0]],p[f[1]],p[f[2]],p[f[3]],c,false));}
+ /** Regression for the exact missing-state callback reported on the user's client.
+  * Runs inside the real Mixin-enabled client, not a replacement for an Iris world test. */
+ public static void smoke(){
+  if(!Boolean.getBoolean("interium.visualSmoke"))return;
+  WorldRenderContext absent=(WorldRenderContext)java.lang.reflect.Proxy.newProxyInstance(WorldRenderContext.class.getClassLoader(),new Class<?>[]{WorldRenderContext.class},(proxy,method,args)->null);
+  Frame previous=extracted;
+  try{
+   extracted=EMPTY;if(frame(absent)!=EMPTY)throw new AssertionError("Missing state must resolve to empty extraction");draw(absent);
+   Frame sample=new Frame(List.of(),List.of(),List.of(),List.of());extracted=sample;
+   if(frame(absent)!=sample)throw new AssertionError("Missing state lost extracted geometry");draw(absent);
+  }finally{extracted=previous;}
+  System.out.println("INTERIUM_NULL_WORLDSTATE_REGRESSION_PASSED (callback regression, not a modpack/world test)");
+ }
  private static Frame frame(WorldRenderContext ctx){
   var state=ctx.worldState();return state==null?extracted:state.getDataOrDefault(KEY,extracted);
  }
