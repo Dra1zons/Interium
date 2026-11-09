@@ -1,19 +1,7 @@
 package interium.fabric;
-
 import net.minecraft.client.MinecraftClient;
-
-/** Basic local-velocity flight; does not grant server permission to fly. */
 final class Flight {
-    boolean tick(MinecraftClient c){
-        var p=c.player;
-        if(!InteriumClient.flightEnabled || p==null || c.world==null || c.currentScreen!=null || !p.isAlive()
-                || p.hasVehicle() || p.isGliding() || p.getAbilities().flying) return false;
-        var input=p.input.getMovementInput();
-        double side=input.x, forward=input.y, len=Math.hypot(side,forward);
-        if(len>1){side/=len;forward/=len;}
-        double yaw=Math.toRadians(p.getYaw());
-        double vertical=(c.options.jumpKey.isPressed()?0.35:0.0)-(c.options.sneakKey.isPressed()?0.35:0.0);
-        p.setVelocity((side*Math.cos(yaw)-forward*Math.sin(yaw))*.35,vertical,(forward*Math.cos(yaw)+side*Math.sin(yaw))*.35);
-        return true;
-    }
+ static void hit(MinecraftClient c){if(!InteriumClient.flightEnabled||c.player==null||c.world==null||(int)DeltaVisualSettings.number("flight.mode",0,0,2)!=2)return;if(DeltaVisualSettings.flag("flight.hit.elytra",true)&&!c.player.isGliding())return;motion(c,DeltaVisualSettings.number("flight.xz",.35f,0,3),.022);}
+ private static void motion(MinecraftClient c,double speed,double vertical){var p=c.player;var input=p.input.getMovementInput();double side=input.x,forward=input.y,len=Math.hypot(side,forward);if(len>1){side/=len;forward/=len;}double yaw=Math.toRadians(p.getYaw());p.setVelocity((side*Math.cos(yaw)-forward*Math.sin(yaw))*speed,vertical,(forward*Math.cos(yaw)+side*Math.sin(yaw))*speed);}
+ boolean tick(MinecraftClient c){var p=c.player;if(!InteriumClient.flightEnabled||p==null||c.world==null||c.currentScreen!=null||!p.isAlive()||p.hasVehicle()||p.getAbilities().flying)return false;int mode=(int)DeltaVisualSettings.number("flight.mode",0,0,2);if(mode==2||p.isGliding())return false;double y=mode==1?-DeltaVisualSettings.number("flight.glide",.03f,0,.3f):(c.options.jumpKey.isPressed()?DeltaVisualSettings.number("flight.y",.35f,0,3):0)-(c.options.sneakKey.isPressed()?DeltaVisualSettings.number("flight.y",.35f,0,3):0);motion(c,DeltaVisualSettings.number("flight.xz",.35f,0,3),y);return true;}
 }
