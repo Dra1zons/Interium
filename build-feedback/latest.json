@@ -1,7 +1,7 @@
 {
-  "status": "failure",
-  "run_id": 42662624133,
-  "sha": "b57a5cd52b0442dab602c2daa295ee4c706b8cee",
-  "url": "https://github.com/Dra1zons/Interium/actions/runs/42662624133",
-  "release": null
+  "status": "success",
+  "run_id": 42663071435,
+  "sha": "d1f9bfe16218bd374ae51e14c7d138a32b2ef4cf",
+  "url": "https://github.com/Dra1zons/Interium/actions/runs/42663071435",
+  "release": "https://github.com/Dra1zons/Interium/releases/tag/experimental-42663071435"
 }
