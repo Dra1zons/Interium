@@ -25,3 +25,28 @@ tasks.register('coreChecks', JavaExec) {
     mainClass = 'interium.core.CoreTest'
 }
 check.dependsOn coreChecks
+
+// Diagnostic bytecode check, not a substitute for a game launch.
+tasks.register('visualTargetChecks') {
+ dependsOn compileJava
+ doLast {
+  def javaHome=javaToolchains.launcherFor { languageVersion=JavaLanguageVersion.of(21) }.get().metadata.installationPath.asFile
+  def classes=['net.minecraft.client.render.item.HeldItemRenderer','net.minecraft.client.render.entity.ItemEntityRenderer']
+  classes.each { name ->
+   def proc=new ProcessBuilder(new File(javaHome,'bin/javap').absolutePath,'-classpath',sourceSets.main.compileClasspath.asPath,'-c','-p',name).redirectErrorStream(true).start()
+   def text=proc.inputStream.text
+   if(proc.waitFor()!=0)throw new GradleException(text)
+   def path=file("build/visual-targets/"+name.tokenize('.').last()+'.txt');path.parentFile.mkdirs();path.text=text
+   if(name.endsWith('HeldItemRenderer')) {
+    def first=text.indexOf('private void renderFirstPersonItem(')
+    def end=text.indexOf('private void swingArm(',first)
+    def body=text.substring(first,end)
+    int count=body.readLines().count { it.contains('invoke')&&it.contains('Method swingArm:') }
+    println('Visual target check: renderFirstPersonItem swingArm calls='+count)
+    if(count<3)throw new GradleException('Delta swing ordinal=2 unavailable; inspect named bytecode')
+   }
+   if(name.endsWith('ItemEntityRenderer'))println('ITEM_RENDERER_BYTECODE_BEGIN\n'+text+'\nITEM_RENDERER_BYTECODE_END')
+  }
+ }
+}
+check.dependsOn visualTargetChecks

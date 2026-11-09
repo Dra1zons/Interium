@@ -29,7 +29,12 @@
     "DeltaCooldownEntryAccess",
     "DeltaHudMixin",
     "DeltaHurtCameraMixin",
-    "DeltaViewModelMixin"
+    "DeltaViewModelMixin",
+    "DeltaAspectMixin",
+    "DeltaSwingMixin",
+    "DeltaInvisibleStateMixin",
+    "DeltaInvisibleRendererMixin",
+    "DeltaShulkerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -11,7 +11,7 @@ import java.util.Locale;
 /** Translucent five-column module screen. Uses Minecraft's normal screen blur, not a refraction shader. */
 public final class InteriumScreen extends Screen {
     private static final String[] CATEGORIES={"Combat","Movement","Visuals","Player","World"};
-    static final String[][] MODULES={{"Auto Clicker","Anti Fireball","TriggerBot","Aura","Velocity","Auto Totem","Crystal Breaker","Crystal Place","No Friend Damage","Auto EXP"},{"Sprint","No Slow Down","Speed","Target Strafe","Flight","Gui Move","No Jump Delay","No Push","Free Camera"},{"TNT Timer","Bed Radar","Player Radar","Full Bright","Interface","Crosshair","View Model","Removals"},{"Middle Click","Chest Stealer","Auto Armor","Auto Respawn","Death Coords"},{"Fast Place","SafeWalk","Bed Breaker","Scaffold"}};
+    static final String[][] MODULES={{"Auto Clicker","Anti Fireball","TriggerBot","Aura","Velocity","Auto Totem","Crystal Breaker","Crystal Place","No Friend Damage","Auto EXP"},{"Sprint","No Slow Down","Speed","Target Strafe","Flight","Gui Move","No Jump Delay","No Push","Free Camera"},{"TNT Timer","Bed Radar","Player Radar","Full Bright","Interface","Crosshair","View Model","Removals","Aspect Ratio","Swing Animation","Pointers","Shulker Preview","See Invisibles"},{"Middle Click","Chest Stealer","Auto Armor","Auto Respawn","Death Coords"},{"Fast Place","SafeWalk","Bed Breaker","Scaffold"}};
     private TextFieldWidget search;
     private String searchText="";
     private int cols,left,top,colWidth,gap=6,panelHeight,expanded=-1;
@@ -33,18 +33,18 @@ public final class InteriumScreen extends Screen {
     static boolean enabled(int i,int j){return switch(i){
         case 0 -> switch(j){case 0->InteriumClient.autoClickerEnabled;case 1->InteriumClient.antiFireballEnabled;case 2->InteriumClient.triggerBotEnabled;case 3->InteriumClient.auraEnabled;case 4->InteriumClient.velocityEnabled;case 5->InteriumClient.autoTotemEnabled;case 6->InteriumClient.crystalBreakerEnabled;case 7->InteriumClient.crystalPlacerEnabled;case 8->InteriumClient.noFriendDamageEnabled;case 9->InteriumClient.autoExpEnabled;default->false;};
         case 1 -> switch(j){case 0->InteriumClient.sprintEnabled;case 1->InteriumClient.noSlowEnabled;case 2->InteriumClient.speedEnabled;case 3->InteriumClient.targetStrafeEnabled;case 4->InteriumClient.flightEnabled;case 5->InteriumClient.guiMoveEnabled;case 6->InteriumClient.noJumpDelayEnabled;case 7->InteriumClient.noPushEnabled;case 8->InteriumClient.freeCameraEnabled;default->false;};
-        case 2 -> switch(j){case 0->InteriumClient.tntTimerEnabled;case 1->InteriumClient.bedRadarEnabled;case 2->InteriumClient.playerRadarEnabled;case 3->InteriumClient.fullBrightEnabled;case 4->DeltaVisualSettings.hud;case 5->DeltaVisualSettings.crosshair;case 6->DeltaVisualSettings.viewModel;case 7->DeltaVisualSettings.removals;default->false;};
+        case 2 -> switch(j){case 0->InteriumClient.tntTimerEnabled;case 1->InteriumClient.bedRadarEnabled;case 2->InteriumClient.playerRadarEnabled;case 3->InteriumClient.fullBrightEnabled;case 4->DeltaVisualSettings.hud;case 5->DeltaVisualSettings.crosshair;case 6->DeltaVisualSettings.viewModel;case 7->DeltaVisualSettings.removals;case 8->DeltaVisualSettings.aspectRatio;case 9->DeltaVisualSettings.swingAnimation;case 10->DeltaVisualSettings.pointers;case 11->DeltaVisualSettings.shulkerPreview;case 12->DeltaVisualSettings.seeInvisibles;default->false;};
         case 3 -> switch(j){case 0->InteriumClient.middleClickEnabled;case 1->InteriumClient.chestStealerEnabled;case 2->InteriumClient.autoArmorEnabled;case 3->InteriumClient.autoRespawnEnabled;case 4->InteriumClient.deathCoordsEnabled;default->false;};
         case 4 -> switch(j){case 0->InteriumClient.fastPlaceEnabled;case 1->InteriumClient.safeWalkEnabled;case 2->InteriumClient.bedBreakerEnabled;case 3->InteriumClient.scaffoldEnabled;default->false;};default->false;};}
     static void toggle(int i,int j){switch(i){
         case 0->{switch(j){case 0->InteriumClient.autoClickerEnabled=!InteriumClient.autoClickerEnabled;case 1->InteriumClient.antiFireballEnabled=!InteriumClient.antiFireballEnabled;case 2->InteriumClient.triggerBotEnabled=!InteriumClient.triggerBotEnabled;case 3->InteriumClient.auraEnabled=!InteriumClient.auraEnabled;case 4->InteriumClient.velocityEnabled=!InteriumClient.velocityEnabled;case 5->InteriumClient.autoTotemEnabled=!InteriumClient.autoTotemEnabled;case 6->InteriumClient.crystalBreakerEnabled=!InteriumClient.crystalBreakerEnabled;case 7->InteriumClient.crystalPlacerEnabled=!InteriumClient.crystalPlacerEnabled;case 8->InteriumClient.noFriendDamageEnabled=!InteriumClient.noFriendDamageEnabled;case 9->InteriumClient.autoExpEnabled=!InteriumClient.autoExpEnabled;}}
         case 1->{switch(j){case 0->InteriumClient.sprintEnabled=!InteriumClient.sprintEnabled;case 1->InteriumClient.noSlowEnabled=!InteriumClient.noSlowEnabled;case 2->InteriumClient.speedEnabled=!InteriumClient.speedEnabled;case 3->InteriumClient.targetStrafeEnabled=!InteriumClient.targetStrafeEnabled;case 4->InteriumClient.flightEnabled=!InteriumClient.flightEnabled;case 5->InteriumClient.guiMoveEnabled=!InteriumClient.guiMoveEnabled;case 6->InteriumClient.noJumpDelayEnabled=!InteriumClient.noJumpDelayEnabled;case 7->InteriumClient.noPushEnabled=!InteriumClient.noPushEnabled;case 8->InteriumClient.toggleFreeCamera();}}
-        case 2->{switch(j){case 0->InteriumClient.tntTimerEnabled=!InteriumClient.tntTimerEnabled;case 1->InteriumClient.bedRadarEnabled=!InteriumClient.bedRadarEnabled;case 2->InteriumClient.playerRadarEnabled=!InteriumClient.playerRadarEnabled;case 3->InteriumClient.fullBrightEnabled=!InteriumClient.fullBrightEnabled;case 4->DeltaVisualSettings.hud=!DeltaVisualSettings.hud;case 5->DeltaVisualSettings.crosshair=!DeltaVisualSettings.crosshair;case 6->DeltaVisualSettings.viewModel=!DeltaVisualSettings.viewModel;case 7->DeltaVisualSettings.removals=!DeltaVisualSettings.removals;}}
+        case 2->{switch(j){case 0->InteriumClient.tntTimerEnabled=!InteriumClient.tntTimerEnabled;case 1->InteriumClient.bedRadarEnabled=!InteriumClient.bedRadarEnabled;case 2->InteriumClient.playerRadarEnabled=!InteriumClient.playerRadarEnabled;case 3->InteriumClient.fullBrightEnabled=!InteriumClient.fullBrightEnabled;case 4->DeltaVisualSettings.hud=!DeltaVisualSettings.hud;case 5->DeltaVisualSettings.crosshair=!DeltaVisualSettings.crosshair;case 6->DeltaVisualSettings.viewModel=!DeltaVisualSettings.viewModel;case 7->DeltaVisualSettings.removals=!DeltaVisualSettings.removals;case 8->DeltaVisualSettings.aspectRatio=!DeltaVisualSettings.aspectRatio;case 9->DeltaVisualSettings.swingAnimation=!DeltaVisualSettings.swingAnimation;case 10->DeltaVisualSettings.pointers=!DeltaVisualSettings.pointers;case 11->DeltaVisualSettings.shulkerPreview=!DeltaVisualSettings.shulkerPreview;case 12->DeltaVisualSettings.seeInvisibles=!DeltaVisualSettings.seeInvisibles;}}
         case 3->{switch(j){case 0->InteriumClient.middleClickEnabled=!InteriumClient.middleClickEnabled;case 1->InteriumClient.chestStealerEnabled=!InteriumClient.chestStealerEnabled;case 2->InteriumClient.autoArmorEnabled=!InteriumClient.autoArmorEnabled;case 3->InteriumClient.autoRespawnEnabled=!InteriumClient.autoRespawnEnabled;case 4->InteriumClient.deathCoordsEnabled=!InteriumClient.deathCoordsEnabled;}}
         case 4->{switch(j){case 0->InteriumClient.fastPlaceEnabled=!InteriumClient.fastPlaceEnabled;case 1->InteriumClient.safeWalkEnabled=!InteriumClient.safeWalkEnabled;case 2->InteriumClient.bedBreakerEnabled=!InteriumClient.bedBreakerEnabled;case 3->InteriumClient.scaffoldEnabled=!InteriumClient.scaffoldEnabled;}}
     }DeltaHud.notifyModule(MODULES[i][j],enabled(i,j));}
     private String fit(String text,int pixels){if(textRenderer.getWidth(text)<=pixels)return text;return textRenderer.trimToWidth(text,Math.max(1,pixels-7))+"..";}
-    private int rowY(int i,int index){int offset=0;for(int j=0;j<index;j++)if(match(MODULES[i][j]))offset+=21+(expanded==i*10+j?17:0);return y(i)+25+offset;}
+    private int rowY(int i,int index){int offset=0;for(int j=0;j<index;j++)if(match(MODULES[i][j]))offset+=21+(expanded==i*100+j?17:0);return y(i)+25+offset;}
     private static void rounded(DrawContext c,int x,int y,int w,int h,int color){
         if(w<6||h<6){c.fill(x,y,x+w,y+h,color);return;}
         c.fill(x+3,y,x+w-3,y+1,color);
@@ -81,7 +81,7 @@ public final class InteriumScreen extends Screen {
                 boolean hasSettings=(i==0&&j==0)||(i==3&&j==0);
                 c.drawTextWithShadow(textRenderer,fit(name,colWidth-(hasSettings?26:19)),x+14,ry+6,0xFFF3F4FA);
                 if(hasSettings)c.drawTextWithShadow(textRenderer,"..",x+colWidth-14,ry+5,0xFFBEC2D1);
-                if(expanded==i*10+j && hasSettings && ry+35<y+panelHeight) {
+                if(expanded==i*100+j && hasSettings && ry+35<y+panelHeight) {
                     String value=i==3?(InteriumState.middleFriend?"Friend":"Pearl"):"CPS: "+InteriumState.cps;
                     c.fill(x+11,ry+22,x+12,ry+34,tint(0xC0,rgb));
                     c.drawTextWithShadow(textRenderer,fit(value,colWidth-25),x+17,ry+24,accent);
@@ -100,9 +100,9 @@ public final class InteriumScreen extends Screen {
             if(!match(MODULES[i][j]))continue;int x=x(i),ry=rowY(i,j),y=y(i);if(ry+18>y+panelHeight-3)continue;
             boolean hasSettings=(i==0&&j==0)||(i==3&&j==0);
             if(mx>=x+4&&mx<x+colWidth-4&&my>=ry&&my<ry+19) {
-                if(button==0){toggle(i,j);return true;} if(button==1&&hasSettings){int id=i*10+j;expanded=expanded==id?-1:id;return true;}
+                if(button==0){toggle(i,j);return true;} if(button==1&&hasSettings){int id=i*100+j;expanded=expanded==id?-1:id;return true;}
             }
-            if(expanded==i*10+j&&hasSettings&&mx>=x+4&&mx<x+colWidth-4&&my>=ry+20&&my<ry+36){
+            if(expanded==i*100+j&&hasSettings&&mx>=x+4&&mx<x+colWidth-4&&my>=ry+20&&my<ry+36){
                 if(i==3)InteriumState.middleFriend=!InteriumState.middleFriend;
                 else InteriumState.cps=Math.max(1,Math.min(20,InteriumState.cps+(button==1?-1:1)));
                 InteriumState.save();return true;

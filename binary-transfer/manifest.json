@@ -94,5 +94,19 @@
       "binary-transfer/b950f15e6d5acaa6.027.b64",
       "binary-transfer/b950f15e6d5acaa6.028.b64"
     ]
+  },
+  {
+    "path": "src/main/resources/assets/delta/pictures/pointer.png",
+    "sha256": "c251ac95edc41509db2a8a8fccc934e6984784fbf53b7cf3085673e642484105",
+    "parts": [
+      "binary-transfer/e5877b2593423a2c.000.b64"
+    ]
+  },
+  {
+    "path": "src/main/resources/assets/delta/pictures/minecraft/3x9.png",
+    "sha256": "99e5c45638d447a4239d80f86c5d7d89aab5536f0ea30d9d8228d10a647ebec2",
+    "parts": [
+      "binary-transfer/eb59e51c851ff682.000.b64"
+    ]
   }
 ]

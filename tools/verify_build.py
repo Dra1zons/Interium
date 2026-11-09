@@ -11,7 +11,7 @@ with zipfile.ZipFile(jar) as z:
     assert meta['depends']['minecraft']=='1.21.11'
     nested=z.read('META-INF/jars/ViaFabricPlus-4.4.15.jar')
     assert hashlib.sha256(nested).hexdigest()=='002308aba61f85ff236f9cda391e93c158a9b197674c5a1c75db2afd185f224e'
-    for n in ['interium/fabric/FreeCamera.class','interium/fabric/TntCountdownRenderer.class','interium/mixin/TntCountdownMixin.class','assets/delta/fonts/onest_regular.png','interium.mixins.json']:
+    for n in ['interium/fabric/DeltaHud.class','interium/fabric/DeltaHudEditor.class','interium/fabric/DeltaPointers.class','interium/fabric/DeltaShulkerPreview.class','assets/delta/fonts/gt_regular.png','assets/delta/fonts/icons.png','assets/delta/pictures/pointer.png','assets/delta/pictures/minecraft/3x9.png','interium/fabric/FreeCamera.class','interium/fabric/TntCountdownRenderer.class','interium/mixin/TntCountdownMixin.class','assets/delta/fonts/onest_regular.png','interium.mixins.json']:
         assert n in z.namelist(),n
     cfg=json.loads(z.read('interium.mixins.json'))
     for name in cfg.get('client',[])+cfg.get('mixins',[]):

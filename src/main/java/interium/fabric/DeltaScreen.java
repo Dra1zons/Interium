@@ -56,7 +56,7 @@ public final class DeltaScreen extends Screen {
         out.sort(Comparator.comparing(Item::name,String.CASE_INSENSITIVE_ORDER));return out;
     }
     private static boolean hasSetting(Item a){return (a.i==0&&(a.j==0||a.j==3||a.j==5||a.j==6||a.j==7))||(a.i==3&&a.j==0)||(a.i==2&&(a.j==0||a.j==3||a.j>=4))||(a.i==1&&(a.j==1||a.j==2||a.j==3||a.j==8));}
-    private float rowHeight(Item a){return ROW+(hasSetting(a)&&!(a.i==2&&a.j>=4)&&expanded==a.i*10+a.j?((a.i==0&&a.j==3)?216:(a.i==1&&a.j==2)?36:(a.i==1&&a.j==3)?72:(a.i==0&&a.j==5)?72:(a.i==0&&a.j==6)?54:(a.i==2&&a.j==3&&!InteriumState.nightVision)?36:18):0);}
+    private float rowHeight(Item a){return ROW+(hasSetting(a)&&!(a.i==2&&a.j>=4)&&expanded==a.i*100+a.j?((a.i==0&&a.j==3)?216:(a.i==1&&a.j==2)?36:(a.i==1&&a.j==3)?72:(a.i==0&&a.j==5)?72:(a.i==0&&a.j==6)?54:(a.i==2&&a.j==3&&!InteriumState.nightVision)?36:18):0);}
     private float clampedScroll(int i,List<Item> items){
         float total=0;for(Item a:items)total+=rowHeight(a)+ROW_GAP;
         scroll[i]=Math.max(Math.min(0, (PH-30)-total),Math.min(0,scroll[i]));return scroll[i];
@@ -82,7 +82,7 @@ public final class DeltaScreen extends Screen {
             case GLFW.GLFW_KEY_LEFT_CONTROL -> "LCtrl";case GLFW.GLFW_KEY_RIGHT_CONTROL -> "RCtrl";
             case GLFW.GLFW_KEY_ENTER -> "Enter";case GLFW.GLFW_KEY_BACKSPACE -> "Back";default -> "Key "+key;};
     }
-    private void setBinding(int id,int key){InteriumState.binds[id/10][id%10]=key;binding=-1;InteriumState.save();}
+    private void setBinding(int id,int key){InteriumState.binds[id/100][id%100]=key;binding=-1;InteriumState.save();}
     @Override public void renderBackground(DrawContext c,int x,int y,float delta) {} // Delta deliberately leaves the game visible.
     @Override public void render(DrawContext c,int rawX,int rawY,float delta){
         layout();float mx=rawX/scale,my=rawY/scale;
@@ -101,7 +101,7 @@ public final class DeltaScreen extends Screen {
                 if(on)rect(c,x+6,y,PW-12,h,4,0x0a859cff);
                 if(hover)rect(c,x+6,y,PW-12,h,4,0x06ffffff);
                 if(on)border(c,x+6,y,PW-12,h,4,0x05ffffff);
-                int id=item.i*10+item.j,key=InteriumState.binds[item.i][item.j];
+                int id=item.i*100+item.j,key=InteriumState.binds[item.i][item.j];
                 String name=trim(item.name,7.25f,(key!=-1||binding==id)?53:(on?76:92));
                 onest.draw(c,name,x+10,y+8-7.25f/2-.5f,7.25f,TEXT);
                 if(key!=-1||binding==id){
@@ -113,7 +113,7 @@ public final class DeltaScreen extends Screen {
                 }
                 if(hasSetting(item))label(c,onest,"...",x+PW-10-(on?18:0)-onest.width("...",10),y+8,10,DISABLED);
                 if(on){float tx=x+PW-24,ty=y+3.75f;rect(c,tx,ty,14,8.5f,3.25f,0x7d859cff);border(c,tx,ty,14,8.5f,3.25f,0x05ffffff);rect(c,tx+7,ty+1.5f,5.5f,5.5f,1.75f,TEXT);}
-                if(expanded==item.i*10+item.j&&hasSetting(item)){
+                if(expanded==item.i*100+item.j&&hasSetting(item)){
                     if(item.i==0&&item.j==3){
                         String[] values={"Дистанция: "+String.format(Locale.ROOT,"%.1f",InteriumState.auraRange),"Доп. дистанция: "+String.format(Locale.ROOT,"%.1f",InteriumState.auraExtra),"Приоритет: "+new String[]{"Прицел","Дистанция","ХП"}[InteriumState.auraPriority],"Игроки: "+onoff(InteriumState.auraPlayers),"Враждебные мобы: "+onoff(InteriumState.auraHostiles),"Животные: "+onoff(InteriumState.auraAnimals),"Только криты: "+onoff(InteriumState.auraOnlyCrits),"Адаптивные: "+onoff(InteriumState.auraAdaptive),"Не бить при использовании: "+onoff(InteriumState.auraStopUsing),"Топор против щита: "+onoff(InteriumState.auraShieldBreak),"Скорость поворота: "+(int)InteriumState.auraTurnSpeed,"Удерживать цель: "+onoff(InteriumState.auraLock)};
                         for(int n=0;n<values.length;n++)label(c,onest,trim(values[n],6.5f,PW-20),x+10,y+24+n*18,6.5f,0xffdddded);
@@ -185,11 +185,11 @@ public final class DeltaScreen extends Screen {
             for(Item item:list){float h=rowHeight(item);
                 if(inside(mx,my,x+6,y,PW-12,ROW)){
                     if(button==0){InteriumScreen.toggle(item.i,item.j);return true;}
-                    if(button==2){binding=item.i*10+item.j;return true;}
+                    if(button==2){binding=item.i*100+item.j;return true;}
                     if(button==1&&item.i==2&&item.j>=4){client.setScreen(new DeltaVisualScreen(this,item.j-4));return true;}
-                    if(button==1&&hasSetting(item)){expanded=expanded==item.i*10+item.j?-1:item.i*10+item.j;return true;}
+                    if(button==1&&hasSetting(item)){expanded=expanded==item.i*100+item.j?-1:item.i*100+item.j;return true;}
                 }
-                if(hasSetting(item)&&expanded==item.i*10+item.j&&inside(mx,my,x+6,y+ROW,PW-12,h-ROW)){
+                if(hasSetting(item)&&expanded==item.i*100+item.j&&inside(mx,my,x+6,y+ROW,PW-12,h-ROW)){
                     if(button==0||button==1){
                         if(item.i==0&&item.j==3){
                             int n=(int)((my-y-ROW)/18);int step=button==1?-1:1;

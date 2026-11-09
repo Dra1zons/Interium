@@ -220,6 +220,8 @@ public final class InteriumClient implements ClientModInitializer {
     }
     private void renderHud(DrawContext matrices,RenderTickCounter tickDelta) {
         MinecraftClient client=MinecraftClient.getInstance();
+        DeltaVisuals.auraTargetPresent=aura.target()!=null;
+        DeltaPointers.render(client,matrices);
         if(!(client.currentScreen instanceof DeltaHudEditor))DeltaHud.INSTANCE.render(client,matrices,aura.target(),false);
         bedFeatures.render(client,matrices);
         renderPlayerRadar(client,matrices);
