@@ -1,0 +1,483 @@
+
+=== com.mojang.blaze3d.systems.RenderSystem ===
+Compiled from "RenderSystem.java"
+public class com.mojang.blaze3d.systems.RenderSystem {
+  static final org.slf4j.Logger LOGGER;
+  public static final int MINIMUM_ATLAS_TEXTURE_SIZE;
+  public static final int PROJECTION_MATRIX_UBO_SIZE;
+  private static java.lang.Thread renderThread;
+  private static com.mojang.blaze3d.systems.GpuDevice DEVICE;
+  private static double lastDrawTime;
+  private static final com.mojang.blaze3d.systems.RenderSystem$ShapeIndexBuffer sharedSequential;
+  private static final com.mojang.blaze3d.systems.RenderSystem$ShapeIndexBuffer sharedSequentialQuad;
+  private static final com.mojang.blaze3d.systems.RenderSystem$ShapeIndexBuffer sharedSequentialLines;
+  private static com.mojang.blaze3d.systems.ProjectionType projectionType;
+  private static com.mojang.blaze3d.systems.ProjectionType savedProjectionType;
+  private static final org.joml.Matrix4fStack modelViewStack;
+  private static com.mojang.blaze3d.buffers.GpuBufferSlice shaderFog;
+  private static com.mojang.blaze3d.buffers.GpuBufferSlice shaderLightDirections;
+  private static com.mojang.blaze3d.buffers.GpuBufferSlice projectionMatrixBuffer;
+  private static com.mojang.blaze3d.buffers.GpuBufferSlice savedProjectionMatrixBuffer;
+  private static java.lang.String apiDescription;
+  private static final java.util.concurrent.atomic.AtomicLong pollEventsWaitStart;
+  private static final java.util.concurrent.atomic.AtomicBoolean pollingEvents;
+  private static final net.minecraft.util.collection.ArrayListDeque<com.mojang.blaze3d.systems.RenderSystem$Task> PENDING_FENCES;
+  public static com.mojang.blaze3d.textures.GpuTextureView outputColorTextureOverride;
+  public static com.mojang.blaze3d.textures.GpuTextureView outputDepthTextureOverride;
+  private static com.mojang.blaze3d.buffers.GpuBuffer globalSettingsUniform;
+  private static net.minecraft.client.gl.DynamicUniforms dynamicUniforms;
+  private static final net.minecraft.client.gl.ScissorState scissorStateForRenderTypeDraws;
+  private static net.minecraft.client.gl.SamplerCache samplerCache;
+  public com.mojang.blaze3d.systems.RenderSystem();
+  public static net.minecraft.client.gl.SamplerCache getSamplerCache();
+  public static void initRenderThread();
+  public static boolean isOnRenderThread();
+  public static void assertOnRenderThread();
+  private static java.lang.IllegalStateException constructThreadException();
+  private static void pollEvents();
+  public static boolean isFrozenAtPollEvents();
+  public static void flipFrame(net.minecraft.client.util.Window, net.minecraft.client.util.tracy.TracyFrameCapturer);
+  public static void limitDisplayFPS(int);
+  public static void setShaderFog(com.mojang.blaze3d.buffers.GpuBufferSlice);
+  public static com.mojang.blaze3d.buffers.GpuBufferSlice getShaderFog();
+  public static void setShaderLights(com.mojang.blaze3d.buffers.GpuBufferSlice);
+  public static com.mojang.blaze3d.buffers.GpuBufferSlice getShaderLights();
+  public static void enableScissorForRenderTypeDraws(int, int, int, int);
+  public static void disableScissorForRenderTypeDraws();
+  public static net.minecraft.client.gl.ScissorState getScissorStateForRenderTypeDraws();
+  public static java.lang.String getBackendDescription();
+  public static java.lang.String getApiDescription();
+  public static net.minecraft.util.TimeSupplier$Nanoseconds initBackendSystem();
+  public static void initRenderer(long, int, boolean, net.minecraft.client.gl.ShaderSourceGetter, boolean);
+  public static void setErrorCallback(org.lwjgl.glfw.GLFWErrorCallbackI);
+  public static void setupDefaultState();
+  public static void setProjectionMatrix(com.mojang.blaze3d.buffers.GpuBufferSlice, com.mojang.blaze3d.systems.ProjectionType);
+  public static void backupProjectionMatrix();
+  public static void restoreProjectionMatrix();
+  public static com.mojang.blaze3d.buffers.GpuBufferSlice getProjectionMatrixBuffer();
+  public static org.joml.Matrix4f getModelViewMatrix();
+  public static org.joml.Matrix4fStack getModelViewStack();
+  public static com.mojang.blaze3d.systems.RenderSystem$ShapeIndexBuffer getSequentialBuffer(com.mojang.blaze3d.vertex.VertexFormat$DrawMode);
+  public static void setGlobalSettingsUniform(com.mojang.blaze3d.buffers.GpuBuffer);
+  public static com.mojang.blaze3d.buffers.GpuBuffer getGlobalSettingsUniform();
+  public static com.mojang.blaze3d.systems.ProjectionType getProjectionType();
+  public static void queueFencedTask(java.lang.Runnable);
+  public static void executePendingTasks();
+  public static com.mojang.blaze3d.systems.GpuDevice getDevice();
+  public static com.mojang.blaze3d.systems.GpuDevice tryGetDevice();
+  public static net.minecraft.client.gl.DynamicUniforms getDynamicUniforms();
+  public static void bindDefaultUniforms(com.mojang.blaze3d.systems.RenderPass);
+  private static void lambda$static$1(it.unimi.dsi.fastutil.ints.IntConsumer, int);
+  private static void lambda$static$0(it.unimi.dsi.fastutil.ints.IntConsumer, int);
+  static {};
+}
+
+=== com.mojang.blaze3d.systems.CommandEncoder ===
+Compiled from "CommandEncoder.java"
+public interface com.mojang.blaze3d.systems.CommandEncoder {
+  public abstract com.mojang.blaze3d.systems.RenderPass createRenderPass(java.util.function.Supplier<java.lang.String>, com.mojang.blaze3d.textures.GpuTextureView, java.util.OptionalInt);
+  public abstract com.mojang.blaze3d.systems.RenderPass createRenderPass(java.util.function.Supplier<java.lang.String>, com.mojang.blaze3d.textures.GpuTextureView, java.util.OptionalInt, com.mojang.blaze3d.textures.GpuTextureView, java.util.OptionalDouble);
+  public abstract void clearColorTexture(com.mojang.blaze3d.textures.GpuTexture, int);
+  public abstract void clearColorAndDepthTextures(com.mojang.blaze3d.textures.GpuTexture, int, com.mojang.blaze3d.textures.GpuTexture, double);
+  public abstract void clearColorAndDepthTextures(com.mojang.blaze3d.textures.GpuTexture, int, com.mojang.blaze3d.textures.GpuTexture, double, int, int, int, int);
+  public abstract void clearDepthTexture(com.mojang.blaze3d.textures.GpuTexture, double);
+  public abstract void writeToBuffer(com.mojang.blaze3d.buffers.GpuBufferSlice, java.nio.ByteBuffer);
+  public abstract com.mojang.blaze3d.buffers.GpuBuffer$MappedView mapBuffer(com.mojang.blaze3d.buffers.GpuBuffer, boolean, boolean);
+  public abstract com.mojang.blaze3d.buffers.GpuBuffer$MappedView mapBuffer(com.mojang.blaze3d.buffers.GpuBufferSlice, boolean, boolean);
+  public abstract void copyToBuffer(com.mojang.blaze3d.buffers.GpuBufferSlice, com.mojang.blaze3d.buffers.GpuBufferSlice);
+  public abstract void writeToTexture(com.mojang.blaze3d.textures.GpuTexture, net.minecraft.client.texture.NativeImage);
+  public abstract void writeToTexture(com.mojang.blaze3d.textures.GpuTexture, net.minecraft.client.texture.NativeImage, int, int, int, int, int, int, int, int);
+  public abstract void writeToTexture(com.mojang.blaze3d.textures.GpuTexture, java.nio.ByteBuffer, net.minecraft.client.texture.NativeImage$Format, int, int, int, int, int, int);
+  public abstract void copyTextureToBuffer(com.mojang.blaze3d.textures.GpuTexture, com.mojang.blaze3d.buffers.GpuBuffer, long, java.lang.Runnable, int);
+  public abstract void copyTextureToBuffer(com.mojang.blaze3d.textures.GpuTexture, com.mojang.blaze3d.buffers.GpuBuffer, long, java.lang.Runnable, int, int, int, int, int);
+  public abstract void copyTextureToTexture(com.mojang.blaze3d.textures.GpuTexture, com.mojang.blaze3d.textures.GpuTexture, int, int, int, int, int, int, int);
+  public abstract void presentTexture(com.mojang.blaze3d.textures.GpuTextureView);
+  public abstract com.mojang.blaze3d.buffers.GpuFence createFence();
+  public abstract com.mojang.blaze3d.systems.GpuQuery timerQueryBegin();
+  public abstract void timerQueryEnd(com.mojang.blaze3d.systems.GpuQuery);
+}
+
+=== com.mojang.blaze3d.systems.RenderPass ===
+Compiled from "RenderPass.java"
+public interface com.mojang.blaze3d.systems.RenderPass extends java.lang.AutoCloseable {
+  public abstract void pushDebugGroup(java.util.function.Supplier<java.lang.String>);
+  public abstract void popDebugGroup();
+  public abstract void setPipeline(com.mojang.blaze3d.pipeline.RenderPipeline);
+  public abstract void bindTexture(java.lang.String, com.mojang.blaze3d.textures.GpuTextureView, net.minecraft.client.gl.GpuSampler);
+  public abstract void setUniform(java.lang.String, com.mojang.blaze3d.buffers.GpuBuffer);
+  public abstract void setUniform(java.lang.String, com.mojang.blaze3d.buffers.GpuBufferSlice);
+  public abstract void enableScissor(int, int, int, int);
+  public abstract void disableScissor();
+  public abstract void setVertexBuffer(int, com.mojang.blaze3d.buffers.GpuBuffer);
+  public abstract void setIndexBuffer(com.mojang.blaze3d.buffers.GpuBuffer, com.mojang.blaze3d.vertex.VertexFormat$IndexType);
+  public abstract void drawIndexed(int, int, int, int);
+  public abstract <T> void drawMultipleIndexed(java.util.Collection<com.mojang.blaze3d.systems.RenderPass$RenderObject<T>>, com.mojang.blaze3d.buffers.GpuBuffer, com.mojang.blaze3d.vertex.VertexFormat$IndexType, java.util.Collection<java.lang.String>, T);
+  public abstract void draw(int, int);
+  public abstract void close();
+}
+
+=== com.mojang.blaze3d.systems.GpuDevice ===
+Compiled from "GpuDevice.java"
+public interface com.mojang.blaze3d.systems.GpuDevice {
+  public abstract com.mojang.blaze3d.systems.CommandEncoder createCommandEncoder();
+  public abstract net.minecraft.client.gl.GpuSampler createSampler(com.mojang.blaze3d.textures.AddressMode, com.mojang.blaze3d.textures.AddressMode, com.mojang.blaze3d.textures.FilterMode, com.mojang.blaze3d.textures.FilterMode, int, java.util.OptionalDouble);
+  public abstract com.mojang.blaze3d.textures.GpuTexture createTexture(java.util.function.Supplier<java.lang.String>, int, com.mojang.blaze3d.textures.TextureFormat, int, int, int, int);
+  public abstract com.mojang.blaze3d.textures.GpuTexture createTexture(java.lang.String, int, com.mojang.blaze3d.textures.TextureFormat, int, int, int, int);
+  public abstract com.mojang.blaze3d.textures.GpuTextureView createTextureView(com.mojang.blaze3d.textures.GpuTexture);
+  public abstract com.mojang.blaze3d.textures.GpuTextureView createTextureView(com.mojang.blaze3d.textures.GpuTexture, int, int);
+  public abstract com.mojang.blaze3d.buffers.GpuBuffer createBuffer(java.util.function.Supplier<java.lang.String>, int, long);
+  public abstract com.mojang.blaze3d.buffers.GpuBuffer createBuffer(java.util.function.Supplier<java.lang.String>, int, java.nio.ByteBuffer);
+  public abstract java.lang.String getImplementationInformation();
+  public abstract java.util.List<java.lang.String> getLastDebugMessages();
+  public abstract boolean isDebuggingEnabled();
+  public abstract java.lang.String getVendor();
+  public abstract java.lang.String getBackendName();
+  public abstract java.lang.String getVersion();
+  public abstract java.lang.String getRenderer();
+  public abstract int getMaxTextureSize();
+  public abstract int getUniformOffsetAlignment();
+  public default com.mojang.blaze3d.pipeline.CompiledRenderPipeline precompilePipeline(com.mojang.blaze3d.pipeline.RenderPipeline);
+  public abstract com.mojang.blaze3d.pipeline.CompiledRenderPipeline precompilePipeline(com.mojang.blaze3d.pipeline.RenderPipeline, net.minecraft.client.gl.ShaderSourceGetter);
+  public abstract void clearPipelineCache();
+  public abstract java.util.List<java.lang.String> getEnabledExtensions();
+  public abstract int getMaxSupportedAnisotropy();
+  public abstract void close();
+}
+
+=== com.mojang.blaze3d.buffers.GpuBuffer ===
+Compiled from "GpuBuffer.java"
+public abstract class com.mojang.blaze3d.buffers.GpuBuffer implements java.lang.AutoCloseable {
+  public static final int USAGE_MAP_READ;
+  public static final int USAGE_MAP_WRITE;
+  public static final int USAGE_HINT_CLIENT_STORAGE;
+  public static final int USAGE_COPY_DST;
+  public static final int USAGE_COPY_SRC;
+  public static final int USAGE_VERTEX;
+  public static final int USAGE_INDEX;
+  public static final int USAGE_UNIFORM;
+  public static final int USAGE_UNIFORM_TEXEL_BUFFER;
+  private final int usage;
+  private final long size;
+  public com.mojang.blaze3d.buffers.GpuBuffer(int, long);
+  public long size();
+  public int usage();
+  public abstract boolean isClosed();
+  public abstract void close();
+  public com.mojang.blaze3d.buffers.GpuBufferSlice slice(long, long);
+  public com.mojang.blaze3d.buffers.GpuBufferSlice slice();
+}
+
+=== com.mojang.blaze3d.textures.GpuTexture ===
+Compiled from "GpuTexture.java"
+public abstract class com.mojang.blaze3d.textures.GpuTexture implements java.lang.AutoCloseable {
+  public static final int USAGE_COPY_DST;
+  public static final int USAGE_COPY_SRC;
+  public static final int USAGE_TEXTURE_BINDING;
+  public static final int USAGE_RENDER_ATTACHMENT;
+  public static final int USAGE_CUBEMAP_COMPATIBLE;
+  private final com.mojang.blaze3d.textures.TextureFormat format;
+  private final int width;
+  private final int height;
+  private final int depthOrLayers;
+  private final int mipLevels;
+  private final int usage;
+  private final java.lang.String label;
+  public com.mojang.blaze3d.textures.GpuTexture(int, java.lang.String, com.mojang.blaze3d.textures.TextureFormat, int, int, int, int);
+  public int getWidth(int);
+  public int getHeight(int);
+  public int getDepthOrLayers();
+  public int getMipLevels();
+  public com.mojang.blaze3d.textures.TextureFormat getFormat();
+  public int usage();
+  public java.lang.String getLabel();
+  public abstract void close();
+  public abstract boolean isClosed();
+}
+
+=== net.minecraft.client.gl.Framebuffer ===
+Compiled from "Framebuffer.java"
+public abstract class net.minecraft.client.gl.Framebuffer {
+  private static int index;
+  public int textureWidth;
+  public int textureHeight;
+  protected final java.lang.String name;
+  public final boolean useDepthAttachment;
+  protected com.mojang.blaze3d.textures.GpuTexture colorAttachment;
+  protected com.mojang.blaze3d.textures.GpuTextureView colorAttachmentView;
+  protected com.mojang.blaze3d.textures.GpuTexture depthAttachment;
+  protected com.mojang.blaze3d.textures.GpuTextureView depthAttachmentView;
+  public net.minecraft.client.gl.Framebuffer(java.lang.String, boolean);
+  public void resize(int, int);
+  public void delete();
+  public void copyDepthFrom(net.minecraft.client.gl.Framebuffer);
+  public void initFbo(int, int);
+  public void blitToScreen();
+  public void drawBlit(com.mojang.blaze3d.textures.GpuTextureView);
+  public com.mojang.blaze3d.textures.GpuTexture getColorAttachment();
+  public com.mojang.blaze3d.textures.GpuTextureView getColorAttachmentView();
+  public com.mojang.blaze3d.textures.GpuTexture getDepthAttachment();
+  public com.mojang.blaze3d.textures.GpuTextureView getDepthAttachmentView();
+  private static java.lang.String method_71167();
+  private java.lang.String method_67768();
+  private java.lang.String method_67767();
+  static {};
+}
+
+=== net.minecraft.client.gl.SimpleFramebuffer ===
+Compiled from "SimpleFramebuffer.java"
+public class net.minecraft.client.gl.SimpleFramebuffer extends net.minecraft.client.gl.Framebuffer {
+  public net.minecraft.client.gl.SimpleFramebuffer(java.lang.String, int, int, boolean);
+}
+
+=== net.minecraft.client.render.VertexFormats ===
+Compiled from "VertexFormats.java"
+public class net.minecraft.client.render.VertexFormats {
+  public static final com.mojang.blaze3d.vertex.VertexFormat EMPTY;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_COLOR_TEXTURE_LIGHT_NORMAL;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_TEXTURE_COLOR_LIGHT;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_COLOR;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_COLOR_NORMAL;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_COLOR_LIGHT;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_TEXTURE;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_TEXTURE_COLOR;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_COLOR_TEXTURE_LIGHT;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_TEXTURE_LIGHT_COLOR;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_TEXTURE_COLOR_NORMAL;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_COLOR_LINE_WIDTH;
+  public static final com.mojang.blaze3d.vertex.VertexFormat POSITION_COLOR_NORMAL_LINE_WIDTH;
+  public net.minecraft.client.render.VertexFormats();
+  static {};
+}
+
+=== net.minecraft.client.gui.render.state.GuiRenderState ===
+Compiled from "GuiRenderState.java"
+public class net.minecraft.client.gui.render.state.GuiRenderState {
+  private static final int field_60454;
+  private final java.util.List<net.minecraft.client.gui.render.state.GuiRenderState$Layer> rootLayers;
+  private int blurLayer;
+  private net.minecraft.client.gui.render.state.GuiRenderState$Layer currentLayer;
+  private final java.util.Set<java.lang.Object> itemModelKeys;
+  private net.minecraft.client.gui.ScreenRect currentLayerBounds;
+  public net.minecraft.client.gui.render.state.GuiRenderState();
+  public void createNewRootLayer();
+  public void applyBlur();
+  public void goUpLayer();
+  public void addItem(net.minecraft.client.gui.render.state.ItemGuiElementRenderState);
+  public void addText(net.minecraft.client.gui.render.state.TextGuiElementRenderState);
+  public void addSpecialElement(net.minecraft.client.gui.render.state.special.SpecialGuiElementRenderState);
+  public void addSimpleElement(net.minecraft.client.gui.render.state.SimpleGuiElementRenderState);
+  private void onElementAdded(net.minecraft.client.gui.ScreenRect);
+  private boolean findAndGoToLayerToAdd(net.minecraft.client.gui.render.state.GuiElementRenderState);
+  private void findAndGoToLayerIntersecting(net.minecraft.client.gui.ScreenRect);
+  private boolean anyIntersect(net.minecraft.client.gui.ScreenRect, java.util.List<? extends net.minecraft.client.gui.render.state.GuiElementRenderState>);
+  public void addSimpleElementToCurrentLayer(net.minecraft.client.gui.render.state.TexturedQuadGuiElementRenderState);
+  public void addPreparedTextElement(net.minecraft.client.gui.render.state.SimpleGuiElementRenderState);
+  public java.util.Set<java.lang.Object> getItemModelKeys();
+  public void forEachSimpleElement(java.util.function.Consumer<net.minecraft.client.gui.render.state.SimpleGuiElementRenderState>, net.minecraft.client.gui.render.state.GuiRenderState$LayerFilter);
+  public void forEachItemElement(java.util.function.Consumer<net.minecraft.client.gui.render.state.ItemGuiElementRenderState>);
+  public void forEachTextElement(java.util.function.Consumer<net.minecraft.client.gui.render.state.TextGuiElementRenderState>);
+  public void forEachSpecialElement(java.util.function.Consumer<net.minecraft.client.gui.render.state.special.SpecialGuiElementRenderState>);
+  public void sortSimpleElements(java.util.Comparator<net.minecraft.client.gui.render.state.SimpleGuiElementRenderState>);
+  private void forEachLayer(java.util.function.Consumer<net.minecraft.client.gui.render.state.GuiRenderState$Layer>, net.minecraft.client.gui.render.state.GuiRenderState$LayerFilter);
+  private void traverseLayers(net.minecraft.client.gui.render.state.GuiRenderState$Layer, java.util.function.Consumer<net.minecraft.client.gui.render.state.GuiRenderState$Layer>);
+  public void clear();
+  private static void method_71063(java.util.Comparator, net.minecraft.client.gui.render.state.GuiRenderState$Layer);
+  private void method_71065(java.util.function.Consumer, net.minecraft.client.gui.render.state.GuiRenderState$Layer);
+  private void method_71069(java.util.function.Consumer, net.minecraft.client.gui.render.state.GuiRenderState$Layer);
+  private void method_71072(java.util.function.Consumer, net.minecraft.client.gui.render.state.GuiRenderState$Layer);
+  private static void method_71066(java.util.function.Consumer, net.minecraft.client.gui.render.state.GuiRenderState$Layer);
+}
+
+=== net.minecraft.client.gui.render.state.SimpleGuiElementRenderState ===
+Compiled from "SimpleGuiElementRenderState.java"
+public interface net.minecraft.client.gui.render.state.SimpleGuiElementRenderState extends net.minecraft.client.gui.render.state.GuiElementRenderState {
+  public abstract void setupVertices(net.minecraft.client.render.VertexConsumer);
+  public abstract com.mojang.blaze3d.pipeline.RenderPipeline pipeline();
+  public abstract net.minecraft.client.texture.TextureSetup textureSetup();
+  public abstract net.minecraft.client.gui.ScreenRect scissorArea();
+}
+
+=== net.minecraft.client.gui.render.state.ColoredQuadGuiElementRenderState ===
+Compiled from "ColoredQuadGuiElementRenderState.java"
+public final class net.minecraft.client.gui.render.state.ColoredQuadGuiElementRenderState extends java.lang.Record implements net.minecraft.client.gui.render.state.SimpleGuiElementRenderState {
+  private final com.mojang.blaze3d.pipeline.RenderPipeline pipeline;
+  private final net.minecraft.client.texture.TextureSetup textureSetup;
+  private final org.joml.Matrix3x2fc pose;
+  private final int x0;
+  private final int y0;
+  private final int x1;
+  private final int y1;
+  private final int col1;
+  private final int col2;
+  private final net.minecraft.client.gui.ScreenRect scissorArea;
+  private final net.minecraft.client.gui.ScreenRect bounds;
+  public net.minecraft.client.gui.render.state.ColoredQuadGuiElementRenderState(com.mojang.blaze3d.pipeline.RenderPipeline, net.minecraft.client.texture.TextureSetup, org.joml.Matrix3x2fc, int, int, int, int, int, int, net.minecraft.client.gui.ScreenRect);
+  public net.minecraft.client.gui.render.state.ColoredQuadGuiElementRenderState(com.mojang.blaze3d.pipeline.RenderPipeline, net.minecraft.client.texture.TextureSetup, org.joml.Matrix3x2fc, int, int, int, int, int, int, net.minecraft.client.gui.ScreenRect, net.minecraft.client.gui.ScreenRect);
+  public void setupVertices(net.minecraft.client.render.VertexConsumer);
+  private static net.minecraft.client.gui.ScreenRect createBounds(int, int, int, int, org.joml.Matrix3x2fc, net.minecraft.client.gui.ScreenRect);
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public com.mojang.blaze3d.pipeline.RenderPipeline pipeline();
+  public net.minecraft.client.texture.TextureSetup textureSetup();
+  public org.joml.Matrix3x2fc pose();
+  public int x0();
+  public int y0();
+  public int x1();
+  public int y1();
+  public int col1();
+  public int col2();
+  public net.minecraft.client.gui.ScreenRect scissorArea();
+  public net.minecraft.client.gui.ScreenRect bounds();
+}
+
+=== net.minecraft.client.gl.TextureSetup ===
+Error: class not found: net.minecraft.client.gl.TextureSetup
+
+=== net.minecraft.client.render.GameRenderer ===
+Compiled from "GameRenderer.java"
+public class net.minecraft.client.render.GameRenderer implements net.minecraft.world.waypoint.TrackedWaypoint$PitchProvider,java.lang.AutoCloseable {
+  private static final net.minecraft.util.Identifier BLUR_ID;
+  public static final int field_49904;
+  private static final org.slf4j.Logger LOGGER;
+  public static final float CAMERA_DEPTH;
+  public static final float field_60107;
+  private static final float field_55869;
+  private static final float field_55870;
+  private final net.minecraft.client.MinecraftClient client;
+  private final net.minecraft.util.math.random.Random random;
+  private float viewDistanceBlocks;
+  public final net.minecraft.client.render.item.HeldItemRenderer firstPersonRenderer;
+  private final net.minecraft.client.gui.hud.InGameOverlayRenderer overlayRenderer;
+  private final net.minecraft.client.render.BufferBuilderStorage buffers;
+  private float nauseaEffectTime;
+  private float nauseaEffectSpeed;
+  private float fovMultiplier;
+  private float lastFovMultiplier;
+  private float skyDarkness;
+  private float lastSkyDarkness;
+  private boolean blockOutlineEnabled;
+  private long lastWorldIconUpdate;
+  private boolean hasWorldIcon;
+  private long lastWindowFocusedTime;
+  private final net.minecraft.client.render.LightmapTextureManager lightmapTextureManager;
+  private final net.minecraft.client.render.OverlayTexture overlayTexture;
+  private net.minecraft.client.render.CameraOverride cameraOverride;
+  protected final net.minecraft.client.gui.CubeMapRenderer panoramaRenderer;
+  protected final net.minecraft.client.gui.RotatingCubeMapRenderer rotatingPanoramaRenderer;
+  private final net.minecraft.client.util.memory.ObjectPool pool;
+  private final net.minecraft.client.render.fog.FogRenderer fogRenderer;
+  private final net.minecraft.client.gui.render.GuiRenderer guiRenderer;
+  final net.minecraft.client.gui.render.state.GuiRenderState guiState;
+  private final net.minecraft.client.render.state.WorldRenderState worldRenderState;
+  private final net.minecraft.client.render.command.OrderedRenderCommandQueueImpl orderedRenderCommandQueue;
+  private final net.minecraft.client.render.command.RenderDispatcher entityRenderDispatcher;
+  private net.minecraft.util.Identifier postProcessorId;
+  private boolean postProcessorEnabled;
+  private final net.minecraft.client.render.Camera camera;
+  private final net.minecraft.client.render.DiffuseLighting diffuseLighting;
+  private final net.minecraft.client.gl.GlobalSettings globalSettings;
+  private final net.minecraft.client.render.RawProjectionMatrix worldProjectionMatrix;
+  private final net.minecraft.client.render.ProjectionMatrix3 hudProjectionMatrix;
+  public net.minecraft.client.render.GameRenderer(net.minecraft.client.MinecraftClient, net.minecraft.client.render.item.HeldItemRenderer, net.minecraft.client.render.BufferBuilderStorage, net.minecraft.client.render.block.BlockRenderManager);
+  public void close();
+  public net.minecraft.client.render.command.OrderedRenderCommandQueueImpl getEntityRenderCommandQueue();
+  public net.minecraft.client.render.command.RenderDispatcher getEntityRenderDispatcher();
+  public net.minecraft.client.render.state.WorldRenderState getEntityRenderStates();
+  public void setBlockOutlineEnabled(boolean);
+  public void setCameraOverride(net.minecraft.client.render.CameraOverride);
+  public net.minecraft.client.render.CameraOverride getCameraOverride();
+  public boolean isRenderingPanorama();
+  public void clearPostProcessor();
+  public void togglePostProcessorEnabled();
+  public void onCameraEntitySet(net.minecraft.entity.Entity);
+  private void setPostProcessor(net.minecraft.util.Identifier);
+  public void renderBlur();
+  public void preloadPrograms(net.minecraft.resource.ResourceFactory);
+  public void tick();
+  public net.minecraft.util.Identifier getPostProcessorId();
+  public void onResized(int, int);
+  public void updateCrosshairTarget(float);
+  private void updateFovMultiplier();
+  private float getFov(net.minecraft.client.render.Camera, float, boolean);
+  private void tiltViewWhenHurt(net.minecraft.client.util.math.MatrixStack, float);
+  private void bobView(net.minecraft.client.util.math.MatrixStack, float);
+  private void renderHand(float, boolean, org.joml.Matrix4f);
+  public org.joml.Matrix4f getBasicProjectionMatrix(float);
+  public float getFarPlaneDistance();
+  public static float getNightVisionStrength(net.minecraft.entity.LivingEntity, float);
+  public void render(net.minecraft.client.render.RenderTickCounter, boolean);
+  private void renderActiveTextAreas();
+  private void updateWorldIcon();
+  private void updateWorldIcon(java.nio.file.Path);
+  private boolean shouldRenderBlockOutline();
+  public void updateCamera(net.minecraft.client.render.RenderTickCounter);
+  public void renderWorld(net.minecraft.client.render.RenderTickCounter);
+  private void updateCameraState(float);
+  private org.joml.Matrix4f getProjectionMatrix(float);
+  public void reset();
+  public void showFloatingItem(net.minecraft.item.ItemStack);
+  public net.minecraft.client.MinecraftClient getClient();
+  public float getSkyDarkness(float);
+  public float getViewDistanceBlocks();
+  public net.minecraft.client.render.Camera getCamera();
+  public net.minecraft.client.render.LightmapTextureManager getLightmapTextureManager();
+  public net.minecraft.client.render.OverlayTexture getOverlayTexture();
+  public net.minecraft.util.math.Vec3d project(net.minecraft.util.math.Vec3d);
+  public double getPitch();
+  public net.minecraft.client.gl.GlobalSettings getGlobalSettings();
+  public net.minecraft.client.render.DiffuseLighting getDiffuseLighting();
+  public void setWorld(net.minecraft.client.world.ClientWorld);
+  public net.minecraft.client.gui.RotatingCubeMapRenderer getRotatingPanoramaRenderer();
+  private static void method_68164(java.nio.file.Path, net.minecraft.client.texture.NativeImage);
+  private static void method_3181(net.minecraft.client.texture.NativeImage, java.nio.file.Path);
+  private void method_37474(java.nio.file.Path);
+  private void method_75836(net.minecraft.client.gui.render.state.TextGuiElementRenderState);
+  private java.lang.String method_37103() throws java.lang.Exception;
+  private java.lang.String method_3205() throws java.lang.Exception;
+  private java.lang.String method_18655() throws java.lang.Exception;
+  private static java.lang.String method_68479(net.minecraft.resource.ResourceFactory, net.minecraft.util.Identifier, com.mojang.blaze3d.shaders.ShaderType);
+  static {};
+}
+
+=== net.minecraft.client.gui.DrawContext$ScissorStack ===
+Compiled from "DrawContext.java"
+public class net.minecraft.client.gui.DrawContext$ScissorStack {
+  private final java.util.Deque<net.minecraft.client.gui.ScreenRect> stack;
+  net.minecraft.client.gui.DrawContext$ScissorStack();
+  public net.minecraft.client.gui.ScreenRect push(net.minecraft.client.gui.ScreenRect);
+  public net.minecraft.client.gui.ScreenRect pop();
+  public net.minecraft.client.gui.ScreenRect peekLast();
+  public boolean contains(int, int);
+}
+
+=== net.minecraft.client.render.entity.state.EntityRenderState ===
+Compiled from "EntityRenderState.java"
+public class net.minecraft.client.render.entity.state.EntityRenderState implements net.fabricmc.fabric.api.client.rendering.v1.FabricRenderState {
+  public static final int NO_OUTLINE;
+  public net.minecraft.entity.EntityType<?> entityType;
+  public double x;
+  public double y;
+  public double z;
+  public float age;
+  public float width;
+  public float height;
+  public float standingEyeHeight;
+  public double squaredDistanceToCamera;
+  public boolean invisible;
+  public boolean sneaking;
+  public boolean onFire;
+  public int light;
+  public int outlineColor;
+  public net.minecraft.util.math.Vec3d positionOffset;
+  public net.minecraft.text.Text displayName;
+  public net.minecraft.util.math.Vec3d nameLabelPos;
+  public java.util.List<net.minecraft.client.render.entity.state.EntityRenderState$LeashData> leashDatas;
+  public float shadowRadius;
+  public final java.util.List<net.minecraft.client.render.entity.state.EntityRenderState$ShadowPiece> shadowPieces;
+  public net.minecraft.client.render.entity.state.EntityRenderState();
+  public boolean hasOutline();
+  public void addCrashReportDetails(net.minecraft.util.crash.CrashReportSection);
+}
