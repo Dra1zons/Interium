@@ -15,7 +15,7 @@ Note: Recompile with -Xlint:deprecation for details.
 1 error
 
 > Task :compileJava FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794245386874.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794245458235.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/Interium/Interium/build/reports/problems/problems-report.html
 
@@ -97,5 +97,5 @@ Note: Recompile with -Xlint:deprecation for details.
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 
 
-BUILD FAILED in 31s
+BUILD FAILED in 23s
 1 actionable task: 1 executed
