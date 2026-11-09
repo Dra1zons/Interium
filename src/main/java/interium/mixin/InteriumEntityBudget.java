@@ -1,0 +1,3 @@
+package interium.mixin;
+import net.minecraft.client.render.entity.EntityRenderer;import net.minecraft.client.render.Frustum;import net.minecraft.entity.Entity;import org.spongepowered.asm.mixin.Mixin;import org.spongepowered.asm.mixin.injection.*;import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+@Mixin(EntityRenderer.class) public abstract class InteriumEntityBudget {@Inject(method="shouldRender",at=@At("HEAD"),cancellable=true)private void interium$distance(Entity e,Frustum f,double x,double y,double z,CallbackInfoReturnable<Boolean> cir){if(interium.fabric.EntityRenderBudget.skip(e,e.squaredDistanceTo(x,y,z)))cir.setReturnValue(false);}}
