@@ -24,7 +24,9 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import net.minecraft.text.Text;
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
