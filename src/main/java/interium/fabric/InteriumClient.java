@@ -67,6 +67,7 @@ public final class InteriumClient implements ClientModInitializer {
 
     @Override public void onInitializeClient() {
         InteriumState.load();
+        DeltaVisualSettings.load();
         KeyBinding.Category controls = KeyBinding.Category.create(Identifier.of("interium", "controls"));
         openMenu = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.interium.open", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_SHIFT, controls));
@@ -219,6 +220,7 @@ public final class InteriumClient implements ClientModInitializer {
     }
     private void renderHud(DrawContext matrices,RenderTickCounter tickDelta) {
         MinecraftClient client=MinecraftClient.getInstance();
+        if(!(client.currentScreen instanceof DeltaHudEditor))DeltaHud.INSTANCE.render(client,matrices,aura.target(),false);
         bedFeatures.render(client,matrices);
         renderPlayerRadar(client,matrices);
 

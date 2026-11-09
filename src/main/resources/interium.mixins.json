@@ -24,7 +24,12 @@
     "FreeCameraInteractionMixin",
     "FreeCameraDropMixin",
     "TntCountdownMixin",
-    "TntCountdownStateMixin"
+    "TntCountdownStateMixin",
+    "DeltaCooldownAccess",
+    "DeltaCooldownEntryAccess",
+    "DeltaHudMixin",
+    "DeltaHurtCameraMixin",
+    "DeltaViewModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

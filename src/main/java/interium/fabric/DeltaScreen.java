@@ -55,8 +55,8 @@ public final class DeltaScreen extends Screen {
         }
         out.sort(Comparator.comparing(Item::name,String.CASE_INSENSITIVE_ORDER));return out;
     }
-    private static boolean hasSetting(Item a){return (a.i==0&&(a.j==0||a.j==3||a.j==5||a.j==6||a.j==7))||(a.i==3&&a.j==0)||(a.i==2&&(a.j==0||a.j==3))||(a.i==1&&(a.j==1||a.j==2||a.j==3||a.j==8));}
-    private float rowHeight(Item a){return ROW+(hasSetting(a)&&expanded==a.i*10+a.j?((a.i==0&&a.j==3)?216:(a.i==1&&a.j==2)?36:(a.i==1&&a.j==3)?72:(a.i==0&&a.j==5)?72:(a.i==0&&a.j==6)?54:(a.i==2&&a.j==3&&!InteriumState.nightVision)?36:18):0);}
+    private static boolean hasSetting(Item a){return (a.i==0&&(a.j==0||a.j==3||a.j==5||a.j==6||a.j==7))||(a.i==3&&a.j==0)||(a.i==2&&(a.j==0||a.j==3||a.j>=4))||(a.i==1&&(a.j==1||a.j==2||a.j==3||a.j==8));}
+    private float rowHeight(Item a){return ROW+(hasSetting(a)&&!(a.i==2&&a.j>=4)&&expanded==a.i*10+a.j?((a.i==0&&a.j==3)?216:(a.i==1&&a.j==2)?36:(a.i==1&&a.j==3)?72:(a.i==0&&a.j==5)?72:(a.i==0&&a.j==6)?54:(a.i==2&&a.j==3&&!InteriumState.nightVision)?36:18):0);}
     private float clampedScroll(int i,List<Item> items){
         float total=0;for(Item a:items)total+=rowHeight(a)+ROW_GAP;
         scroll[i]=Math.max(Math.min(0, (PH-30)-total),Math.min(0,scroll[i]));return scroll[i];
@@ -186,6 +186,7 @@ public final class DeltaScreen extends Screen {
                 if(inside(mx,my,x+6,y,PW-12,ROW)){
                     if(button==0){InteriumScreen.toggle(item.i,item.j);return true;}
                     if(button==2){binding=item.i*10+item.j;return true;}
+                    if(button==1&&item.i==2&&item.j>=4){client.setScreen(new DeltaVisualScreen(this,item.j-4));return true;}
                     if(button==1&&hasSetting(item)){expanded=expanded==item.i*10+item.j?-1:item.i*10+item.j;return true;}
                 }
                 if(hasSetting(item)&&expanded==item.i*10+item.j&&inside(mx,my,x+6,y+ROW,PW-12,h-ROW)){
