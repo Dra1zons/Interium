@@ -76,3 +76,44 @@ User supplied Fabric_1.16.5_TimeToLive_0.3.jar (418694 bytes), mod timetolive 0.
 Removed the old fixed HUD TNT list (eight-entry limit/coordinates). New source adds a world-space label per rendered TNT, entity height +.5, camera-facing at scale .025, white Minecraft text, fullbright text only. A faint see-through text/background pass (0x20ffffff / 0x3f000000), then opaque depth-tested text, follow the reference behavior. TNT render state carries only extracted per-frame Text/height; no entity cache/global entity map or camera-position double subtraction. Normal TNT entity interpolation/render culling are reused. Module/F1 disable rendering, inactive/dead/removed/passenger-bearing TNT clear label data. Entity names/fuse/game state are not changed. TNT only: the original mod's ignited-creeper feature is not added to the requested TNT module.
 Seconds default, optional ticks through existing DeltaScreen TNT Timer settings (right click, then toggle the line); persisted tntTimer.ticks. Format matches reference: '4.0 s', '80 t', truncation instead of old rounding-up; >1200 ticks becomes minutes, >72000 hours. Negative inputs clamped to zero. One tick is '0.0 s', matching reference display precision. This is client-fuse time at 20 ticks/second, not real-time prediction or guaranteed server explosion time, especially on translated protocols.
 New files: TntCountdownRenderer, TntCountdownState, TntCountdownMixin, TntCountdownStateMixin, TntTimerTest. Updated TntTimer, module settings/persistence, Mixin registry and core tests. Full source is experimental: compiled core/tests PASS 27 + camera math PASS 65 + new TNT-format PASS 108; syntax parsing of 53 Java files has zero errors, no Minecraft type resolution. Yarn 1.21.11+build.6 render-state, renderer, camera and submitText signatures checked against documentation. No full mod build, real Mixin application, world-label rendering, depth behavior, interpolation, F1/toggle runtime or multiplayer test; prior Gradle download/environment blocker remains. No new ready JAR. Next game checks: labels on separate/moving TNT; Free Camera/third person; occlusion/light; ticks/seconds settings persistence; F1/off; expiration/removal/world switch; existing nametags and render mods; translated server protocol.
+
+
+## Visual/HUD adaptation checkpoint — 2026-11-09
+
+Donor pinned to CollapseLoader/DeltaClient 8749e4810f93df75c191cb5517abdfba2887a369. Target is Fabric/Minecraft 1.21.11, not the lost Interium 0.6.0 branch. This is NOT a claim of full source or pixel parity.
+
+### Implemented adapters in source
+
+- Aspect Ratio, five Swing Animation modes, Crosshair and View Model.
+- Item Physic, See Invisibles and Removals (see omissions below).
+- Pointers arrow texture and 3D player tracers.
+- Inventory and dropped-item Shulker Preview using real CONTAINER data.
+- Entity Box square/corners/fill and health; Entity ESP real names/health/equipment/current effects.
+- Block ESP using bounded loaded-chunk client-thread scan, never the unsafe donor async world scan.
+- Sound ESP's three original sound filters; Warden ESP's original fixed-coordinate chest region and observed armor-stand timers (not a generic Warden-mob tracker).
+- Predictions with donor drag/gravity and raycasts; China Hat geometry adapter; local-only Board Spoofer.
+- Hands Shader contains the original noise_shader.fsh FBM/ridged algorithm, ported to a depth-difference RenderPass; in-world hook/mask correctness still needs validation.
+- Shader ESP: donor ShaderESP.java is an empty module, and indexed source search found no calls to its ad() getter. The target implementation is explicitly a native Minecraft outline adapter, NOT a recovered custom donor shader.
+- Full Bright remains the existing Interium implementation, not a newly claimed source-perfect Delta port.
+
+### HUD
+
+Original GT and icons atlases. Watermark, Hotkeys, Potion list, Cooldowns, Target, Armor, Staff, Environment, Notifications, Items and drag editor are connected to real client data. Items uses actual inventory cooldowns and the actual AutoExp hold binding; no fake server-assistant providers. Environment now follows target/previous-target, armor and alphabetical priority, armor display and observed hand history. A '~' cooldown badge is a source-derived heuristic, not authoritative server information. Manual staff names and block IDs have an original-GT text editor.
+
+The rounded-rectangle renderer now uses one shared pipeline with vertex-carried parameters instead of generating an unbounded shader program for every animated rectangle size.
+
+### Explicitly unfinished / differences
+
+- HUD backdrop blur/glow, full source easing/scissor/exit transitions, backend notifications/staff providers and measured TPS.
+- Entity ESP observed remote effect history; currently only currently exposed client effect data is shown.
+- Predictions returning-trident filtering, source per-entity entry/exit animations and full endpoint-card fidelity.
+- China Hat uses a world-extracted head approximation, not the donor player model feature transform.
+- Per-block colors and original BlockESP command framework; scan is intentionally bounded and may populate over several ticks.
+- Removals breaking particles, lava/submersion fog and all weather particle/sound paths.
+- End-to-end runtime checks in a world, resize/resource reload, screenshots matching donor and the packaged JAR with bundled ViaFabricPlus.
+
+### Verification scope
+
+Last fully released pre-shader build: source df1defd014aaece7025daca5d3cc65c31ca07bcb, run 42663402292. Newer commits must be judged by build-feedback/latest.json matching their source SHA, not older success logs. CI now performs compile/remap, core and visual numerical tests, then an actual software-OpenGL title/Delta GUI launch. A zero-mask noise draw is a GPU pipeline test, NOT a first-person in-world hand test. World runtime must not be marked tested on that basis.
+
+No external documentation URL approvals are required for this checkpoint; use the already obtained material and the authorized GitHub source. Do not use Jarvis, npm install, curl or wget.
