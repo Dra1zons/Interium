@@ -7,121 +7,39 @@ Fabric Loom: 1.19.4
 Cannot remap modifiers because it does not exist in any of the targets [] or their parents.
 
 > Task :compileJava
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaHud.java:83: error: cannot find symbol
-            if(r.skin!=null)face(c,r.skin,x+5,y+2,7.5f);else if(r.effect!=null)c.drawSpriteStretched(RenderPipelines.GUI_TEXTURED,MinecraftClient.getInstance().getStatusEffectSpriteManager().getSprite(r.effect.getEffectType()),(int)(x+5),(int)(y+2),7,7,fade(-1,alpha));else if(!r.stack.isEmpty())item(c,r.stack,x+5,y+2,7.2f,false);else icon(c,r.icon,x+5,y+5.75f,6.5f,DeltaVisualSettings.primary());
-                                                                                                                                                               ^
-  symbol:   method getStatusEffectSpriteManager()
-  location: class MinecraftClient
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaHud.java:107: error: cannot find symbol
-    private void target(MinecraftClient c,DrawContext ctx,LivingEntity auraTarget,boolean preview){LivingEntity t=auraTarget;if(t==null&&DeltaVisualSettings.flag("target.crosshair",false)&&c.crosshairTarget instanceof net.minecraft.util.hit.EntityHitResult hit&&hit.getEntity() instanceof PlayerEntity living)t=living;if(t==null&&preview)t=c.player;float a=anim("panel.target",t!=null&&t.isAlive());if(t!=null)retainedTarget=t;if(a<=0||retainedTarget==null)return;t=retainedTarget;alpha=a;Bounds b=place("target",100,DeltaVisualSettings.flag("target.items",true)?34:24);box(ctx,b.x,b.y,100,24);float hs=24/1.35f,hy=b.y+(24-hs)/2;if(t instanceof AbstractClientPlayerEntity p)face(ctx,p.getSkinTextures().body().texturePath(),b.x+5,hy,hs);else icon(ctx,"B",b.x+5,hy+hs/2,18,DeltaVisualSettings.text());float tx=b.x+10+hs;String name=t.getName().getString();if(name.codePointCount(0,name.length())>12)name=name.substring(0,name.offsetByCodePoints(0,12))+"…";text(ctx,name,tx,hy+3.75f,7.5f,DeltaVisualSettings.text());String hp=Integer.toString((int)t.getHealth());text(ctx,hp,b.x+95-gt.width(hp,7),hy+3.75f,7,DeltaVisualSettings.primary());float target=Math.max(0,Math.min(1,t.getHealth()/Math.max(1,t.getMaxHealth())));if(!t.getUuid().equals(healthTarget)){health=target;healthTarget=t.getUuid();}health+=(target-health)*(1-(float)Math.exp(-dt*10));rectFill(ctx,tx,hy+12.5f,54,3,fade(DeltaVisualSettings.primary(),.3f));rectFill(ctx,tx,hy+12.5f,54*health,3,DeltaVisualSettings.primary());if(DeltaVisualSettings.flag("target.items",true)){int i=0;for(EquipmentSlot slot:new EquipmentSlot[]{EquipmentSlot.MAINHAND,EquipmentSlot.OFFHAND,EquipmentSlot.HEAD,EquipmentSlot.CHEST,EquipmentSlot.LEGS,EquipmentSlot.FEET}){ItemStack s=t.getEquippedStack(slot);if(!s.isEmpty())item(ctx,s,b.x+90-9*i++,b.y+24,8.8f,true);}}alpha=1;}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ^
-  symbol:   method getSkinTextures()
-  location: variable p of type AbstractClientPlayerEntity
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaHud.java:111: error: cannot find symbol
-    private void environment(MinecraftClient c,DrawContext ctx,boolean preview){List<Row> rows=new ArrayList<>();c.world.getPlayers().stream().filter(p->p!=c.player&&p.isAlive()&&!InteriumState.friends.contains(p.getUuid())).sorted(Comparator.comparingDouble(c.player::squaredDistanceTo)).limit(2).forEach(p->rows.add(new Row(p.getUuid().toString(),"x",p.getName().getString(),(int)p.getHealth()+"HP",ItemStack.EMPTY,p instanceof AbstractClientPlayerEntity a?a.getSkinTextures().body().texturePath():null,null,DeltaVisualSettings.text())));list(ctx,"environment","x","Окружение",rows,preview);}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ^
-  symbol:   method getSkinTextures()
-  location: variable a of type AbstractClientPlayerEntity
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
-3 errors
 
-> Task :compileJava FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794242634190.json
+> Task :processResources
+> Task :classes
+> Task :jar
+> Task :processIncludeJars
+> Task :sourcesJar
+> Task :compileTestJava
+> Task :processTestResources NO-SOURCE
+> Task :testClasses
+
+> Task :coreChecks
+PASS: 27 checks
+PASS: 65 camera numerical checks (not game tests)
+PASS: 108 TNT-format checks (not rendering tests)
+
+> Task :test
+> Task :validateAccessWidener NO-SOURCE
+> Task :check
+> Task :remapSourcesJar
+> Task :remapJar
+> Task :assemble
+> Task :build
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794242973645.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/Interium/Interium/build/reports/problems/problems-report.html
 
-FAILURE: Build failed with an exception.
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
 
-* What went wrong:
-Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
-> Compilation failed; see the compiler output below.
-  /home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaHud.java:83: error: cannot find symbol
-              if(r.skin!=null)face(c,r.skin,x+5,y+2,7.5f);else if(r.effect!=null)c.drawSpriteStretched(RenderPipelines.GUI_TEXTURED,MinecraftClient.getInstance().getStatusEffectSpriteManager().getSprite(r.effect.getEffectType()),(int)(x+5),(int)(y+2),7,7,fade(-1,alpha));else if(!r.stack.isEmpty())item(c,r.stack,x+5,y+2,7.2f,false);else icon(c,r.icon,x+5,y+5.75f,6.5f,DeltaVisualSettings.primary());
-                                                                                                                                                                 ^
-    symbol:   method getStatusEffectSpriteManager()
-    location: class MinecraftClient
-  3 errors
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
 
-* Try:
-> Check your code and dependencies to fix the compilation error(s)
-> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+For more on this, please refer to https://docs.gradle.org/9.8.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-* Exception is:
-org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.lambda$doExecute$1(DefaultTaskNodeExecutor.java:367)
-	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.doExecute(DefaultTaskNodeExecutor.java:365)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeTrackingTaskIdentity(DefaultTaskNodeExecutor.java:332)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeFinalizingProperties(DefaultTaskNodeExecutor.java:318)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeSkippingWithNoActions(DefaultTaskNodeExecutor.java:289)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeSkippingOnlyIf(DefaultTaskNodeExecutor.java:272)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeCatchingFailures(DefaultTaskNodeExecutor.java:228)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeWithFallbackOperationId(DefaultTaskNodeExecutor.java:197)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeWithLifecycle(DefaultTaskNodeExecutor.java:171)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.access$000(DefaultTaskNodeExecutor.java:67)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor$1.run(DefaultTaskNodeExecutor.java:136)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
-	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.execute(DefaultTaskNodeExecutor.java:133)
-	at org.gradle.execution.plan.LocalTaskNode.execute(LocalTaskNode.java:229)
-	at org.gradle.execution.DefaultBuildWorkExecutor.lambda$executePlan$0(DefaultBuildWorkExecutor.java:153)
-	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.lambda$execute$0(DefaultPlanExecutor.java:476)
-	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
-	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:475)
-	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:392)
-	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:65)
-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaHud.java:83: error: cannot find symbol
-            if(r.skin!=null)face(c,r.skin,x+5,y+2,7.5f);else if(r.effect!=null)c.drawSpriteStretched(RenderPipelines.GUI_TEXTURED,MinecraftClient.getInstance().getStatusEffectSpriteManager().getSprite(r.effect.getEffectType()),(int)(x+5),(int)(y+2),7,7,fade(-1,alpha));else if(!r.stack.isEmpty())item(c,r.stack,x+5,y+2,7.2f,false);else icon(c,r.icon,x+5,y+5.75f,6.5f,DeltaVisualSettings.primary());
-                                                                                                                                                               ^
-  symbol:   method getStatusEffectSpriteManager()
-  location: class MinecraftClient
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaHud.java:107: error: cannot find symbol
-    private void target(MinecraftClient c,DrawContext ctx,LivingEntity auraTarget,boolean preview){LivingEntity t=auraTarget;if(t==null&&DeltaVisualSettings.flag("target.crosshair",false)&&c.crosshairTarget instanceof net.minecraft.util.hit.EntityHitResult hit&&hit.getEntity() instanceof PlayerEntity living)t=living;if(t==null&&preview)t=c.player;float a=anim("panel.target",t!=null&&t.isAlive());if(t!=null)retainedTarget=t;if(a<=0||retainedTarget==null)return;t=retainedTarget;alpha=a;Bounds b=place("target",100,DeltaVisualSettings.flag("target.items",true)?34:24);box(ctx,b.x,b.y,100,24);float hs=24/1.35f,hy=b.y+(24-hs)/2;if(t instanceof AbstractClientPlayerEntity p)face(ctx,p.getSkinTextures().body().texturePath(),b.x+5,hy,hs);else icon(ctx,"B",b.x+5,hy+hs/2,18,DeltaVisualSettings.text());float tx=b.x+10+hs;String name=t.getName().getString();if(name.codePointCount(0,name.length())>12)name=name.substring(0,name.offsetByCodePoints(0,12))+"…";text(ctx,name,tx,hy+3.75f,7.5f,DeltaVisualSettings.text());String hp=Integer.toString((int)t.getHealth());text(ctx,hp,b.x+95-gt.width(hp,7),hy+3.75f,7,DeltaVisualSettings.primary());float target=Math.max(0,Math.min(1,t.getHealth()/Math.max(1,t.getMaxHealth())));if(!t.getUuid().equals(healthTarget)){health=target;healthTarget=t.getUuid();}health+=(target-health)*(1-(float)Math.exp(-dt*10));rectFill(ctx,tx,hy+12.5f,54,3,fade(DeltaVisualSettings.primary(),.3f));rectFill(ctx,tx,hy+12.5f,54*health,3,DeltaVisualSettings.primary());if(DeltaVisualSettings.flag("target.items",true)){int i=0;for(EquipmentSlot slot:new EquipmentSlot[]{EquipmentSlot.MAINHAND,EquipmentSlot.OFFHAND,EquipmentSlot.HEAD,EquipmentSlot.CHEST,EquipmentSlot.LEGS,EquipmentSlot.FEET}){ItemStack s=t.getEquippedStack(slot);if(!s.isEmpty())item(ctx,s,b.x+90-9*i++,b.y+24,8.8f,true);}}alpha=1;}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ^
-  symbol:   method getSkinTextures()
-  location: variable p of type AbstractClientPlayerEntity
-/home/runner/work/Interium/Interium/src/main/java/interium/fabric/DeltaHud.java:111: error: cannot find symbol
-    private void environment(MinecraftClient c,DrawContext ctx,boolean preview){List<Row> rows=new ArrayList<>();c.world.getPlayers().stream().filter(p->p!=c.player&&p.isAlive()&&!InteriumState.friends.contains(p.getUuid())).sorted(Comparator.comparingDouble(c.player::squaredDistanceTo)).limit(2).forEach(p->rows.add(new Row(p.getUuid().toString(),"x",p.getName().getString(),(int)p.getHealth()+"HP",ItemStack.EMPTY,p instanceof AbstractClientPlayerEntity a?a.getSkinTextures().body().texturePath():null,null,DeltaVisualSettings.text())));list(ctx,"environment","x","Окружение",rows,preview);}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ^
-  symbol:   method getSkinTextures()
-  location: variable a of type AbstractClientPlayerEntity
-Note: Some input files use or override a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-3 errors
-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:88)
-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:49)
-	at org.gradle.api.internal.tasks.compile.daemon.CompilerWorkAction.execute(CompilerWorkAction.java:52)
-	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
-	at org.gradle.workers.internal.AbstractClassLoaderWorker$1.create(AbstractClassLoaderWorker.java:54)
-	at org.gradle.workers.internal.AbstractClassLoaderWorker$1.create(AbstractClassLoaderWorker.java:48)
-	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:103)
-	at org.gradle.workers.internal.AbstractClassLoaderWorker.executeInClassLoader(AbstractClassLoaderWorker.java:48)
-	at org.gradle.workers.internal.FlatClassLoaderWorker.run(FlatClassLoaderWorker.java:32)
-	at org.gradle.workers.internal.FlatClassLoaderWorker.run(FlatClassLoaderWorker.java:22)
-	at org.gradle.workers.internal.WorkerDaemonServer.run(WorkerDaemonServer.java:109)
-	at org.gradle.workers.internal.WorkerDaemonServer.run(WorkerDaemonServer.java:78)
-	at org.gradle.process.internal.worker.request.WorkerAction.lambda$run$1(WorkerAction.java:150)
-	at org.gradle.process.internal.worker.child.WorkerLogEventListener.withWorkerLoggingProtocol(WorkerLogEventListener.java:41)
-	at org.gradle.process.internal.worker.request.WorkerAction.lambda$run$0(WorkerAction.java:150)
-	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
-	at org.gradle.process.internal.worker.request.WorkerAction.run(WorkerAction.java:142)
-	at org.gradle.internal.dispatch.MethodInvocation.invokeOn(MethodInvocation.java:77)
-	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:28)
-	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:19)
-	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:183)
-	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:165)
-	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:414)
-	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:65)
-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-
-
-BUILD FAILED in 28s
-1 actionable task: 1 executed
+BUILD SUCCESSFUL in 31s
+10 actionable tasks: 10 executed
