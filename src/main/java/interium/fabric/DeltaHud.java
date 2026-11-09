@@ -22,7 +22,7 @@ import java.util.*;
 
 /** 1.21.11 adaptation of Delta Widget/Watermark/Hotkeys/Potion/Cooldowns/Target/Armor.
  * Original GT and icons atlases, header 12.5, body 11.5, gap 2, separator .75.
- * GPU backdrop blur/glow and backend notifications are NOT implemented here.
+ * Liquid-glass backdrop uses DeltaGlass. Backend notifications remain unavailable.
  */
 public final class DeltaHud {
     static final DeltaHud INSTANCE=new DeltaHud();
@@ -72,7 +72,7 @@ public final class DeltaHud {
     private Bounds place(String id,float w,float h){int i=Arrays.asList(IDS).indexOf(id);float[] d=DEFAULT[Math.max(0,i)];w=Math.min(sw,Math.max(1,(float)Math.ceil(w)));h=Math.min(sh,Math.max(1,h));float x=DeltaVisualSettings.number("pos."+id+".x",d[0],0,1)*Math.max(0,sw-w);float y=DeltaVisualSettings.number("pos."+id+".y",d[1],0,1)*Math.max(0,sh-h);Bounds b=new Bounds(x,y,w,h);bounds.put(id,b);return b;}
     private void text(DrawContext c,String s,float x,float cy,float size,int color){gt.draw(c,s,x,gt.centeredY(s,size,cy),size,fade(color,alpha));}
     private void icon(DrawContext c,String s,float x,float cy,float size,int color){icons.draw(c,s,x,icons.centeredY(s,size,cy),size,fade(color,alpha));}
-    private void box(DrawContext c,float x,float y,float w,float h){DeltaRect.draw(c,x,y,(float)Math.ceil(w),h,Math.min(5,h/2),0,fade(DeltaVisualSettings.background(),alpha));}
+    private void box(DrawContext c,float x,float y,float w,float h){DeltaGlass.draw(c,x,y,(float)Math.ceil(w),h,Math.min(5,h/2),fade(DeltaVisualSettings.background(),alpha));}
     private void separator(DrawContext c,float x,float y,float h){DeltaRect.draw(c,x,y+h/4,.75f,h/2,0,0,fade(DeltaVisualSettings.light()?0x80111216:0x80c8c8c8,alpha));}
     private void header(DrawContext c,Bounds b,String glyph,String title){box(c,b.x,b.y,b.w,12.5f);icon(c,glyph,b.x+3,b.y+6.25f,8,DeltaVisualSettings.primary());separator(c,b.x+13.5f,b.y,12.5f);text(c,title,b.x+17.5f,b.y+5.75f,7,DeltaVisualSettings.text());}
     private void item(DrawContext c,ItemStack stack,float x,float y,float size,boolean overlay){if(stack.isEmpty())return;var m=c.getMatrices();m.pushMatrix();m.translate(x,y);m.scale(size/16,size/16);c.drawItem(stack,0,0);if(overlay)c.drawStackOverlay(MinecraftClient.getInstance().textRenderer,stack,0,0);m.popMatrix();}

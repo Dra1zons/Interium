@@ -49,6 +49,9 @@
     "DeltaBoardMixin",
     "DeltaDrawContextAccess",
     "DeltaHandsMixin",
+    "DeltaGlassMixin",
+    "DeltaBreakingParticlesMixin",
+    "DeltaSubmersionRemovalMixin",
     "DeltaOutlineStateMixin",
     "DeltaShaderOutlineMixin"
   ],

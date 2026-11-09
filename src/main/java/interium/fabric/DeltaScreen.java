@@ -89,7 +89,7 @@ public final class DeltaScreen extends Screen {
         var matrix=c.getMatrices();matrix.pushMatrix();matrix.scale(scale,scale);
         for(int i=0;i<5;i++) {
             float x=px(i); List<Item> list=items(i);
-            rect(c,x,top,PW,PH,8,BG);border(c,x,top,PW,PH,8,OUTLINE);
+            DeltaGlass.draw(c,x,top,PW,PH,8,BG);border(c,x,top,PW,PH,8,OUTLINE);
             int title=0xffe1e6ff;
             label(c,onest,CATEGORY[i],x+10,top+12,9,title);
             label(c,icons,ICON[i],x+PW-10-icons.width(ICON[i],9),top+12,9,title);
