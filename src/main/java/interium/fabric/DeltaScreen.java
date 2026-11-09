@@ -35,6 +35,8 @@ public final class DeltaScreen extends Screen {
     private int expanded=-1, searchStart=0, binding=-1;
     private float scale=1,left,top,searchX,searchY;
     private record Item(int i,int j,String name) {}
+    private String cachedQuery;
+    private final List<List<Item>> itemCache=new ArrayList<>();
     public DeltaScreen(){super(Text.literal("Interium"));}
     @Override protected void init() {
         try {onest=DeltaFont.load(client,"onest_regular");icons=DeltaFont.load(client,"icons");}
@@ -54,12 +56,10 @@ public final class DeltaScreen extends Screen {
     private float px(int i){return left+i*(PW+GAP);}
     private List<Item> items(int i){
         String query=input.getText().trim().toLowerCase(Locale.ROOT);
-        List<Item> out=new ArrayList<>();
-        for(int j=0;j<InteriumScreen.MODULES[i].length;j++) {
-            String n=InteriumScreen.MODULES[i][j];
-            if(n.toLowerCase(Locale.ROOT).contains(query))out.add(new Item(i,j,n));
-        }
-        out.sort(Comparator.comparing(Item::name,String.CASE_INSENSITIVE_ORDER));return out;
+        if(!query.equals(cachedQuery)){cachedQuery=query;itemCache.clear();for(int category=0;category<5;category++){
+          List<Item> out=new ArrayList<>();for(int j=0;j<InteriumScreen.MODULES[category].length;j++){String name=InteriumScreen.MODULES[category][j];if(name.toLowerCase(Locale.ROOT).contains(query))out.add(new Item(category,j,name));}
+          out.sort(Comparator.comparing(Item::name,String.CASE_INSENSITIVE_ORDER));itemCache.add(List.copyOf(out));
+        }}return itemCache.get(i);
     }
     private static boolean hasSetting(Item a){return (a.i==0&&(a.j==0||a.j==3||a.j==5||a.j==6||a.j==7))||(a.i==3&&a.j==0)||(a.i==2&&(a.j==0||a.j==3||a.j>=4))||(a.i==1&&(a.j==1||a.j==2||a.j==3||a.j==8));}
     private float rowHeight(Item a){return ROW+(hasSetting(a)&&!(a.i==2&&a.j>=4)&&expanded==a.i*100+a.j?((a.i==0&&a.j==3)?216:(a.i==1&&a.j==2)?36:(a.i==1&&a.j==3)?72:(a.i==0&&a.j==5)?72:(a.i==0&&a.j==6)?54:(a.i==2&&a.j==3&&!InteriumState.nightVision)?36:18):0);}
@@ -105,7 +105,7 @@ public final class DeltaScreen extends Screen {
             float y=top+28+clampedScroll(i,list),bottom=top+PH-2;
             c.enableScissor((int)x,(int)(top+28),(int)(x+PW),(int)bottom);
             for(Item item:list){
-                float h=rowHeight(item);boolean on=InteriumScreen.enabled(item.i,item.j);
+                float h=rowHeight(item);if(y+h<top+28||y>bottom){y+=h+ROW_GAP;continue;}boolean on=InteriumScreen.enabled(item.i,item.j);
                 boolean hover=inside(mx,my,x+6,y,PW-12,ROW)&&my>=top+28&&my<bottom;
                 int motionId=item.i*100+item.j;
                 float hot=approach(hoverValues.getOrDefault(motionId,0f),hover?1:0,19),active=approach(toggleValues.getOrDefault(motionId,on?1f:0f),on?1:0,16);
@@ -289,6 +289,7 @@ public final class DeltaScreen extends Screen {
         if(binding!=-1){int code=key.key();setBinding(binding,code==GLFW.GLFW_KEY_DELETE?-1:code);return true;}
         if(key.key()==GLFW.GLFW_KEY_F&& (key.modifiers()&GLFW.GLFW_MOD_CONTROL)!=0){input.setFocused(!input.isFocused());return true;}
         if(input.isFocused()&&key.key()!=GLFW.GLFW_KEY_ESCAPE&&input.keyPressed(key))return true;
+        if(!input.isFocused()&&key.key()==GLFW.GLFW_KEY_F8){client.setScreen(new PerformanceScreen(this));return true;}
         if(!input.isFocused()&&key.key()==GLFW.GLFW_KEY_F7){client.setScreen(new ThemeEditorScreen(this));return true;}
         if(!input.isFocused()&&key.key()==GLFW.GLFW_KEY_F6&&ViaFabricPlus.getImpl()!=null){ViaFabricPlus.getImpl().openProtocolSelectionScreen(this);return true;}
         return super.keyPressed(key);

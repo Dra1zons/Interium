@@ -9,17 +9,20 @@ import java.util.*;
 public final class DeltaVisualSettings {
     private static final Path FILE=FabricLoader.getInstance().getConfigDir().resolve("interium/delta-visuals.properties");
     private static final Properties DATA=new Properties();
+    private static final Map<String,Float> NUMBERS=new HashMap<>();
     public static boolean hud=true,crosshair=false,viewModel=false,removals=false,seeInvisibles=false,aspectRatio=false,swingAnimation=false,pointers=false,shulkerPreview=false,itemPhysic=false,entityBox=false,entityEsp=false,blockEsp=false,soundEsp=false,predictions=false,chinaHat=false,boardSpoofer=false,handsShader=false,shaderEsp=false;
     static void load(){
-        try(var in=Files.newInputStream(FILE)){DATA.load(in);}
+        try(var in=Files.newInputStream(FILE)){DATA.load(in);NUMBERS.clear();}
         catch(NoSuchFileException ignored){}catch(IOException|IllegalArgumentException e){System.err.println("Interium Delta preferences: "+e.getMessage());DATA.clear();}
     }
     static boolean flag(String key,boolean fallback){return Boolean.parseBoolean(DATA.getProperty(key,Boolean.toString(fallback)));}
     static float number(String key,float fallback,float min,float max){
-        try{float n=Float.parseFloat(DATA.getProperty(key,Float.toString(fallback)));return Float.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;}catch(NumberFormatException e){return fallback;}
+        String raw=DATA.getProperty(key);if(raw==null)return fallback;
+        Float n=NUMBERS.get(key);if(n==null){try{n=Float.parseFloat(raw);}catch(NumberFormatException e){n=Float.NaN;}NUMBERS.put(key,n);}
+        return Float.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;
     }
     static String string(String key,String fallback){return DATA.getProperty(key,fallback);}
-    static void set(String key,Object value){DATA.setProperty(key,String.valueOf(value));}
+    static void set(String key,Object value){DATA.setProperty(key,String.valueOf(value));NUMBERS.remove(key);}
     static void toggle(String key,boolean fallback){set(key,!flag(key,fallback));}
     static void save(){
         try{Files.createDirectories(FILE.getParent());Path temp=Files.createTempFile(FILE.getParent(),"delta-",".tmp");

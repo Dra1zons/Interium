@@ -53,7 +53,9 @@
     "DeltaBreakingParticlesMixin",
     "DeltaSubmersionRemovalMixin",
     "DeltaOutlineStateMixin",
-    "DeltaShaderOutlineMixin"
+    "DeltaShaderOutlineMixin",
+    "InteriumTitleMixin",
+    "DeltaButtonActionAccess"
   ],
   "injectors": {
     "defaultRequire": 1

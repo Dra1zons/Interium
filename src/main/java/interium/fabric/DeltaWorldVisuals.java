@@ -47,7 +47,8 @@ public final class DeltaWorldVisuals {
  private static final Map<BlockPos,Integer> blocks=new LinkedHashMap<>();
    private static int scanCursor,ticks;
  private static BlockPos scanCenter=BlockPos.ORIGIN;
- private static String scanConfig="";
+ private static String scanConfig="",targetConfig="";
+ private static Set<Block> scanTargets=Set.of();
  private record Segment(Vec3d a,Vec3d b,int color){}
  private record Quad(Vec3d a,Vec3d b,Vec3d c,Vec3d d,int color,boolean depth){}
  private record ScreenBox(float x,float y,float w,float h,int color,boolean corners,boolean health,float fraction){}
@@ -88,20 +89,21 @@ public final class DeltaWorldVisuals {
  private static void scan(MinecraftClient mc){
   String config=DeltaVisualSettings.string("block.ids","");BlockPos center=mc.player.getBlockPos();
   if(!config.equals(scanConfig)||scanCenter.getSquaredDistance(center)>64){scanConfig=config;scanCenter=center.toImmutable();scanCursor=0;blocks.clear();}
-  Set<Block> targets=new HashSet<>();for(String id:config.split(",")){Identifier ident=Identifier.tryParse(id.trim());if(ident!=null&&Registries.BLOCK.containsId(ident)){Block b=Registries.BLOCK.get(ident);if(b!=Blocks.AIR)targets.add(b);}}
-  if(targets.isEmpty()){blocks.clear();return;}
+  if(!config.equals(targetConfig)){targetConfig=config;Set<Block> targets=new HashSet<>();for(String id:config.split(",")){Identifier ident=Identifier.tryParse(id.trim());if(ident!=null&&Registries.BLOCK.containsId(ident)){Block b=Registries.BLOCK.get(ident);if(b!=Blocks.AIR)targets.add(b);}}scanTargets=Set.copyOf(targets);}
+  if(scanTargets.isEmpty()){blocks.clear();return;}
   int radius=70,side=radius*2+1,height=mc.world.getHeight(),total=side*side*height;BlockPos.Mutable pos=new BlockPos.Mutable();
-  for(int n=0;n<12000;n++){int index=scanCursor++;if(scanCursor>=total)scanCursor=0;int y=index%height+mc.world.getBottomY(),column=index/height;int x=scanCenter.getX()-radius+column%side,z=scanCenter.getZ()-radius+column/side;
-   if(!mc.world.getChunkManager().isChunkLoaded(x>>4,z>>4))continue;pos.set(x,y,z);if(targets.contains(mc.world.getBlockState(pos).getBlock())){if(blocks.size()<4096)blocks.put(pos.toImmutable(),DeltaVisualSettings.primary());}else blocks.remove(pos);
+  for(int n=0,budget=DeltaPerformance.scanBudget();n<budget;n++){int index=scanCursor++;if(scanCursor>=total)scanCursor=0;int y=index%height+mc.world.getBottomY(),column=index/height;int x=scanCenter.getX()-radius+column%side,z=scanCenter.getZ()-radius+column/side;
+   if(!mc.world.getChunkManager().isChunkLoaded(x>>4,z>>4))continue;pos.set(x,y,z);if(scanTargets.contains(mc.world.getBlockState(pos).getBlock())){if(blocks.size()<4096)blocks.put(pos.toImmutable(),DeltaVisualSettings.primary());}else blocks.remove(pos);
   }
  }
  private static void extract(WorldExtractionContext ctx){
   var mc=MinecraftClient.getInstance();extracted=EMPTY;latest=EMPTY;
   var state=ctx.worldState();if(state!=null)state.setData(KEY,EMPTY);
   if(mc.player==null||mc.world==null||ctx.world()==null||ctx.camera()==null||mc.options.hudHidden)return;
+  if(!(DeltaVisualSettings.shulkerPreview||DeltaVisualSettings.entityBox||DeltaVisualSettings.entityEsp||DeltaVisualSettings.pointers||DeltaVisualSettings.chinaHat||DeltaVisualSettings.predictions||DeltaVisualSettings.blockEsp||DeltaVisualSettings.soundEsp))return;
   float tick=ctx.tickCounter().getTickProgress(false);Vec3d cam=ctx.camera().getCameraPos();Matrix4f vp=new Matrix4f(ctx.cullProjectionMatrix()).mul(ctx.viewMatrix());
   int sw=mc.getWindow().getScaledWidth(),sh=mc.getWindow().getScaledHeight();List<Segment> lines=new ArrayList<>();List<Quad> quads=new ArrayList<>();List<ScreenBox> boxes=new ArrayList<>();List<Label> labels=new ArrayList<>();
-  for(Entity e:ctx.world().getEntities()){
+  if(DeltaVisualSettings.shulkerPreview||DeltaVisualSettings.entityBox||DeltaVisualSettings.entityEsp||(DeltaVisualSettings.pointers&&DeltaVisualSettings.flag("pointers.tracers",true)))for(Entity e:ctx.world().getEntities()){
    if(mc.player.squaredDistanceTo(e)>512*512)continue;
    Vec3d pos=e.getLerpedPos(tick);Box box=e.getBoundingBox().offset(pos.subtract(e.getEntityPos()));boolean self=e==mc.player,friend=InteriumState.friends.contains(e.getUuid());
    if(DeltaVisualSettings.entityBox&&(e instanceof PlayerEntity||e instanceof ItemEntity)&&(!self||!mc.options.getPerspective().isFirstPerson())){
@@ -122,7 +124,7 @@ public final class DeltaWorldVisuals {
    Vec3d center=player.getLerpedPos(tick).add(0,player.getEyeHeight(player.getPose())+.15,0).subtract(cam);float radius=player.getWidth(),pitch=(float)Math.toRadians(player.getPitch(tick)),yaw=(float)-Math.toRadians(player.headYaw);int color=player==mc.player?0xff000000|(int)DeltaVisualSettings.number("hat.color",0x859cff,0,0xffffff):0xff009600;Vec3d apex=new Vec3d(0,.3,0).rotateX(pitch).rotateY(yaw).add(center);
    for(int segment=0;segment<90;segment++){double a=segment*Math.PI/45,b=(segment+1)*Math.PI/45;Vec3d p=new Vec3d(Math.sin(a)*radius,0,Math.cos(a)*radius).rotateX(pitch).rotateY(yaw).add(center),q=new Vec3d(Math.sin(b)*radius,0,Math.cos(b)*radius).rotateX(pitch).rotateY(yaw).add(center);float f=.75f+.25f*(float)Math.sin(segment*.14+System.currentTimeMillis()/450d);int shaded=0xff000000|Math.round(((color>>16)&255)*f)<<16|Math.round(((color>>8)&255)*f)<<8|Math.round((color&255)*f);quads.add(new Quad(p,q,apex,apex,shaded,true));}
   }
-  for(var prediction:DeltaPredictions.extract(mc,tick)){var path=prediction.path();if(path.size()<2)continue;int base=DeltaVisualSettings.primary();if(!prediction.held())for(int n=0;n<path.size()-1;n++){Vec3d p=path.get(n),q=path.get(n+1);int color=DeltaVisualSettings.flag("predict.rainbow",false)?java.awt.Color.HSBtoRGB((float)((p.x*.05+p.z*.05)%1),1,1):base;int alpha=Math.round(255*(.3f+.7f*(1-n/(float)(path.size()-1))));lines.add(new Segment(p.subtract(cam),q.subtract(cam),(color&0xffffff)|(alpha<<24)));}
+  if(DeltaVisualSettings.predictions)for(var prediction:DeltaPredictions.extract(mc,tick)){var path=prediction.path();if(path.size()<2)continue;int base=DeltaVisualSettings.primary();if(!prediction.held())for(int n=0;n<path.size()-1;n++){Vec3d p=path.get(n),q=path.get(n+1);int color=DeltaVisualSettings.flag("predict.rainbow",false)?java.awt.Color.HSBtoRGB((float)((p.x*.05+p.z*.05)%1),1,1):base;int alpha=Math.round(255*(.3f+.7f*(1-n/(float)(path.size()-1))));lines.add(new Segment(p.subtract(cam),q.subtract(cam),(color&0xffffff)|(alpha<<24)));}
    Vec3d end=path.getLast();if(prediction.hit()!=null)outline(lines,prediction.hit(),cam,0xffff6464);if(prediction.side()!=null){Direction.Axis axis=prediction.side().getAxis();Vec3d u=axis==Direction.Axis.Y?new Vec3d(1,0,0):new Vec3d(0,1,0),v=axis==Direction.Axis.Z?new Vec3d(1,0,0):new Vec3d(0,0,1);for(int n=0;n<32;n++){double a=n*Math.PI/16,b=(n+1)*Math.PI/16;lines.add(new Segment(end.add(u.multiply(Math.cos(a)*.33)).add(v.multiply(Math.sin(a)*.33)).subtract(cam),end.add(u.multiply(Math.cos(b)*.33)).add(v.multiply(Math.sin(b)*.33)).subtract(cam),0xffffffff));}}
    if(!prediction.held()){Vector2f p=project(vp,cam,end,sw,sh);if(p!=null)labels.add(new Label(p.x,p.y,String.format(Locale.ROOT,"%.1fs",(path.size()-1)/20f),0x82000000,List.of(prediction.icon()),List.of(),ItemStack.EMPTY));}
   }
