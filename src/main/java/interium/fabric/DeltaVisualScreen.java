@@ -15,7 +15,7 @@ final class DeltaVisualScreen extends Screen {
     private float scale,x,y,panelH,scroll;
     private final List<Option> options=new ArrayList<>();
     private record Option(String label,String key,boolean fallback,float value,float min,float max,float step,Runnable action){}
-    DeltaVisualScreen(Screen parent,int mode){super(Text.literal(new String[]{"Interface","Crosshair","View Model","Removals"}[mode]));this.parent=parent;this.mode=mode;}
+    DeltaVisualScreen(Screen parent,int mode){super(Text.literal(new String[]{"Interface","Crosshair","View Model","Removals","Aspect Ratio","Swing Animation","Pointers","Shulker Preview","See Invisibles","Item Physic"}[mode]));this.parent=parent;this.mode=mode;}
     private void flag(String label,String key,boolean fallback){options.add(new Option(label,key,fallback,0,0,0,0,null));}
     private void slider(String label,String key,float fallback,float min,float max,float step){options.add(new Option(label,key,false,fallback,min,max,step,null));}
     private void button(String label,Runnable action){options.add(new Option(label,"",false,0,0,0,0,action));}
@@ -26,7 +26,13 @@ final class DeltaVisualScreen extends Screen {
             for(String key:new String[]{"name","fps","ping","time","coords","speed"})flag("Инфо: "+switch(key){case "name"->"Ник";case "fps"->"FPS";case "ping"->"Пинг";case "time"->"Время";case "coords"->"Координаты";default->"Скорость";},"watermark."+key,true);
         }else if(mode==1){slider("Расстояние от центра","crosshair.gap",0,0,6,.5f);slider("Длина сегментов","crosshair.length",2.5f,2,5,.5f);flag("Адаптивность","crosshair.adaptive",false);flag("Контур","crosshair.outline",true);flag("Центральная метка","crosshair.dot",false);
         }else if(mode==2){for(String hand:new String[]{"main","off"})for(String axis:new String[]{"x","y","z"})slider((hand.equals("main")?"Основная":"Вторая")+" рука "+axis.toUpperCase(Locale.ROOT),"view."+hand+"."+axis,0,-2,2,.1f);button("Сбросить позиции",()->{for(String hand:new String[]{"main","off"})for(String axis:new String[]{"x","y","z"})DeltaVisualSettings.set("view."+hand+"."+axis,0);DeltaVisualSettings.save();});
-        }else{flag("Тряска при уроне","remove.hurt",true);flag("Скорбоард","remove.scoreboard",false);flag("Боссбар","remove.bossbar",false);flag("Эффект портала","remove.portal",true);flag("Тошнота","remove.nausea",true);flag("Тыква","remove.pumpkin",true);flag("Огонь","remove.fire",true);flag("Обрезка камеры","remove.clip",true);flag("Частицы погоды","remove.weather",false);flag("Водная плёнка","remove.water",false);flag("Слепота","remove.blindness",true);flag("Тьма","remove.darkness",true);flag("Свечение","remove.glow",true);flag("Чёрные сердца","remove.hearts",true);}
+        }else if(mode==3){flag("Тряска при уроне","remove.hurt",true);flag("Скорбоард","remove.scoreboard",false);flag("Боссбар","remove.bossbar",false);flag("Эффект портала","remove.portal",true);flag("Тошнота","remove.nausea",true);flag("Тыква","remove.pumpkin",true);flag("Огонь","remove.fire",true);flag("Обрезка камеры","remove.clip",true);flag("Частицы погоды","remove.weather",false);flag("Водная плёнка","remove.water",false);flag("Слепота","remove.blindness",true);flag("Тьма","remove.darkness",true);flag("Свечение","remove.glow",true);flag("Чёрные сердца","remove.hearts",true);
+        }else if(mode==4){slider("Режим: 0=4:3 1=16:9 2=1:1 3=16:10 4=свой","aspect.mode",4,0,4,1);slider("Соотношение","aspect.value",1.9f,.1f,5,.1f);
+        }else if(mode==5){flag("Только при цели Aura","swing.aura",true);slider("Мод анимации","swing.mode",1,1,5,1);slider("Угол поворота (Мод 1)","swing.angle",75,0,360,1);slider("Наклон кончика (Моды 1–4)","swing.tip",-20,-90,90,1);slider("Интенсивность","swing.power",5,1,10,1);
+        }else if(mode==6){flag("Только друзья","pointers.friends",false);slider("Размер стрелки","pointers.size",7,5,15,1);slider("Отступ от центра","pointers.radius",30,20,50,1);
+        }else if(mode==7){button("Показывает реальные данные CONTAINER",()->{});
+        }else if(mode==8){slider("Прозрачность","invis.alpha",.5f,.1f,1,.1f);
+        }else if(mode==9){flag("Уменьшить размер предметов","physic.small",false);}
     }
     private void layout(){scale=Math.max(.1f,Math.min(2f/client.getWindow().getScaleFactor(),Math.min((width-8f)/260,(height-8f)/110)));x=(width/scale-260)/2;panelH=Math.min(options.size()*16+43,height/scale-20);y=(height/scale-panelH)/2;scroll=Math.max(0,Math.min(scroll,Math.max(0,options.size()*16-(panelH-43))));}
     @Override public void renderBackground(DrawContext c,int mx,int my,float delta){}

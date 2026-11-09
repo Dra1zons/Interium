@@ -11,6 +11,30 @@ import net.minecraft.util.hit.EntityHitResult;
 /** Source-based Delta Crosshair and View Model; render-only, no gameplay mutation. */
 public final class DeltaVisuals {
     private DeltaVisuals(){}
+    public static boolean smallItems(){return DeltaVisualSettings.flag("physic.small",false);}
+    public static volatile boolean auraTargetPresent;
+    public static float aspectRatio(){int mode=Math.round(DeltaVisualSettings.number("aspect.mode",4,0,4));return switch(mode){case 0->4f/3;case 1->16f/9;case 2->1;case 3->1.6f;default->DeltaVisualSettings.number("aspect.value",1.9f,.1f,5);};}
+    public static float invisAlpha(){return DeltaVisualSettings.number("invis.alpha",.5f,.1f,1);}
+    /** Same five transforms as Delta SwingAnimation; caller replaces vanilla's ordinary item swing. */
+    public static boolean swing(MatrixStack m,Hand hand,float progress,int arm){
+        if(!DeltaVisualSettings.swingAnimation||hand!=Hand.MAIN_HAND||(DeltaVisualSettings.flag("swing.aura",true)&&!auraTargetPresent))return false;
+        int mode=Math.round(DeltaVisualSettings.number("swing.mode",1,1,5));
+        float anim=(float)Math.sin(progress*3.1415936112270124d),power=DeltaVisualSettings.number("swing.power",5,1,10)*10;
+        float angle=DeltaVisualSettings.number("swing.angle",75,0,360),tip=DeltaVisualSettings.number("swing.tip",-20,-90,90);
+        m.translate(arm*(mode==5?.5f:.72f),-.5f,mode==5?-.72f:-1);
+        if(mode!=5)m.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(-tip));
+        switch(mode){
+          case 1->{ry(m,arm*90);rz(m,arm*-70);rx(m,-angle-power*anim);}
+          case 2->{ry(m,arm*90);rz(m,arm*-65);rx(m,-65+power*anim);}
+          case 3->{ry(m,arm*-90);rz(m,arm*60);rx(m,30);rz(m,arm*power*anim);}
+          case 4->{ry(m,arm*90);rz(m,arm*-75);rx(m,-45-power*anim);ry(m,arm*power*anim*.5f);}
+          case 5->{float strength=power/80,swing=anim*anim,twist=(float)Math.sin(progress*progress*3.1415936112270124d);ry(m,arm*(45+twist*-20*strength));rz(m,arm*swing*-22*strength);rx(m,swing*-85*strength);ry(m,arm*-45);}
+        }return true;
+    }
+    private static void rx(MatrixStack m,float d){m.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(d));}
+    private static void ry(MatrixStack m,float d){m.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(d));}
+    private static void rz(MatrixStack m,float d){m.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(d));}
+
     public static boolean remove(String effect,boolean fallback){return DeltaVisualSettings.removals&&DeltaVisualSettings.flag("remove."+effect,fallback);}
     public static void viewModel(MatrixStack matrices,Hand hand){if(!DeltaVisualSettings.viewModel)return;String prefix="view."+(hand==Hand.MAIN_HAND?"main":"off")+".";matrices.translate(DeltaVisualSettings.number(prefix+"x",0,-2,2),DeltaVisualSettings.number(prefix+"y",0,-2,2),DeltaVisualSettings.number(prefix+"z",0,-2,2));}
     /** Replaces vanilla only when Delta's crosshair can actually be drawn. */
